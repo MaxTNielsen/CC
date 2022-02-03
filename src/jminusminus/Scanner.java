@@ -117,6 +117,19 @@ class Scanner {
             } else {
                 moreWhiteSpace = false;
             }
+            if (ch == '%') {
+                nextCh();
+                if (ch == '%') {
+                    // CharReader maps all new lines to '\n'
+                    while (ch != '\n' && ch != EOFCH) {
+                        nextCh();
+                    }
+                } else {
+                    return new TokenInfo(REM, line);
+                }
+            } else {
+                moreWhiteSpace = false;
+            }
         }
         line = input.line();
         switch (ch) {

@@ -1136,6 +1136,8 @@ public class Parser {
                 lhs = new JMultiplyOp(line, lhs, unaryExpression());
             } else if (have(DIV)) {
                 lhs = new JDivideOP(line, lhs, unaryExpression());
+            } else if (have(REM)) {
+                lhs = new JRemainderOP(line, lhs, unaryExpression());
             }
             else {
                 more = false;}
