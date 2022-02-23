@@ -17,7 +17,7 @@ public class RemainderTest extends TestCase{
 
     public void testDivide() {
         this.assertEquals(modulus.mod(20, 5), 0);
-        this.assertEquals(modulus.mod(42, 1), 42);
+        this.assertEquals(modulus.mod(42, 43), 42);
         this.assertEquals(modulus.mod(7, 3), 1);
     }
 }

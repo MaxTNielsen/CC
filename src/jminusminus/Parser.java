@@ -1067,8 +1067,8 @@ public class Parser {
      * Parse a relational expression.
      * 
      * <pre>
-     *   relationalExpression ::= additiveExpression  // level 5
-     *                              [(GT | LE) additiveExpression 
+     *   relationalExpression ::= shiftExpression  // level 5
+     *                              [(GT | LE) shiftExpression 
      *                              | INSTANCEOF referenceType]
      * </pre>
      * 
@@ -1077,13 +1077,32 @@ public class Parser {
 
     private JExpression relationalExpression() {
         int line = scanner.token().line();
-        JExpression lhs = additiveExpression();
+        JExpression lhs = shiftExpression();
         if (have(GT)) {
-            return new JGreaterThanOp(line, lhs, additiveExpression());
+            return new JGreaterThanOp(line, lhs, shiftExpression());
         } else if (have(LE)) {
-            return new JLessEqualOp(line, lhs, additiveExpression());
+            return new JLessEqualOp(line, lhs, shiftExpression());
         } else if (have(INSTANCEOF)) {
             return new JInstanceOfOp(line, lhs, referenceType());
+        } else {
+            return lhs;
+        }
+    }
+
+    /*
+     * ShiftExpression ::= additiveExpression // level 4
+     * {(LEFTSHIFT | RIGHTSHIFT | UNSIGNEDSHIFTRIGHT) additiveExpression}
+     */
+
+    private JExpression shiftExpression() {
+        int line = scanner.token().line();
+        JExpression lhs = additiveExpression();
+        if (have(LEFTSHIFT)) {
+            return new JLeftShiftOp(line, lhs, additiveExpression());
+        } else if (have(RIGHTSHIFT)) {
+            return new JRightShiftOp(line, lhs, additiveExpression());
+        } else if (have(UNSIGNEDSHIFTRIGHT)) {
+            return new JUnsignedLeftShiftOp(line, lhs, additiveExpression());
         } else {
             return lhs;
         }
@@ -1094,7 +1113,7 @@ public class Parser {
      * 
      * <pre>
      *   additiveExpression ::= multiplicativeExpression // level 3
-     *                            {MINUS multiplicativeExpression}
+     *                            {(MINUS|PLUS) multiplicativeExpression}
      * </pre>
      * 
      * @return an AST for an additiveExpression.
@@ -1138,9 +1157,9 @@ public class Parser {
                 lhs = new JDivideOP(line, lhs, unaryExpression());
             } else if (have(REM)) {
                 lhs = new JRemainderOP(line, lhs, unaryExpression());
+            } else {
+                more = false;
             }
-            else {
-                more = false;}
         }
         return lhs;
     }

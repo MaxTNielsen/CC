@@ -266,7 +266,7 @@ class JDivideOP extends JBinaryExpression {
 
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context); 
-        rhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
         lhs.type().mustMatchExpected(line(), Type.INT);
         rhs.type().mustMatchExpected(line(), Type.INT);
         type = Type.INT;
@@ -287,7 +287,7 @@ class JRemainderOP extends JBinaryExpression {
 
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context); 
-        rhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
         lhs.type().mustMatchExpected(line(), Type.INT);
         rhs.type().mustMatchExpected(line(), Type.INT);
         type = Type.INT;
@@ -298,5 +298,68 @@ class JRemainderOP extends JBinaryExpression {
         lhs.codegen(output);
         rhs.codegen(output);
         output.addNoArgInstruction(IREM);
+    }
+}
+
+class JLeftShiftOp extends JBinaryExpression {
+    public JLeftShiftOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "<<", lhs, rhs);
+    }
+
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context); 
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.INT);
+        rhs.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    public void codegen(CLEmitter output) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(ISHL);
+    }
+}
+
+class JRightShiftOp extends JBinaryExpression {
+    public JRightShiftOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, ">>", lhs, rhs);
+    }
+
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context); 
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.INT);
+        rhs.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    public void codegen(CLEmitter output) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(ISHR);
+    }
+}
+
+class JUnsignedLeftShiftOp extends JBinaryExpression {
+    public JUnsignedLeftShiftOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, ">>>", lhs, rhs);
+    }
+
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context); 
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.INT);
+        rhs.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    public void codegen(CLEmitter output) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IUSHR);
     }
 }

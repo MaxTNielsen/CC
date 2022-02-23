@@ -80,8 +80,11 @@ equalityExpression ::= relationalExpression  // level 6
                          {EQUAL relationalExpression}
 
 relationalExpression ::= additiveExpression       // level 5
-                           [(GT | LE) additiveExpression
+                           [(GT | LE) ShiftExpression
                            | INSTANCEOF referenceType]
+
+ShiftExpression ::= additiveExpression          // level 4
+                    [(LEFTSHIFT | RIGHTSHIFT | UNSIGNEDSHIFTRIGHT) additiveExpression]
 
 additiveExpression ::= multiplicativeExpression // level 3
                          {(PLUS | MINUS) multiplicativeExpression}
@@ -125,3 +128,6 @@ newArrayDeclarator ::= LBRACK expression RBRACK
 
 literal ::= INT_LITERAL | CHAR_LITERAL | STRING_LITERAL
           | TRUE        | FALSE        | NULL
+
+ShiftExpression ::= unaryExpression
+                    {(LEFTSHIFT | RIGHTSHIFT | UNSIGNEDSHIFTRIGHT) unaryExpression}
