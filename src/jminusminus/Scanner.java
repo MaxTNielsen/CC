@@ -63,6 +63,10 @@ class Scanner {
 
         // Keywords in j--
         reserved = new Hashtable<String, TokenKind>();
+        reserved.put(INTERFACE.image(), INTERFACE);
+        reserved.put(LONG.image(), LONG);
+        reserved.put(NATIVE.image(), NATIVE);
+        reserved.put(SHORT.image(), SHORT);
         reserved.put(ABSTRACT.image(), ABSTRACT);
         reserved.put(BOOLEAN.image(), BOOLEAN);
         reserved.put(CHAR.image(), CHAR);
@@ -107,13 +111,16 @@ class Scanner {
             }
             if (ch == '/') {
                 nextCh();
-                if (ch == '/') {
-                    // CharReader maps all new lines to '\n'
-                    while (ch != '\n' && ch != EOFCH) {
-                        nextCh();
-                    }
-                } else {
-                    return new TokenInfo(DIV, line);
+                if(ch == '=') {
+                    return new TokenInfo(DIV_ASSIGN, line);
+                }
+                    if (ch == '/') {
+                        // CharReader maps all new lines to '\n'
+                        while (ch != '\n' && ch != EOFCH) {
+                            nextCh();
+                        }
+                    } else {
+                        return new TokenInfo(DIV, line);
                 }
             } else {
                 moreWhiteSpace = false;
@@ -194,14 +201,18 @@ class Scanner {
                 nextCh();
                 if (ch == '>') {
                     nextCh();
+                    if(ch == '=') {
+                        nextCh();
+                        return new TokenInfo(RIGHTSHIFT_ASSIGN, line);
+                    }
                     if (ch == '>') {
                         nextCh();
                         return new TokenInfo(UNSIGNEDSHIFTRIGHT, line);
                     }
                     return new TokenInfo(RIGHTSHIFT, line);
-                } else {
-                    return new TokenInfo(GT, line);
-                }
+                    } else {
+                        return new TokenInfo(GT, line);
+                    }
             case '<':
                 nextCh();
                 if (ch == '=') {

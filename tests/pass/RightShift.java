@@ -2,7 +2,7 @@ package pass;
 
 public class RightShift {
 
-    public int rightShift_(int x , int y) {
+    public int doRightShift(int x , int y) {
         return x >> y;
     } 
 }

@@ -17,8 +17,8 @@ public class RightShiftTest extends TestCase{
     }
     
     public void testRigtSign() {
-        this.assertEquals(rightShift.rightShift_(4, 1), 2);
-        this.assertEquals(rightShift.rightShift_(6, 2), 1);
-        this.assertEquals(rightShift.rightShift_(2, 3), 0);
+        this.assertEquals(rightShift.doRightShift(4, 1), 2);
+        this.assertEquals(rightShift.doRightShift(6, 2), 1);
+        this.assertEquals(rightShift.doRightShift(2, 3), 0);
     }
 }

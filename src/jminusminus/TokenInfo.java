@@ -19,12 +19,13 @@ enum TokenKind {
     INSTANCEOF("instanceof"), INT("int"), NEW("new"), PACKAGE("package"), 
     PRIVATE("private"), PROTECTED("protected"), PUBLIC("public"), 
     RETURN("return"), STATIC("static"), SUPER("super"), THIS("this"), 
-    VOID("void"), WHILE("while"), 
+    VOID("void"), WHILE("while"), LONG("long"), NATIVE("native"), SHORT("short"), INTERFACE("interface"),
 
     // Operators
     ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"), 
     LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"),
-    DIV("/"), REM("%"), LEFTSHIFT("<<"), RIGHTSHIFT(">>"), UNSIGNEDSHIFTRIGHT(">>>"),
+    DIV("/"), REM("%"), LEFTSHIFT("<<"), RIGHTSHIFT(">>"), UNSIGNEDSHIFTRIGHT(">>>"), DIV_ASSIGN("/="),
+    RIGHTSHIFT_ASSIGN(">>="),
 
     // Separators
     LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["), 
