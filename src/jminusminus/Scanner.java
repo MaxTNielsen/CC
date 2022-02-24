@@ -87,6 +87,15 @@ class Scanner {
         reserved.put(VOID.image(), VOID);
         reserved.put(WHILE.image(), WHILE);
 
+        //MINE
+        reserved.put(CONST.image(), CONST);
+        reserved.put(FINALLY.image(), FINALLY);
+        reserved.put(CONTINUE.image(), CONTINUE);
+        reserved.put(FLOAT.image(), FLOAT);
+        reserved.put(FLOAT.image(), FLOAT);
+        reserved.put(INTERFACE.image(),INTERFACE);
+        reserved.put(THROW.image(), THROW);
+
         // Prime the pump.
         nextCh();
     }
@@ -104,28 +113,33 @@ class Scanner {
             while (isWhitespace(ch)) {
                 nextCh();
             }
+            /*
+            */
             if (ch == '/') {
                 nextCh();
-                if (ch == '/') {
+                if (ch == '*') {
+                    boolean skip = true;
+                    while (skip){
+                        nextCh();
+                        if (ch == '*' && ch != EOFCH){
+                            nextCh();
+                            if (ch == '/' && ch != EOFCH){
+                                //break out
+                                nextCh();
+                                skip = false;
+
+                            }
+                        }
+                    }    
+                }
+                else if (ch == '/') {
                     // CharReader maps all new lines to '\n'
                     while (ch != '\n' && ch != EOFCH) {
                         nextCh();
                     }
                 } else {
                     return new TokenInfo(DIV, line);
-                }
-            } else {
-                moreWhiteSpace = false;
-            }
-            if (ch == '%') {
-                nextCh();
-                if (ch == '%') {
-                    // CharReader maps all new lines to '\n'
-                    while (ch != '\n' && ch != EOFCH) {
-                        nextCh();
-                    }
-                } else {
-                    return new TokenInfo(REM, line);
+                    //reportScannerError("Operator / is not supported in j--.");
                 }
             } else {
                 moreWhiteSpace = false;
@@ -133,6 +147,18 @@ class Scanner {
         }
         line = input.line();
         switch (ch) {
+        case '|':
+            nextCh();
+            return new TokenInfo(OR, line);
+        case '^':
+            nextCh();
+            return new TokenInfo(XOR, line);
+        case '~':
+            nextCh();
+            return new TokenInfo(UCOMP, line);
+        case '%':
+            nextCh();
+            return new TokenInfo(MOD, line);
         case '(':
             nextCh();
             return new TokenInfo(LPAREN, line);
@@ -196,18 +222,35 @@ class Scanner {
                 nextCh();
                 return new TokenInfo(LAND, line);
             } else {
-                reportScannerError("Operator & is not supported in j--.");
-                return getNextToken();
+                //reportScannerError("Operator & is not supported in j--.");
+                return new TokenInfo(AND, line);
+                //return getNextToken();
             }
         case '>':
             nextCh();
-            return new TokenInfo(GT, line);
+            if (ch == '>'){
+                nextCh();
+                if (ch == '>'){
+                    nextCh();
+                    return new TokenInfo(USHR,line);
+                }
+                else{
+                    return new TokenInfo(SHR, line);
+                }
+            }
+            else {
+                return new TokenInfo(GT, line);
+            }
         case '<':
             nextCh();
             if (ch == '=') {
                 nextCh();
                 return new TokenInfo(LE, line);
-            } else {
+            } else if (ch == '<'){
+                nextCh();
+                return new TokenInfo(SHL, line);
+            }
+            else {
                 reportScannerError("Operator < is not supported in j--.");
                 return getNextToken();
             }

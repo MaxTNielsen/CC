@@ -33,6 +33,14 @@ TRUE        ::= "true"
 VOID        ::= "void"
 WHILE       ::= "while"
 
+//mine 
+CONST		::= "const"
+FINALLY		::= "finally"
+CONTINUE	::= "continue"
+FLOAT		::= "float"
+INTERFACE	::= "interface"
+THROW		::= "throw"
+
 // Operators
 ASSIGN      ::= "="
 EQUAL       ::= "=="
@@ -45,9 +53,16 @@ MINUS       ::= "-"
 PLUS        ::= "+"
 PLUS_ASSIGN ::= "+="
 STAR        ::= "*"
+//MINE
 DIV			::= "/"
-REM			::= "%"
-
+MOD			::= "%"
+SHL			::= "<<"
+SHR			::= ">>"
+USHR		::= ">>>"
+UCOM		::= "~"
+OR 			::= "|"
+XOR			::= "^"
+AND 		::= "&"
 // Separators
 COMMA       ::= ","
 DOT         ::= "."
@@ -63,7 +78,7 @@ SEMI        ::= ";"
 IDENTIFIER ::= ("a"-"z"|"A"-"Z"|"_"|"$") {"a"-"z"|"A"-"Z"|"_"|"0"-"9"|"$"}
 
 // Literals
-INT_LITERAL    ::= "0" | ("1"-"9") {"0"-"9"}
+INT_LITERAL    ::= "0" | ("1"-"9") {"0"-"9"}Gaurav
 ESC            ::= "\\" ("n"|"r"|"t"|"b"|"f"|"'"|"\""|"\\")
 STRING_LITERAL ::= "\"" {ESC | ~("\""|"\\"|"\n"|"\r")} "\""
 CHAR_LITERAL   ::= "'" (ESC | ~("'"|"\n"|"\r"|"\\")) "'"

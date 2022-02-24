@@ -9,12 +9,11 @@ import static jminusminus.TokenKind.*;
 /**
  * A recursive descent parser that, given a lexical analyzer (a
  * {@link LookaheadScanner}), parses a Java compilation unit (program file),
- * taking tokens from the LookaheadScanner, and produces an abstract syntax
+ * taking tokens from the LookaheadScanner, and produces an abstract syntax 
  * tree (AST) for it.
  * <p>
  * See Appendix C.2.2 in the textbook or the
- * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/index.html">Java
- * Language Specifications</a>
+ * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/index.html">Java Language Specifications</a>
  * for the full syntactic grammar.
  */
 
@@ -33,7 +32,7 @@ public class Parser {
      * Constructs a parser from the given lexical analyzer.
      * 
      * @param scanner
-     *                the lexical analyzer with which tokens are scanned.
+     *            the lexical analyzer with which tokens are scanned.
      */
 
     public Parser(LookaheadScanner scanner) {
@@ -61,7 +60,7 @@ public class Parser {
      * Is the current token this one?
      * 
      * @param sought
-     *               the token we're looking for.
+     *            the token we're looking for.
      * @return true iff they match; false otherwise.
      */
 
@@ -75,7 +74,7 @@ public class Parser {
      * scanning a thing).
      * 
      * @param sought
-     *               the token we're looking for.
+     *            the token we're looking for.
      * @return true iff they match; false otherwise.
      */
 
@@ -99,7 +98,7 @@ public class Parser {
      * is due to David Turner and Ron Morrison.
      * 
      * @param sought
-     *               the token we're looking for.
+     *            the token we're looking for.
      */
 
     private void mustBe(TokenKind sought) {
@@ -127,7 +126,7 @@ public class Parser {
      * Pull out the ambiguous part of a name and return it.
      * 
      * @param name
-     *             with an ambiguos part (possibly).
+     *            with an ambiguos part (possibly).
      * @return ambiguous part or null.
      */
 
@@ -144,9 +143,9 @@ public class Parser {
      * Report a syntax error.
      * 
      * @param message
-     *                message identifying the error.
+     *            message identifying the error.
      * @param args
-     *                related values.
+     *            related values.
      */
 
     private void reportParserError(String message, Object... args) {
@@ -367,8 +366,8 @@ public class Parser {
         }
         mustBe(EOF);
         return new JCompilationUnit(scanner.fileName(),
-                line, packageName,
-                imports, typeDeclarations);
+                                    line, packageName,
+                                    imports, typeDeclarations);
     }
 
     /**
@@ -488,7 +487,7 @@ public class Parser {
      * extends the superclass java.lang.Object.
      * 
      * @param mods
-     *             the class modifiers.
+     *            the class modifiers.
      * @return an AST for a classDeclaration.
      */
 
@@ -542,7 +541,7 @@ public class Parser {
      * </pre>
      * 
      * @param mods
-     *             the class member modifiers.
+     *            the class member modifiers.
      * @return an AST for a memberDecl.
      */
 
@@ -763,12 +762,13 @@ public class Parser {
      * </pre>
      * 
      * @param type
-     *             type of the variables.
+     *            type of the variables.
      * @return a list of variable declarators.
      */
 
     private ArrayList<JVariableDeclarator> variableDeclarators(Type type) {
-        ArrayList<JVariableDeclarator> variableDeclarators = new ArrayList<JVariableDeclarator>();
+        ArrayList<JVariableDeclarator> variableDeclarators = 
+                                       new ArrayList<JVariableDeclarator>();
         do {
             variableDeclarators.add(variableDeclarator(type));
         } while (have(COMMA));
@@ -784,7 +784,7 @@ public class Parser {
      * </pre>
      * 
      * @param type
-     *             type of the variable.
+     *            type of the variable.
      * @return an AST for a variableDeclarator.
      */
 
@@ -805,7 +805,7 @@ public class Parser {
      * </pre>
      * 
      * @param type
-     *             type of the variable.
+     *            type of the variable.
      * @return an AST for a variableInitializer.
      */
 
@@ -827,7 +827,7 @@ public class Parser {
      * </pre>
      * 
      * @param type
-     *             type of the array.
+     *            type of the array.
      * @return an AST for an arrayInitializer.
      */
 
@@ -840,9 +840,8 @@ public class Parser {
         }
         initials.add(variableInitializer(type.componentType()));
         while (have(COMMA)) {
-            initials.add(see(RCURLY) ? null
-                    : variableInitializer(type
-                            .componentType()));
+            initials.add(see(RCURLY) ? null : variableInitializer(type
+                    .componentType()));
         }
         mustBe(RCURLY);
         return new JArrayInitializer(line, type, initials);
@@ -957,12 +956,12 @@ public class Parser {
         int line = scanner.token().line();
         JExpression expr = expression();
         if (expr instanceof JAssignment || expr instanceof JPreIncrementOp
-                || expr instanceof JPostDecrementOp
-                || expr instanceof JMessageExpression
-                || expr instanceof JSuperConstruction
-                || expr instanceof JThisConstruction
-                || expr instanceof JNewOp
-                || expr instanceof JNewArrayOp) {
+                                        || expr instanceof JPostDecrementOp
+                                        || expr instanceof JMessageExpression
+                                        || expr instanceof JSuperConstruction
+                                        || expr instanceof JThisConstruction 
+                                        || expr instanceof JNewOp
+                                        || expr instanceof JNewArrayOp) {
             // So as not to save on stack
             expr.isStatementExpression = true;
         } else {
@@ -1027,10 +1026,10 @@ public class Parser {
     private JExpression conditionalAndExpression() {
         int line = scanner.token().line();
         boolean more = true;
-        JExpression lhs = equalityExpression();
+        JExpression lhs = bitwiseExpression();
         while (more) {
             if (have(LAND)) {
-                lhs = new JLogicalAndOp(line, lhs, equalityExpression());
+                lhs = new JLogicalAndOp(line, lhs, bitwiseExpression());
             } else {
                 more = false;
             }
@@ -1048,6 +1047,25 @@ public class Parser {
      * 
      * @return an AST for an equalityExpression.
      */
+    private JExpression bitwiseExpression() {
+        int line = scanner.token().line();
+        boolean more = true;
+        JExpression lhs = equalityExpression();
+        while (more){
+            if (have(OR)){
+                lhs = new JOrOp(line, lhs, equalityExpression());
+            } else if (have(XOR)){
+                lhs = new JXorOp(line, lhs, equalityExpression());
+            } else if (have(AND)){
+                lhs = new JAndOp(line, lhs, equalityExpression());
+            }
+            else{
+                more = false;
+            }
+        }
+        return lhs;
+    }
+
 
     private JExpression equalityExpression() {
         int line = scanner.token().line();
@@ -1077,11 +1095,11 @@ public class Parser {
 
     private JExpression relationalExpression() {
         int line = scanner.token().line();
-        JExpression lhs = additiveExpression();
+        JExpression lhs = shiftExpression();
         if (have(GT)) {
-            return new JGreaterThanOp(line, lhs, additiveExpression());
+            return new JGreaterThanOp(line, lhs, shiftExpression());
         } else if (have(LE)) {
-            return new JLessEqualOp(line, lhs, additiveExpression());
+            return new JLessEqualOp(line, lhs, shiftExpression());
         } else if (have(INSTANCEOF)) {
             return new JInstanceOfOp(line, lhs, referenceType());
         } else {
@@ -1100,6 +1118,24 @@ public class Parser {
      * @return an AST for an additiveExpression.
      */
 
+
+    private JExpression shiftExpression(){
+        int line = scanner.token().line();
+        boolean more = true;
+        JExpression lhs = additiveExpression();
+        while(more){
+            if (have(SHR)){
+                lhs = new JShrOp(line, lhs, additiveExpression());
+            } else if (have(SHL)){
+                lhs = new JShlOp(line, lhs, additiveExpression());
+            } else if (have(USHR)){
+                lhs = new JUshrOp(line, lhs, additiveExpression());
+            } else{
+                more = false;
+            }
+        }
+        return lhs;
+    }
     private JExpression additiveExpression() {
         int line = scanner.token().line();
         boolean more = true;
@@ -1134,13 +1170,16 @@ public class Parser {
         while (more) {
             if (have(STAR)) {
                 lhs = new JMultiplyOp(line, lhs, unaryExpression());
-            } else if (have(DIV)) {
-                lhs = new JDivideOP(line, lhs, unaryExpression());
-            } else if (have(REM)) {
-                lhs = new JRemainderOP(line, lhs, unaryExpression());
             }
-            else {
-                more = false;}
+            else if (have(MOD)){
+                lhs = new JRemainderOp(line, lhs, unaryExpression());
+            }
+            else if (have(DIV)){
+                lhs = new JDivideOp(line, lhs, unaryExpression());
+
+            } else {
+                more = false;
+            }
         }
         return lhs;
     }
@@ -1163,6 +1202,11 @@ public class Parser {
             return new JPreIncrementOp(line, unaryExpression());
         } else if (have(MINUS)) {
             return new JNegateOp(line, unaryExpression());
+        } else if (have(PLUS)){
+            return new JUnaryPlusOp(line, unaryExpression());
+        }
+        else if (have(UCOMP)) {
+            return new JUcompOp(line, unaryExpression());
         } else {
             return simpleUnaryExpression();
         }
@@ -1232,7 +1276,7 @@ public class Parser {
      * </pre>
      * 
      * @param target
-     *               the target expression for this selector.
+     *            the target expression for this selector.
      * @return an AST for a selector.
      */
 
@@ -1365,9 +1409,9 @@ public class Parser {
      * </pre>
      * 
      * @param line
-     *             line in which the declarator occurred.
+     *            line in which the declarator occurred.
      * @param type
-     *             type of the array.
+     *            type of the array.
      * @return an AST for a newArrayDeclarator.
      */
 
@@ -1440,4 +1484,7 @@ public class Parser {
     // + scanner.token().tokenRep()
     // + " = " + scanner.token().image() + "]" );
     // }
+
+
+
 }
