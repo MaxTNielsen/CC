@@ -164,6 +164,9 @@ class Scanner {
         case ',':
             nextCh();
             return new TokenInfo(COMMA, line);
+        case ':':
+            nextCh();
+            return new TokenInfo(COLON, line);
         case '=':
             nextCh();
             if (ch == '=') {
