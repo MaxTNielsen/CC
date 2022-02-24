@@ -135,6 +135,9 @@ class Scanner {
                             }
                         }
                     }    
+                } if(ch == '=') {
+					nextCh();
+                    return new TokenInfo(DIV_ASSIGN, line);
                 }
                 else if (ch == '/') {
                     // CharReader maps all new lines to '\n'
@@ -153,7 +156,15 @@ class Scanner {
         switch (ch) {
         case '|':
             nextCh();
-            return new TokenInfo(OR, line);
+            if(ch == '='){
+                nextCh();
+                return new TokenInfo(OR_ASSIGN, line);
+            }
+            else if(ch=='|'){
+                nextCh();
+                return new TokenInfo(LOGICAL_OR, line);
+            }
+            else return new TokenInfo(OR, line);
         case '^':
             nextCh();
             return new TokenInfo(XOR, line);
@@ -234,6 +245,10 @@ class Scanner {
             nextCh();
             if (ch == '>'){
                 nextCh();
+                if(ch == '=') {
+                    nextCh();
+                    return new TokenInfo(RIGHTSHIFT_ASSIGN, line);
+                }
                 if (ch == '>'){
                     nextCh();
                     return new TokenInfo(USHR,line);
