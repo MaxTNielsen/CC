@@ -21,7 +21,7 @@ enum TokenKind {
     RETURN("return"), STATIC("static"), SUPER("super"), THIS("this"), 
     VOID("void"), WHILE("while"), 
     CONST("const"), FINALLY("finally"), CONTINUE("continue"), FLOAT("float"),
-    INTERFACE("interface"), THROW("throw"),
+    INTERFACE("interface"), THROW("throw"),LONG("long"), SHORT("short"),
     // Operators
     ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"), 
     LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"), DIV("/"), MOD("%"),
