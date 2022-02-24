@@ -86,6 +86,13 @@ class Scanner {
         reserved.put(TRUE.image(), TRUE);
         reserved.put(VOID.image(), VOID);
         reserved.put(WHILE.image(), WHILE);
+        reserved.put(STRICTFP.image(), STRICTFP);
+        reserved.put(SYNCRHONIZED.image(), SYNCRHONIZED);
+        reserved.put(THROW.image(), THROW);
+        reserved.put(THROWS.image(), THROWS);
+        reserved.put(TRANSIENT.image(), TRANSIENT);
+        reserved.put(TRY.image(), TRY);
+        reserved.put(VOLATILE.image(), VOLATILE);
 
         // Prime the pump.
         nextCh();
@@ -179,7 +186,8 @@ class Scanner {
             } else if (ch == '+') {
                 nextCh();
                 return new TokenInfo(INC, line);
-            } else {
+            } 
+             else {
                 return new TokenInfo(PLUS, line);
             }
         case '-':
@@ -195,13 +203,39 @@ class Scanner {
             if (ch == '&') {
                 nextCh();
                 return new TokenInfo(LAND, line);
-            } else {
-                reportScannerError("Operator & is not supported in j--.");
-                return getNextToken();
+            } else if (ch == '='){
+                nextCh();
+                return new TokenInfo(ANDEQ, line);
+            }
+            else {
+                nextCh();
+                return new TokenInfo(AND, line);
             }
         case '>':
-            nextCh();
-            return new TokenInfo(GT, line);
+            if (ch == '>') {
+                nextCh();
+                if(ch == '>') {
+                    nextCh();
+                    if(ch == '='){
+                        nextCh();
+                        return new TokenInfo(USHIFTRIGHT_ASSIGN, line);
+                    } else {
+                        nextCh();
+                        return new TokenInfo(USHIFTRIGHT, line);
+                    }
+                }
+                else {
+                    nextCh();
+                    return new TokenInfo(RIGHTSHIFT, line);
+                }
+                
+            } else if (ch == '=') {
+                nextCh();
+                return new TokenInfo(GREATEROREQ, line);
+            } else {
+                nextCh();
+                return new TokenInfo(GT, line);
+            }
         case '<':
             nextCh();
             if (ch == '=') {
