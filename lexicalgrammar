@@ -32,10 +32,6 @@ THIS        ::= "this"
 TRUE        ::= "true"
 VOID        ::= "void"
 WHILE       ::= "while"
-INTERFACE	::= "interface"
-LONG		::= "long"
-NATIVE		::= "native"
-SHORT		::= "short"
 
 // Operators
 ASSIGN      ::= "="
@@ -54,8 +50,7 @@ REM			::= "%"
 LEFTSHIFT   ::= "<<"
 RIGHTSHIFT  ::= ">>"
 UNSIGNEDSHIFTRIGHT ::= ">>>"
-DIV_ASSIGN 	::= "/="
-RIGHTSHIFT_ASSIGN ::= ">>="
+
 
 
 // Separators
