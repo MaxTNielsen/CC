@@ -47,11 +47,6 @@ PLUS_ASSIGN ::= "+="
 STAR        ::= "*"
 DIV			::= "/"
 REM			::= "%"
-LEFTSHIFT   ::= "<<"
-RIGHTSHIFT  ::= ">>"
-UNSIGNEDSHIFTRIGHT ::= ">>>"
-
-
 
 // Separators
 COMMA       ::= ","
