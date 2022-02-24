@@ -41,6 +41,11 @@ FLOAT		::= "float"
 INTERFACE	::= "interface"
 THROW		::= "throw"
 
+//max
+LONG		::= "long"
+NATIVE		::= "native"
+SHORT		::= "short"
+
 // Operators
 ASSIGN      ::= "="
 EQUAL       ::= "=="
@@ -63,6 +68,11 @@ UCOM		::= "~"
 OR 			::= "|"
 XOR			::= "^"
 AND 		::= "&"
+
+//max
+DIV_ASSIGN 	::= "/="
+RIGHTSHIFT_ASSIGN ::= ">>="
+
 // Separators
 COMMA       ::= ","
 DOT         ::= "."

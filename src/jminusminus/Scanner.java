@@ -92,9 +92,13 @@ class Scanner {
         reserved.put(FINALLY.image(), FINALLY);
         reserved.put(CONTINUE.image(), CONTINUE);
         reserved.put(FLOAT.image(), FLOAT);
-        reserved.put(FLOAT.image(), FLOAT);
         reserved.put(INTERFACE.image(),INTERFACE);
         reserved.put(THROW.image(), THROW);
+
+        //max
+        reserved.put(LONG.image(), LONG);
+        reserved.put(NATIVE.image(), NATIVE);
+        reserved.put(SHORT.image(), SHORT);
 
         // Prime the pump.
         nextCh();
