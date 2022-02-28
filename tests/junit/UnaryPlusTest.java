@@ -13,7 +13,7 @@ public class UnaryPlusTest extends TestCase {
     public void testCompute() {
         assertEquals(unaryPlus.plusInt(-1), -1);
         assertEquals(unaryPlus.plusInt(1),1);
-        //assertEquals(unaryPlus.plusString('5'),5);
+        //assertEquals(unaryPlus.plusChar('5'),53);
     }
 
     protected void tearDown() throws Exception {

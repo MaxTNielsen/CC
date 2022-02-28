@@ -21,11 +21,15 @@ enum TokenKind {
     RETURN("return"), STATIC("static"), SUPER("super"), THIS("this"), 
     VOID("void"), WHILE("while"), 
     CONST("const"), FINALLY("finally"), CONTINUE("continue"), FLOAT("float"),
-    INTERFACE("interface"), THROW("throw"),
+    INTERFACE("interface"), THROW("throw"), BREAK("break"), BYTE("byte"),
+    DEFAULT("default"), DO("do"), CASE("case"), CATCH("catch"),
+    
+    
     // Operators
     ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"), 
     LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"), DIV("/"), MOD("%"),
     SHL("<<"), SHR(">>"), USHR(">>>"), UCOMP("~"), OR("|"), XOR("^"), AND("&"),
+    QMARK("?"), MINUS_ASSIGN("-="), SHL_ASSIGN("<<="),
 
     // Separators
     LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["), 

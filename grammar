@@ -36,7 +36,7 @@ statement ::= block
             | SEMI 
             | statementExpression SEMI
             | CONTINUE
-            | THROW [exception];
+            | THROW statementExpression SEMI;
             | FINALLY
 formalParameters ::= LPAREN 
                        [formalParameter {COMMA formalParameter}]

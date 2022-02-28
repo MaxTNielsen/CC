@@ -69,7 +69,6 @@ class Scanner {
         reserved.put(ELSE.image(), ELSE);
         reserved.put(EXTENDS.image(), EXTENDS);
         reserved.put(FALSE.image(), FALSE);
-        reserved.put(IF.image(), IF);
         reserved.put(IMPORT.image(), IMPORT);
         reserved.put(INSTANCEOF.image(), INSTANCEOF);
         reserved.put(INT.image(), INT);
@@ -95,7 +94,12 @@ class Scanner {
         reserved.put(FLOAT.image(), FLOAT);
         reserved.put(INTERFACE.image(),INTERFACE);
         reserved.put(THROW.image(), THROW);
-
+        reserved.put(BREAK.image(), BREAK);
+        reserved.put(BYTE.image(),BYTE);
+        reserved.put(DEFAULT.image(),DEFAULT);
+        reserved.put(DO.image(),DO);
+        reserved.put(CASE.image(),CASE);
+        reserved.put(CATCH.image(),CATCH);
         // Prime the pump.
         nextCh();
     }
@@ -147,6 +151,9 @@ class Scanner {
         }
         line = input.line();
         switch (ch) {
+        case '?':
+            nextCh();
+            return new TokenInfo(QMARK, line);
         case '|':
             nextCh();
             return new TokenInfo(OR, line);
@@ -213,7 +220,11 @@ class Scanner {
             if (ch == '-') {
                 nextCh();
                 return new TokenInfo(DEC, line);
-            } else {
+            } else if (ch == '='){
+                nextCh();
+                return new TokenInfo(MINUS_ASSIGN, line);
+            }
+            else {
                 return new TokenInfo(MINUS, line);
             }
         case '&':
@@ -248,6 +259,10 @@ class Scanner {
                 return new TokenInfo(LE, line);
             } else if (ch == '<'){
                 nextCh();
+                if (ch == '='){
+                    nextCh();
+                    return new TokenInfo(SHL_ASSIGN, line);
+                }
                 return new TokenInfo(SHL, line);
             }
             else {

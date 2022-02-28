@@ -40,6 +40,14 @@ CONTINUE	::= "continue"
 FLOAT		::= "float"
 INTERFACE	::= "interface"
 THROW		::= "throw"
+BREAK		::= "break"
+BYTE		::= "byte"
+DEFAULT		::= "default"
+DO			::= "do"
+CASE		::= "case"
+CATCH		::= "catch"
+
+
 
 // Operators
 ASSIGN      ::= "="
@@ -63,6 +71,12 @@ UCOM		::= "~"
 OR 			::= "|"
 XOR			::= "^"
 AND 		::= "&"
+QMARK		::= "?"
+MINUS_ASSIGN::= "-="
+DEC			::= "--"
+SHL_ASSIGN	::= "<<="
+
+
 // Separators
 COMMA       ::= ","
 DOT         ::= "."
