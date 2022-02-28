@@ -49,6 +49,11 @@ CATCH		::= "catch"
 
 
 
+//max
+LONG		::= "long"
+NATIVE		::= "native"
+SHORT		::= "short"
+
 // Operators
 ASSIGN      ::= "="
 EQUAL       ::= "=="
@@ -76,6 +81,12 @@ MINUS_ASSIGN::= "-="
 DEC			::= "--"
 SHL_ASSIGN	::= "<<="
 
+
+//max
+DIV_ASSIGN 	::= "/="
+RIGHTSHIFT_ASSIGN ::= ">>="
+LOGICAL_OR  ::= "||"
+OR_ASSIGN   ::= "|="
 
 // Separators
 COMMA       ::= ","

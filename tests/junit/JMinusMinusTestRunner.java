@@ -31,6 +31,10 @@ public class JMinusMinusTestRunner {
         suite.addTestSuite(ExclusiveOrTest.class);
         suite.addTestSuite(UcompTest.class);
         suite.addTestSuite(UnaryPlusTest.class);
+        suite.addTestSuite(RightShiftAssignTest.class);
+        suite.addTestSuite(DivisionAssignTest.class);
+        suite.addTestSuite(OrAssignTest.class);
+        suite.addTestSuite(LogicalORTest.class);
         return suite;
     }
 

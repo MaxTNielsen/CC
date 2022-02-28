@@ -91,7 +91,6 @@ class Scanner {
         reserved.put(FINALLY.image(), FINALLY);
         reserved.put(CONTINUE.image(), CONTINUE);
         reserved.put(FLOAT.image(), FLOAT);
-        reserved.put(FLOAT.image(), FLOAT);
         reserved.put(INTERFACE.image(),INTERFACE);
         reserved.put(THROW.image(), THROW);
         reserved.put(BREAK.image(), BREAK);
@@ -100,6 +99,9 @@ class Scanner {
         reserved.put(DO.image(),DO);
         reserved.put(CASE.image(),CASE);
         reserved.put(CATCH.image(),CATCH);
+        reserved.put(LONG.image(), LONG);
+        reserved.put(NATIVE.image(), NATIVE);
+        reserved.put(SHORT.image(), SHORT);
         // Prime the pump.
         nextCh();
     }
@@ -135,6 +137,9 @@ class Scanner {
                             }
                         }
                     }    
+                } if(ch == '=') {
+					nextCh();
+                    return new TokenInfo(DIV_ASSIGN, line);
                 }
                 else if (ch == '/') {
                     // CharReader maps all new lines to '\n'
@@ -156,7 +161,15 @@ class Scanner {
             return new TokenInfo(QMARK, line);
         case '|':
             nextCh();
-            return new TokenInfo(OR, line);
+            if(ch == '='){
+                nextCh();
+                return new TokenInfo(OR_ASSIGN, line);
+            }
+            else if(ch=='|'){
+                nextCh();
+                return new TokenInfo(LOGICAL_OR, line);
+            }
+            else return new TokenInfo(OR, line);
         case '^':
             nextCh();
             return new TokenInfo(XOR, line);
@@ -241,6 +254,10 @@ class Scanner {
             nextCh();
             if (ch == '>'){
                 nextCh();
+                if(ch == '=') {
+                    nextCh();
+                    return new TokenInfo(RIGHTSHIFT_ASSIGN, line);
+                }
                 if (ch == '>'){
                     nextCh();
                     return new TokenInfo(USHR,line);

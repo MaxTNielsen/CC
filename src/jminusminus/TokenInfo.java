@@ -20,8 +20,7 @@ enum TokenKind {
     PRIVATE("private"), PROTECTED("protected"), PUBLIC("public"), 
     RETURN("return"), STATIC("static"), SUPER("super"), THIS("this"), 
     VOID("void"), WHILE("while"), 
-    CONST("const"), FINALLY("finally"), CONTINUE("continue"), FLOAT("float"),
-    INTERFACE("interface"), THROW("throw"), BREAK("break"), BYTE("byte"),
+    CONST("const"), FINALLY("finally"), CONTINUE("continue"), FLOAT("float"), BREAK("break"), BYTE("byte"),
     DEFAULT("default"), DO("do"), CASE("case"), CATCH("catch"),
     
     
@@ -30,6 +29,10 @@ enum TokenKind {
     LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"), DIV("/"), MOD("%"),
     SHL("<<"), SHR(">>"), USHR(">>>"), UCOMP("~"), OR("|"), XOR("^"), AND("&"),
     QMARK("?"), MINUS_ASSIGN("-="), SHL_ASSIGN("<<="),
+    INTERFACE("interface"), THROW("throw"),LONG("long"), SHORT("short"), NATIVE("native"),
+    // Operators
+    DIV_ASSIGN("/="),
+    RIGHTSHIFT_ASSIGN(">>="),LOGICAL_OR("||"), OR_ASSIGN("|="),
 
     // Separators
     LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["), 
