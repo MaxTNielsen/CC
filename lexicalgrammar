@@ -40,6 +40,19 @@ TRANSIENT 	 ::= "transient"
 TRY  		 ::= "try"
 VOLATILE     ::= "volatile"
 
+//mine
+CONST		::= "const"
+FINALLY		::= "finally"
+CONTINUE	::= "continue"
+FLOAT		::= "float"
+INTERFACE	::= "interface"
+THROW		::= "throw"
+
+//max
+LONG		::= "long"
+NATIVE		::= "native"
+SHORT		::= "short"
+
 // Operators
 ASSIGN      ::= "="
 EQUAL       ::= "=="
@@ -52,14 +65,25 @@ MINUS       ::= "-"
 PLUS        ::= "+"
 PLUS_ASSIGN ::= "+="
 STAR        ::= "*"
+//MINE
 DIV			::= "/"
-REM			::= "%"
+MOD			::= "%"
+SHL			::= "<<"
+SHR			::= ">>"
+USHR		::= ">>>"
 USHIFTRIGHT_ASSIGN  ::= ">>>="
 GREATEROREQ	::= ">="
-ANDEQ       ::= "&="
+UCOM		::= "~"
+OR 			::= "|"
+XOR			::= "^"
 AND 		::= "&"
-SHIFTRIGHT  ::= ">>"
-USHIFTRIGHT ::= ">>>"
+ANDEQ       ::= "&="
+
+//max
+DIV_ASSIGN 	::= "/="
+RIGHTSHIFT_ASSIGN ::= ">>="
+LOGICAL_OR  ::= "||"
+OR_ASSIGN   ::= "|="
 
 // Separators
 COMMA       ::= ","
@@ -76,12 +100,10 @@ SEMI        ::= ";"
 IDENTIFIER ::= ("a"-"z"|"A"-"Z"|"_"|"$") {"a"-"z"|"A"-"Z"|"_"|"0"-"9"|"$"}
 
 // Literals
-INT_LITERAL    ::= "0" | ("1"-"9") {"0"-"9"}
+INT_LITERAL    ::= "0" | ("1"-"9") {"0"-"9"}Gaurav
 ESC            ::= "\\" ("n"|"r"|"t"|"b"|"f"|"'"|"\""|"\\")
 STRING_LITERAL ::= "\"" {ESC | ~("\""|"\\"|"\n"|"\r")} "\""
 CHAR_LITERAL   ::= "'" (ESC | ~("'"|"\n"|"\r"|"\\")) "'"
 
 // End of file
 EOF            ::= "<end of file>"
-
-
