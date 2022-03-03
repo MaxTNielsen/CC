@@ -84,6 +84,7 @@ DIV_ASSIGN 	::= "/="
 RIGHTSHIFT_ASSIGN ::= ">>="
 LOGICAL_OR  ::= "||"
 OR_ASSIGN   ::= "|="
+MINUS_ASSIGN ::= "-="
 
 // Separators
 COMMA       ::= ","

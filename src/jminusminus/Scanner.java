@@ -239,6 +239,9 @@ class Scanner {
             if (ch == '-') {
                 nextCh();
                 return new TokenInfo(DEC, line);
+            } else if (ch == '=') {
+                nextCh();
+                return new TokenInfo(MINUS_ASSIGN,line);
             } else {
                 return new TokenInfo(MINUS, line);
             }
@@ -291,8 +294,7 @@ class Scanner {
             } else if (ch == '<'){
                 nextCh();
                 return new TokenInfo(SHL, line);
-            }
-            else {
+            } else {
                 reportScannerError("Operator < is not supported in j--.");
                 return getNextToken();
             }
