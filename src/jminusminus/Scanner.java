@@ -15,7 +15,7 @@ import static jminusminus.TokenKind.*;
  * A lexical analyzer for j--, that has no backtracking mechanism.
  * <p>
  * When you add a new token to the scanner, you must also add an entry in the
- * {@link TokenKind} enum in {@code TokenInfo.java} specifying the kind and 
+ * {@link TokenKind} enum in {@code TokenInfo.java} specifying the kind and
  * image of the new token.
  * <p>
  * See Appendix C.2.1 of the textbook or the
@@ -48,7 +48,7 @@ class Scanner {
 
     /**
      * Constructs a Scanner object.
-     * 
+     *
      * @param fileName
      *            the name of the file containing the source.
      * @exception FileNotFoundException
@@ -86,6 +86,13 @@ class Scanner {
         reserved.put(TRUE.image(), TRUE);
         reserved.put(VOID.image(), VOID);
         reserved.put(WHILE.image(), WHILE);
+        reserved.put(STRICTFP.image(), STRICTFP);
+        reserved.put(SYNCRHONIZED.image(), SYNCRHONIZED);
+        reserved.put(THROW.image(), THROW);
+        reserved.put(THROWS.image(), THROWS);
+        reserved.put(TRANSIENT.image(), TRANSIENT);
+        reserved.put(TRY.image(), TRY);
+        reserved.put(VOLATILE.image(), VOLATILE);
 
         //MINE
         reserved.put(CONST.image(), CONST);
@@ -106,7 +113,7 @@ class Scanner {
 
     /**
      * Scans the next token from input.
-     * 
+     *
      * @return the next scanned token.
      */
 
@@ -134,7 +141,7 @@ class Scanner {
 
                             }
                         }
-                    }    
+                    }
                 } if(ch == '=') {
 					nextCh();
                     return new TokenInfo(DIV_ASSIGN, line);
@@ -198,6 +205,9 @@ class Scanner {
         case ',':
             nextCh();
             return new TokenInfo(COMMA, line);
+        case ':':
+            nextCh();
+            return new TokenInfo(COLON, line);
         case '=':
             nextCh();
             if (ch == '=') {
@@ -220,7 +230,8 @@ class Scanner {
             } else if (ch == '+') {
                 nextCh();
                 return new TokenInfo(INC, line);
-            } else {
+            }
+             else {
                 return new TokenInfo(PLUS, line);
             }
         case '-':
@@ -236,28 +247,40 @@ class Scanner {
             if (ch == '&') {
                 nextCh();
                 return new TokenInfo(LAND, line);
-            } else {
-                //reportScannerError("Operator & is not supported in j--.");
+            } else if (ch == '='){
+                nextCh();
+                return new TokenInfo(ANDEQ, line);
+            }
+            else {
+                nextCh();
                 return new TokenInfo(AND, line);
-                //return getNextToken();
             }
         case '>':
-            nextCh();
-            if (ch == '>'){
+            if (ch == '>') {
                 nextCh();
-                if(ch == '=') {
+                if(ch == '>') {
+                    nextCh();
+                    if(ch == '='){
+                        nextCh();
+                        return new TokenInfo(USHIFTRIGHT_ASSIGN, line);
+                    } else {
+                        nextCh();
+                        return new TokenInfo(USHR, line);
+                    }
+                } if(ch == '=') {
                     nextCh();
                     return new TokenInfo(RIGHTSHIFT_ASSIGN, line);
                 }
-                if (ch == '>'){
+                else {
                     nextCh();
-                    return new TokenInfo(USHR,line);
-                }
-                else{
                     return new TokenInfo(SHR, line);
                 }
-            }
-            else {
+
+            } else if (ch == '=') {
+                nextCh();
+                return new TokenInfo(GREATEROREQ, line);
+            } else {
+                nextCh();
                 return new TokenInfo(GT, line);
             }
         case '<':
@@ -368,7 +391,7 @@ class Scanner {
 
     /**
      * Scans and returns an escaped character.
-     * 
+     *
      * @return escaped character.
      */
 
@@ -406,7 +429,7 @@ class Scanner {
     }
 
     /**
-     * Advances ch to the next character from input, and updates the line 
+     * Advances ch to the next character from input, and updates the line
      * number.
      */
 
@@ -423,7 +446,7 @@ class Scanner {
      * Reports a lexcial error and records the fact that an error has occured.
      * This fact can be ascertained from the Scanner by sending it an
      * errorHasOccurred message.
-     * 
+     *
      * @param message
      *            message identifying the error.
      * @param args
@@ -439,7 +462,7 @@ class Scanner {
 
     /**
      * Returns true if the specified character is a digit (0-9); false otherwise.
-     * 
+     *
      * @param c
      *            character.
      * @return true or false.
@@ -451,7 +474,7 @@ class Scanner {
 
     /**
      * Returns true if the specified character is a whitespace; false otherwise.
-     * 
+     *
      * @param c
      *            character.
      * @return true or false.
@@ -464,7 +487,7 @@ class Scanner {
     /**
      * Returns true if the specified character can start an identifier name;
      * false otherwise.
-     * 
+     *
      * @param c
      *            character.
      * @return true or false.
@@ -477,7 +500,7 @@ class Scanner {
     /**
      * Returns true if the specified character can be part of an identifier name;
      * false otherwise.
-     * 
+     *
      * @param c
      *            character.
      * @return true or false.
@@ -489,7 +512,7 @@ class Scanner {
 
     /**
      * Has an error occurred up to now in lexical analysis?
-     * 
+     *
      * @return {@code true} if an error occurred and {@code false} otherwise.
      */
 
@@ -499,7 +522,7 @@ class Scanner {
 
     /**
      * Returns the name of the source file.
-     * 
+     *
      * @return name of the source file.
      */
 
@@ -528,7 +551,7 @@ class CharReader {
 
     /**
      * Constructs a CharReader from a file name.
-     * 
+     *
      * @param fileName
      *            the name of the input file.
      * @exception FileNotFoundException
@@ -542,7 +565,7 @@ class CharReader {
 
     /**
      * Scans the next character.
-     * 
+     *
      * @return the character scanned.
      * @exception IOException
      *                if an I/O error occurs.
@@ -554,7 +577,7 @@ class CharReader {
 
     /**
      * Returns the current line number in the source file, starting at 1.
-     * 
+     *
      * @return the current line number.
      */
 
@@ -565,7 +588,7 @@ class CharReader {
 
     /**
      * Returns the file name.
-     * 
+     *
      * @return the file name.
      */
 
@@ -575,7 +598,7 @@ class CharReader {
 
     /**
      * Closes the file.
-     * 
+     *
      * @exception IOException
      *                if an I/O error occurs.
      */
