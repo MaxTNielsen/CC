@@ -32,8 +32,10 @@ blockStatement ::= localVariableDeclarationStatement
 statement ::= block
             | IF parExpression statement [ELSE statement]
             | WHILE parExpression statement 
+            | FOR parExpression statement
             | RETURN [expression] SEMI
             | SEMI 
+            | FINALLY statement
             | statementExpression SEMI
 
 formalParameters ::= LPAREN 
@@ -61,7 +63,7 @@ arguments ::= LPAREN [expression {COMMA expression}] RPAREN
 
 type ::= referenceType | basicType
 
-basicType ::= BOOLEAN | CHAR | INT 
+basicType ::= BOOLEAN | CHAR | DOUBLE | FLOAT | INT 
 
 referenceType ::= basicType LBRACK RBRACK {LBRACK RBRACK}
                 | qualifiedIdentifier {LBRACK RBRACK}
@@ -71,7 +73,7 @@ statementExpression ::= expression // but must have side-effect, eg i++
 expression ::= assignmentExpression
 
 assignmentExpression ::= conditionalAndExpression  // must be a valid lhs
-                           [(ASSIGN | PLUS_ASSIGN) assignmentExpression]
+                           [(ASSIGN | PLUS_ASSIGN | STARE | REME | SHLE) assignmentExpression]
 
 conditionalAndExpression ::= equalityExpression // level 10
                                {LAND equalityExpression}
@@ -83,6 +85,9 @@ relationalExpression ::= additiveExpression       // level 5
                            [(GT | LE) additiveExpression
                            | INSTANCEOF referenceType]
 
+shiftExpression ::= additiveExpression    // level 4
+                        {(SHL | SHR | USHR) additiveExpression}
+
 additiveExpression ::= multiplicativeExpression // level 3
                          {(PLUS | MINUS) multiplicativeExpression}
 
@@ -90,6 +95,7 @@ multiplicativeExpression ::= unaryExpression       // level 2
                                {(STAR | DIV | REM) unaryExpression}
 
 unaryExpression ::= INC unaryExpression  // level 1
+                  | DECR unaryExpression
                   | MINUS unaryExpression
                   | simpleUnaryExpression
 
@@ -113,6 +119,7 @@ primary ::= parExpression
           | literal
           | NEW creator
           | qualifiedIdentifier [arguments]
+          | IMPLEMENTS creator
 
 creator ::= (basicType | qualifiedIdentifier) 
               ( arguments

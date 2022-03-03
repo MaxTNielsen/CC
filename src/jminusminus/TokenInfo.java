@@ -14,17 +14,18 @@ enum TokenKind {
     EOF("<EOF>"), 
 
     // Reserved words
-    ABSTRACT("abstract"), BOOLEAN("boolean"), CHAR("char"), CLASS("class"), 
-    ELSE("else"), EXTENDS("extends"), IF("if"), IMPORT("import"), 
+    ABSTRACT("abstract"), BOOLEAN("boolean"), CHAR("char"), CLASS("class"), DOUBLE("double"),
+    ELSE("else"), EXTENDS("extends"), FINAL("final"), FINALLY("finally"), FLOAT("float"), FOR("for"),
+    GOTO("goto"), IF("if"), IMPLEMENTS("implements"), IMPORT("import"), 
     INSTANCEOF("instanceof"), INT("int"), NEW("new"), PACKAGE("package"), 
     PRIVATE("private"), PROTECTED("protected"), PUBLIC("public"), 
     RETURN("return"), STATIC("static"), SUPER("super"), THIS("this"), 
     VOID("void"), WHILE("while"), 
 
     // Operators
-    ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"), 
+    ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), LT("<"), INC("++"), LAND("&&"), 
     LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"),
-    DIV("/"),REM("%"),
+    DIV("/"), REM("%"), REME("%="), STARE("*="), POW("^"), SHLE("<<="), SHL("<<"), APPR("~"),
 
     // Separators
     LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["), 
