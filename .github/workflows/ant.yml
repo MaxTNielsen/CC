@@ -42,7 +42,7 @@ jobs:
   parser:
 
     runs-on: ubuntu-latest
-    needs: scanner
+    needs: clean
 
     steps:
     - uses: actions/checkout@v2
@@ -56,7 +56,7 @@ jobs:
       
   test:
     runs-on: ubuntu-latest
-    needs: parser
+    needs: clean
 
     steps:
     - uses: actions/checkout@v2
