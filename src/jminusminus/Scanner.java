@@ -227,7 +227,10 @@ class Scanner {
                 if (ch == '='){
                     return new TokenInfo(SHLE, line);
                 }
-                else return new TokenInfo(SHL, line);
+                else{
+                return new TokenInfo(SHL, line);
+                }
+            else return new TokenInfo(LT, line);
             }
             else if (ch == '=') {
                 nextCh();
