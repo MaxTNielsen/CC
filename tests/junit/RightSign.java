@@ -20,4 +20,4 @@ public class DivisionTest extends TestCase{
         this.assertEquals(LeftSign.RightSign(4, 1), 2);
         this.assertEquals(RightSign.RightSign(6, 2), 1);
         this.assertEquals(RightSign.RightSign(2, 3), 0);
-    }
+    }}

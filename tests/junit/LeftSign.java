@@ -4,12 +4,12 @@ import junit.framework.TestCase;
 import pass.LeftSign;
 
 
-public class DivisionTest extends TestCase{
-    private LeftSign LeftSign;
+public class LeftSign extends TestCase{
+    private LeftSign ls;
 
     protected void setUp() throws Exception {
         super.setUp();
-        LeftSign = new LeftSign();
+        ls = new LeftSign();
     }
 
     protected void tearDown() throws Exception {
@@ -17,8 +17,8 @@ public class DivisionTest extends TestCase{
     }
     
     public void testDivide() {
-        this.assertEquals(LeftSign.LeftSign(4, 1), 8);
-        this.assertEquals(LeftSign.LeftSign(6, 2), 24);
-        this.assertEquals(LeftSign.LeftSign(2, 3), 16);
+        this.assertEquals(ls.LeftSign(4, 1), 8);
+        this.assertEquals(ls.LeftSign(6, 2), 24);
+        this.assertEquals(ls.LeftSign(2, 3), 16);
     }
 }

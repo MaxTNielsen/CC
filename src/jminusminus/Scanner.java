@@ -177,8 +177,18 @@ class Scanner {
         case '!':
             nextCh();
             return new TokenInfo(LNOT, line);
+        case '~':
+            nextCh();
+            return new TokenInfo(BNOT, line);
+        case '^':
+            nextCh();
+            return new TokenInfo(BXOR, line);
         case '*':
             nextCh();
+            if(ch == '='){
+                nextCh();
+                return new TokenInfo(REMA, line);
+            }
             return new TokenInfo(STAR, line);
         case '+':
             nextCh();
@@ -205,8 +215,7 @@ class Scanner {
                 nextCh();
                 return new TokenInfo(LAND, line);
             } else {
-                reportScannerError("Operator & is not supported in j--.");
-                return getNextToken();
+                return new TokenInfo(BAND, line);
             }
         case '>':
             nextCh();

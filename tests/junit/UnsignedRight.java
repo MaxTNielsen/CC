@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import pass.UnsignedRight;
 
 
-public class DivisionTest extends TestCase{
+public class UnsignedRight extends TestCase{
     private UnsignedRight UnsignedRight;
 
     protected void setUp() throws Exception {
@@ -20,4 +20,4 @@ public class DivisionTest extends TestCase{
         this.assertEquals(UnsignedRight.UnsignedRight(4, 1), 2);
         this.assertEquals(UnsignedRight.UnsignedRight(-6, 2), 1);
         this.assertEquals(UnsignedRight.UnsignedRight(-2, 3), 12);
-    }
+    }}
