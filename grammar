@@ -102,6 +102,7 @@ unaryExpression ::= INC unaryExpression  // level 1
 
 
 simpleUnaryExpression ::= LNOT unaryExpression
+                        | BNOT
                         | LPAREN basicType RPAREN unaryExpression //casted
                         | LPAREN // casted               
                             referenceType
