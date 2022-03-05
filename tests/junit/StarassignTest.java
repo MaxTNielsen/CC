@@ -1,15 +1,14 @@
 package junit;
 
 import junit.framework.TestCase;
+import pass.StarAssign;
 
-import pass.STARA;
-
-public class StarassignTest extends TestCase {
-    private STARA stara;
+public class StarAssignTest extends TestCase {
+    private StarAssign starAssign;
 
     protected void setUp() throws Exception {
         super.setUp();
-        stara = new STARA();
+        starAssign = new StarAssign();
     }
 
     protected void tearDown() throws Exception {
@@ -17,8 +16,7 @@ public class StarassignTest extends TestCase {
     }
     
     public void testStarAssign() {
-        this.assertEquals(stara.starassign(4, 9), 36);
-        
+        this.assertEquals(starAssign.doStarAssign(4, 9), 36);
     }
 
 }

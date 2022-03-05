@@ -76,7 +76,7 @@ statementExpression ::= expression // but must have side-effect, eg i++
 expression ::= assignmentExpression
 
 assignmentExpression ::= conditionalAndExpression  // must be a valid lhs
-                           [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | DIV_ASSIGN | REM_ASSIGN | SHLE | RIGHTSHIFT_ASSIGN | USHIFTRIGHT_ASSIGN | OR_ASSIGN) assignmentExpression]
+                           [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | DIV_ASSIGN | REM_ASSIGN | SHLE | RIGHTSHIFT_ASSIGN | USHIFTRIGHT_ASSIGN | OR_ASSIGN | MINUS_ASSIGN) assignmentExpression]
 
 conditionalAndExpression ::= equalityExpression // level 10
                                {(LAND | LOR) bitwiseExpression}
@@ -103,7 +103,7 @@ multiplicativeExpression ::= unaryExpression       // level 2
                                {(STAR | MOD | DIV) unaryExpression}
 
 unaryExpression ::= INC unaryExpression  // level 1
-                  | DECR unaryExpression
+                  | DEC unaryExpression
                   | MINUS unaryExpression
                   | PLUS unaryExpression
                   | UCOMP unaryExpression 
