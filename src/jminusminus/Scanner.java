@@ -9,6 +9,8 @@ import java.io.LineNumberReader;
 
 import java.util.Hashtable;
 
+import javax.imageio.ImageIO;
+
 import static jminusminus.TokenKind.*;
 
 /**
@@ -66,10 +68,17 @@ class Scanner {
         reserved.put(BOOLEAN.image(), BOOLEAN);
         reserved.put(CHAR.image(), CHAR);
         reserved.put(CLASS.image(), CLASS);
+        reserved.put(DOUBLE.image(), DOUBLE);
         reserved.put(ELSE.image(), ELSE);
         reserved.put(EXTENDS.image(), EXTENDS);
         reserved.put(FALSE.image(), FALSE);
+        reserved.put(FINAL.image(), FINAL);
+        reserved.put(FINALLY.image(), FINALLY);
+        reserved.put(FLOAT.image(), FLOAT);
+        reserved.put(FOR.image(), FOR);
+        reserved.put(GOTO.image(), GOTO);
         reserved.put(IF.image(), IF);
+        reserved.put(IMPLEMENTS.image(), IMPLEMENTS);
         reserved.put(IMPORT.image(), IMPORT);
         reserved.put(INSTANCEOF.image(), INSTANCEOF);
         reserved.put(INT.image(), INT);
@@ -221,7 +230,12 @@ class Scanner {
             return new TokenInfo(LNOT, line);
         case '*':
             nextCh();
+            if(ch == '='){
+                nextCh();
+                return new TokenInfo(STAR_ASSIGN, line);
+            }else{
             return new TokenInfo(STAR, line);
+            }
         case '+':
             nextCh();
             if (ch == '=') {
@@ -250,13 +264,14 @@ class Scanner {
             if (ch == '&') {
                 nextCh();
                 return new TokenInfo(LAND, line);
-            } else if (ch == '='){
+            }
+            else if (ch == '='){
                 nextCh();
                 return new TokenInfo(ANDEQ, line);
             }
             else {
                 nextCh();
-                return new TokenInfo(AND, line);
+                return new TokenInfo(BAND, line);
             }
         case '>':
             if (ch == '>') {
@@ -288,15 +303,24 @@ class Scanner {
             }
         case '<':
             nextCh();
-            if (ch == '=') {
+            if (ch == '<'){
+                nextCh();
+                if (ch == '='){
+                    return new TokenInfo(SHLE, line);
+                }
+                else{
+                return new TokenInfo(SHL, line);
+                }         
+            }
+            else if (ch == '=') {
                 nextCh();
                 return new TokenInfo(LE, line);
             } else if (ch == '<'){
                 nextCh();
                 return new TokenInfo(SHL, line);
-            } else {
-                reportScannerError("Operator < is not supported in j--.");
-                return getNextToken();
+            }
+            else {
+                return new TokenInfo(LT, line);
             }
         case '\'':
             buffer = new StringBuffer();
