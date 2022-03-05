@@ -76,10 +76,10 @@ statementExpression ::= expression // but must have side-effect, eg i++
 expression ::= assignmentExpression
 
 assignmentExpression ::= conditionalAndExpression  // must be a valid lhs
-                           [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | REM_ASSIGN | SHLE | ) assignmentExpression]
+                           [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | DIV_ASSIGN | REM_ASSIGN | SHLE | RIGHTSHIFT_ASSIGN | USHIFTRIGHT_ASSIGN | OR_ASSIGN) assignmentExpression]
 
 conditionalAndExpression ::= equalityExpression // level 10
-                               {LAND bitwiseExpression}
+                               {(LAND | LOR) bitwiseExpression}
                                
 bitwiseExpression ::= equalityExpression  // level 7
                         {(OR | XOR | AND) equalityExpression}

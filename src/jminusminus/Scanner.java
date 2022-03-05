@@ -178,7 +178,7 @@ class Scanner {
             }
             else if(ch=='|'){
                 nextCh();
-                return new TokenInfo(LOGICAL_OR, line);
+                return new TokenInfo(LOR, line);
             }
             else return new TokenInfo(OR, line);
         case '^':
