@@ -9,7 +9,7 @@ qualifiedIdentifier ::= IDENTIFIER {DOT IDENTIFIER}
 
 typeDeclaration ::= modifiers classDeclaration
 
-modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT}
+modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT | STRICTFP | SYNCHRONIZED | TRANSIENT | INTERFACE}
 
 classDeclaration ::= CLASS IDENTIFIER 
                        [EXTENDS qualifiedIdentifier]
@@ -38,7 +38,9 @@ statement ::= block
             | SEMI 
             | FINALLY statement
             | statementExpression SEMI
-
+            | CONTINUE
+            | THROW [exception];
+            | FINALLY
 formalParameters ::= LPAREN 
                        [formalParameter {COMMA formalParameter}]
                      RPAREN
@@ -64,7 +66,11 @@ arguments ::= LPAREN [expression {COMMA expression}] RPAREN
 
 type ::= referenceType | basicType
 
+<<<<<<< HEAD
 basicType ::= BOOLEAN | CHAR | DOUBLE | FLOAT | INT 
+=======
+basicType ::= BOOLEAN | CHAR | INT | FLOAT | CONST
+>>>>>>> main
 
 referenceType ::= basicType LBRACK RBRACK {LBRACK RBRACK}
                 | qualifiedIdentifier {LBRACK RBRACK}
@@ -77,13 +83,21 @@ assignmentExpression ::= conditionalAndExpression  // must be a valid lhs
                            [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | REM_ASSIGN | SHLE | ) assignmentExpression]
 
 conditionalAndExpression ::= equalityExpression // level 10
-                               {LAND equalityExpression}
+                               {LAND bitwiseExpression}
+                               
+bitwiseExpression ::= equalityExpression  // level 7
+                        {(OR | XOR | AND) equalityExpression}
 
 equalityExpression ::= relationalExpression  // level 6
                          {EQUAL relationalExpression}
 
+<<<<<<< HEAD
 relationalExpression ::= additiveExpression       // level 5
                            [(GT | LT | LE) additiveExpression
+=======
+relationalExpression ::= hiftExpression       // level 5
+                           [(GT | LE) shiftExpression
+>>>>>>> main
                            | INSTANCEOF referenceType]
 
 shiftExpression ::= additiveExpression    // level 4
@@ -93,11 +107,13 @@ additiveExpression ::= multiplicativeExpression // level 3
                          {(PLUS | MINUS) multiplicativeExpression}
 
 multiplicativeExpression ::= unaryExpression       // level 2
-                               {(STAR | DIV | REM) unaryExpression}
+                               {(STAR | MOD | DIV) unaryExpression}
 
 unaryExpression ::= INC unaryExpression  // level 1
                   | DECR unaryExpression
                   | MINUS unaryExpression
+                  | PLUS unaryExpression
+                  | UCOMP unaryExpression 
                   | simpleUnaryExpression
 
 

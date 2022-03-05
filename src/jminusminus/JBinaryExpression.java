@@ -5,7 +5,7 @@ package jminusminus;
 import static jminusminus.CLConstants.*;
 
 /**
- * This abstract base class is the AST node for a binary expression.
+ * This abstract base class is the AST node for a binary expression. 
  * A binary expression has an operator and two operands: a lhs and a rhs.
  */
 
@@ -25,14 +25,13 @@ abstract class JBinaryExpression extends JExpression {
      * binary operator, and lhs and rhs operands.
      * 
      * @param line
-     *                 line in which the binary expression occurs in the source
-     *                 file.
+     *            line in which the binary expression occurs in the source file.
      * @param operator
-     *                 the binary operator.
+     *            the binary operator.
      * @param lhs
-     *                 the lhs operand.
+     *            the lhs operand.
      * @param rhs
-     *                 the rhs operand.
+     *            the rhs operand.
      */
 
     protected JBinaryExpression(int line, String operator, JExpression lhs,
@@ -49,11 +48,8 @@ abstract class JBinaryExpression extends JExpression {
 
     public void writeToStdOut(PrettyPrinter p) {
         p.printf("<JBinaryExpression line=\"%d\" type=\"%s\" "
-                + "operator=\"%s\">\n", line(),
-                ((type == null) ? ""
-                        : type
-                                .toString()),
-                Util.escapeSpecialXMLChars(operator));
+                + "operator=\"%s\">\n", line(), ((type == null) ? "" : type
+                .toString()), Util.escapeSpecialXMLChars(operator));
         p.indentRight();
         p.printf("<Lhs>\n");
         p.indentRight();
@@ -83,12 +79,12 @@ class JPlusOp extends JBinaryExpression {
      * and the lhs and rhs operands.
      * 
      * @param line
-     *             line in which the addition expression occurs in the source
-     *             file.
+     *            line in which the addition expression occurs in the source
+     *            file.
      * @param lhs
-     *             the lhs operand.
+     *            the lhs operand.
      * @param rhs
-     *             the rhs operand.
+     *            the rhs operand.
      */
 
     public JPlusOp(int line, JExpression lhs, JExpression rhs) {
@@ -102,7 +98,7 @@ class JPlusOp extends JBinaryExpression {
      * the result type.
      * 
      * @param context
-     *                context in which names are resolved.
+     *            context in which names are resolved.
      * @return the analyzed (and possibly rewritten) AST subtree.
      */
 
@@ -123,14 +119,14 @@ class JPlusOp extends JBinaryExpression {
     }
 
     /**
-     * Any string concatenation has been rewritten as a
-     * {@link JStringConcatenationOp} (in {@code analyze}), so code generation
-     * here involves simply generating code for loading the operands onto the
+     * Any string concatenation has been rewritten as a 
+     * {@link JStringConcatenationOp} (in {@code analyze}), so code generation 
+     * here involves simply generating code for loading the operands onto the 
      * stack and then generating the appropriate add instruction.
      * 
      * @param output
-     *               the code emitter (basically an abstraction for producing the
-     *               .class file).
+     *            the code emitter (basically an abstraction for producing the
+     *            .class file).
      */
 
     public void codegen(CLEmitter output) {
@@ -154,12 +150,12 @@ class JSubtractOp extends JBinaryExpression {
      * and the lhs and rhs operands.
      * 
      * @param line
-     *             line in which the subtraction expression occurs in the source
-     *             file.
+     *            line in which the subtraction expression occurs in the source
+     *            file.
      * @param lhs
-     *             the lhs operand.
+     *            the lhs operand.
      * @param rhs
-     *             the rhs operand.
+     *            the rhs operand.
      */
 
     public JSubtractOp(int line, JExpression lhs, JExpression rhs) {
@@ -171,7 +167,7 @@ class JSubtractOp extends JBinaryExpression {
      * types, and determining the result type.
      * 
      * @param context
-     *                context in which names are resolved.
+     *            context in which names are resolved.
      * @return the analyzed (and possibly rewritten) AST subtree.
      */
 
@@ -189,8 +185,8 @@ class JSubtractOp extends JBinaryExpression {
      * operands, and then the subtraction instruction.
      * 
      * @param output
-     *               the code emitter (basically an abstraction for producing the
-     *               .class file).
+     *            the code emitter (basically an abstraction for producing the
+     *            .class file).
      */
 
     public void codegen(CLEmitter output) {
@@ -212,12 +208,12 @@ class JMultiplyOp extends JBinaryExpression {
      * and the lhs and rhs operands.
      * 
      * @param line
-     *             line in which the multiplication expression occurs in the
-     *             source file.
+     *            line in which the multiplication expression occurs in the
+     *            source file.
      * @param lhs
-     *             the lhs operand.
+     *            the lhs operand.
      * @param rhs
-     *             the rhs operand.
+     *            the rhs operand.
      */
 
     public JMultiplyOp(int line, JExpression lhs, JExpression rhs) {
@@ -229,7 +225,7 @@ class JMultiplyOp extends JBinaryExpression {
      * types, and determining the result type.
      * 
      * @param context
-     *                context in which names are resolved.
+     *            context in which names are resolved.
      * @return the analyzed (and possibly rewritten) AST subtree.
      */
 
@@ -247,8 +243,8 @@ class JMultiplyOp extends JBinaryExpression {
      * operands, and then the multiplication instruction.
      * 
      * @param output
-     *               the code emitter (basically an abstraction for producing the
-     *               .class file).
+     *            the code emitter (basically an abstraction for producing the
+     *            .class file).
      */
 
     public void codegen(CLEmitter output) {
@@ -259,35 +255,19 @@ class JMultiplyOp extends JBinaryExpression {
 
 }
 
-class JDivideOP extends JBinaryExpression {
-    public JDivideOP(int line, JExpression lhs, JExpression rhs) {
-        super(line, "/", lhs, rhs);
-    }
 
-    public JExpression analyze(Context context) {
-        lhs = (JExpression) lhs.analyze(context); 
-        rhs = (JExpression) lhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
-        return this;
-    }
 
-    public void codegen(CLEmitter output) {
-        lhs.codegen(output);
-        rhs.codegen(output);
-        output.addNoArgInstruction(IDIV);
-    }
-}
+//---------MINE
+class JRemainderOp extends JBinaryExpression {
 
-class JRemainderOP extends JBinaryExpression {
-    public JRemainderOP(int line, JExpression lhs, JExpression rhs) {
+    public JRemainderOp(int line, JExpression lhs, JExpression rhs) {
         super(line, "%", lhs, rhs);
     }
 
+
     public JExpression analyze(Context context) {
-        lhs = (JExpression) lhs.analyze(context); 
-        rhs = (JExpression) lhs.analyze(context);
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
         lhs.type().mustMatchExpected(line(), Type.INT);
         rhs.type().mustMatchExpected(line(), Type.INT);
         type = Type.INT;
@@ -297,6 +277,180 @@ class JRemainderOP extends JBinaryExpression {
     public void codegen(CLEmitter output) {
         lhs.codegen(output);
         rhs.codegen(output);
-        output.addNoArgInstruction(IREM);
+        output.addNoArgInstruction(IREM); 
     }
+
 }
+
+class JDivideOp extends JBinaryExpression {
+
+    public JDivideOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "/", lhs, rhs);
+    }
+
+
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.INT);
+        rhs.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    public void codegen(CLEmitter output) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IDIV); 
+    }
+
+}
+
+class JShlOp extends JBinaryExpression {
+
+    public JShlOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "<<", lhs, rhs);
+    }
+
+
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.INT);
+        rhs.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    public void codegen(CLEmitter output) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(ISHL); 
+    }
+
+}
+class JShrOp extends JBinaryExpression {
+
+    public JShrOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, ">>", lhs, rhs);
+    }
+
+
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.INT);
+        rhs.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    public void codegen(CLEmitter output) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(ISHR); 
+    }
+
+}
+class JUshrOp extends JBinaryExpression {
+
+    public JUshrOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, ">>>", lhs, rhs);
+    }
+
+
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.INT);
+        rhs.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    public void codegen(CLEmitter output) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IUSHR); 
+    }
+
+}
+
+class JAndOp extends JBinaryExpression {
+
+    public JAndOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "&", lhs, rhs);
+    }
+
+
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.INT);
+        rhs.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    public void codegen(CLEmitter output) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IAND); 
+    }
+
+}
+
+
+class JOrOp extends JBinaryExpression {
+
+    public JOrOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "|", lhs, rhs);
+    }
+
+
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.INT);
+        rhs.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    public void codegen(CLEmitter output) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IOR); 
+    }
+
+}
+
+class JXorOp extends JBinaryExpression {
+
+    public JXorOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "^", lhs, rhs);
+    }
+
+
+    public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.INT);
+        rhs.type().mustMatchExpected(line(), Type.INT);
+        type = Type.INT;
+        return this;
+    }
+
+    public void codegen(CLEmitter output) {
+        lhs.codegen(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IXOR); 
+    }
+
+}
+
+
+
+
+
+
