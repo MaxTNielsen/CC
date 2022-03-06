@@ -9,10 +9,11 @@ qualifiedIdentifier ::= IDENTIFIER {DOT IDENTIFIER}
 
 typeDeclaration ::= modifiers classDeclaration
 
-modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT | INTERFACE}
+modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT | STRICTFP | SYNCHRONIZED | TRANSIENT | INTERFACE}
 
 classDeclaration ::= CLASS IDENTIFIER 
-                       [EXTENDS qualifiedIdentifier] 
+                       [EXTENDS qualifiedIdentifier]
+                       [IMPLEMENTS qualifiedIdentifier] 
                        classBody
 
 classBody ::= LCURLY {modifiers memberDecl} RCURLY
@@ -32,8 +33,10 @@ blockStatement ::= localVariableDeclarationStatement
 statement ::= block
             | IF parExpression statement [ELSE statement]
             | WHILE parExpression statement 
+            | FOR parExpression statement
             | RETURN [expression] SEMI
             | SEMI 
+            | FINALLY statement
             | statementExpression SEMI
             | CONTINUE
             | THROW statementExpression SEMI;
@@ -63,7 +66,11 @@ arguments ::= LPAREN [expression {COMMA expression}] RPAREN
 
 type ::= referenceType | basicType
 
+<<<<<<< HEAD
+basicType ::= BOOLEAN | CHAR | DOUBLE | FLOAT | INT 
+=======
 basicType ::= BOOLEAN | CHAR | INT | FLOAT | CONST
+>>>>>>> main
 
 referenceType ::= basicType LBRACK RBRACK {LBRACK RBRACK}
                 | qualifiedIdentifier {LBRACK RBRACK}
@@ -73,7 +80,7 @@ statementExpression ::= expression // but must have side-effect, eg i++
 expression ::= assignmentExpression
 
 assignmentExpression ::= conditionalAndExpression  // must be a valid lhs
-                           [(ASSIGN | PLUS_ASSIGN) assignmentExpression]
+                           [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | REM_ASSIGN | SHLE | ) assignmentExpression]
 
 conditionalAndExpression ::= equalityExpression // level 10
                                {LAND bitwiseExpression}
@@ -84,8 +91,13 @@ bitwiseExpression ::= equalityExpression  // level 7
 equalityExpression ::= relationalExpression  // level 6
                          {EQUAL relationalExpression}
 
+<<<<<<< HEAD
+relationalExpression ::= additiveExpression       // level 5
+                           [(GT | LT | LE) additiveExpression
+=======
 relationalExpression ::= hiftExpression       // level 5
                            [(GT | LE) shiftExpression
+>>>>>>> main
                            | INSTANCEOF referenceType]
 
 shiftExpression ::= additiveExpression    // level 4
@@ -98,12 +110,15 @@ multiplicativeExpression ::= unaryExpression       // level 2
                                {(STAR | MOD | DIV) unaryExpression}
 
 unaryExpression ::= INC unaryExpression  // level 1
+                  | DECR unaryExpression
                   | MINUS unaryExpression
                   | PLUS unaryExpression
                   | UCOMP unaryExpression 
                   | simpleUnaryExpression
 
+
 simpleUnaryExpression ::= LNOT unaryExpression
+                        | BNOT
                         | LPAREN basicType RPAREN unaryExpression //casted
                         | LPAREN // casted               
                             referenceType
@@ -123,6 +138,7 @@ primary ::= parExpression
           | literal
           | NEW creator
           | qualifiedIdentifier [arguments]
+          | IMPLEMENTS creator
 
 creator ::= (basicType | qualifiedIdentifier) 
               ( arguments
