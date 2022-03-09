@@ -75,11 +75,11 @@ statementExpression ::= expression // but must have side-effect, eg i++
 
 expression ::= assignmentExpression
 
-assignmentExpression ::= conditionalOrExpression  // must be a valid lhs
+assignmentExpression ::= conditionalExpression  // must be a valid lhs
                            [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | DIV_ASSIGN | REM_ASSIGN | SHLE | RIGHTSHIFT_ASSIGN | USHIFTRIGHT_ASSIGN | OR_ASSIGN | MINUS_ASSIGN) assignmentExpression]
 
 conditionalExpression   :: conditionalOrExpression // 12
-                            {TERNY assignmentExpression COLON conditionalOrExpression}
+                            [TERNY assignmentExpression COLON conditionalExpression]
 
 conditionalOrExpression ::= conditionalAndExpression // 11
                               {LOR conditionalAndExpression}

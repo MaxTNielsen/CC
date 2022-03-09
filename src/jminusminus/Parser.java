@@ -1003,7 +1003,7 @@ public class Parser {
 
     private JExpression assignmentExpression() {
         int line = scanner.token().line();
-        JExpression lhs = conditionalAndExpression();
+        JExpression lhs = conditionalORExpression();
         if (have(ASSIGN)) {
             return new JAssignOp(line, lhs, assignmentExpression());
         } else if (have(PLUS_ASSIGN)) {
@@ -1020,6 +1020,33 @@ public class Parser {
             return lhs;
         }
     }
+
+
+   /**
+     * Parse a conditional-OR expression.
+     * 
+     * <pre>
+     *   conditionalORExpression ::= conditionalAndExpression // 11
+                                         {LOR conditionalAndExpression}
+     * </pre>
+     * 
+     * @return an AST for a conditionalExpression.
+     */
+
+    private JExpression conditionalORExpression() {
+        int line = scanner.token().line();
+        boolean more = true;
+        JExpression lhs = conditionalORExpression();
+        while (more) {
+            if (have(LOR)) {
+                lhs = new JLogicalOROp(line, lhs, conditionalAndExpression());
+            } else {
+                more = false;
+            }
+        }
+        return lhs;
+    }
+
 
     /**
      * Parse a conditional-and expression.
