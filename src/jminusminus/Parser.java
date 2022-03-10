@@ -277,14 +277,14 @@ public class Parser {
      * Are we looking at a basic type? ie.
      * 
      * <pre>
-     * BOOLEAN | CHAR | INT
+     * BOOLEAN | CHAR | INT | DOUBLE
      * </pre>
      * 
      * @return true iff we're looking at a basic type; false otherwise.
      */
 
     private boolean seeBasicType() {
-        return (see(BOOLEAN) || see(CHAR) || see(INT));
+        return (see(BOOLEAN) || see(CHAR) || see(INT) || see(DOUBLE));
     }
 
     /**
@@ -303,7 +303,7 @@ public class Parser {
             return true;
         } else {
             scanner.recordPosition();
-            if (have(BOOLEAN) || have(CHAR) || have(INT)) {
+            if (have(BOOLEAN) || have(CHAR) || have(INT) || have(DOUBLE)) {
                 if (have(LBRACK) && see(RBRACK)) {
                     scanner.returnToPosition();
                     return true;
@@ -892,7 +892,7 @@ public class Parser {
      * Parse a basic type.
      * 
      * <pre>
-     *   basicType ::= BOOLEAN | CHAR | INT
+     *   basicType ::= BOOLEAN | CHAR | INT | DOUBLE
      * </pre>
      * 
      * @return an instance of Type.
@@ -905,6 +905,8 @@ public class Parser {
             return Type.CHAR;
         } else if (have(INT)) {
             return Type.INT;
+        } else if (have(DOUBLE)){
+            return Type.DOUBLE;
         } else {
             reportParserError("Type sought where %s found", scanner.token()
                     .image());
@@ -1002,7 +1004,7 @@ public class Parser {
 
     private JExpression assignmentExpression() {
         int line = scanner.token().line();
-        JExpression lhs = conditionalAndExpression();
+        JExpression lhs = conditionalOrExpression();
         if (have(ASSIGN)) {
             return new JAssignOp(line, lhs, assignmentExpression());
         } else if (have(PLUS_ASSIGN)) {
@@ -1011,7 +1013,19 @@ public class Parser {
             return lhs;
         }
     }
-
+    private JExpression conditionalOrExpression() {
+        int line = scanner.token().line();
+        boolean more = true;
+        JExpression lhs = conditionalAndExpression();
+        while (more) {
+            if (have(LOGICAL_OR)) {
+                lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
+            } else {
+                more = false;
+            }
+        }
+        return lhs;
+    }
     /**
      * Parse a conditional-and expression.
      * 
@@ -1445,6 +1459,7 @@ public class Parser {
      * <pre>
      *   literal ::= INT_LITERAL | CHAR_LITERAL | STRING_LITERAL
      *             | TRUE        | FALSE        | NULL
+     *             | DOUBLE_LITERAL
      * </pre>
      * 
      * @return an AST for a literal.
@@ -1452,7 +1467,9 @@ public class Parser {
 
     private JExpression literal() {
         int line = scanner.token().line();
-        if (have(INT_LITERAL)) {
+        if (have(DOUBLE_LITERAL)){
+            return new JLiteralDouble(line, scanner.previousToken().image());
+        } else if (have(INT_LITERAL)) {
             return new JLiteralInt(line, scanner.previousToken().image());
         } else if (have(CHAR_LITERAL)) {
             return new JLiteralChar(line, scanner.previousToken().image());

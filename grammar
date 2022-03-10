@@ -66,11 +66,7 @@ arguments ::= LPAREN [expression {COMMA expression}] RPAREN
 
 type ::= referenceType | basicType
 
-<<<<<<< HEAD
-basicType ::= BOOLEAN | CHAR | DOUBLE | FLOAT | INT 
-=======
-basicType ::= BOOLEAN | CHAR | INT | FLOAT | CONST
->>>>>>> main
+basicType ::= BOOLEAN | CHAR | INT | FLOAT | CONST | DOUBLE
 
 referenceType ::= basicType LBRACK RBRACK {LBRACK RBRACK}
                 | qualifiedIdentifier {LBRACK RBRACK}
@@ -82,22 +78,21 @@ expression ::= assignmentExpression
 assignmentExpression ::= conditionalAndExpression  // must be a valid lhs
                            [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | REM_ASSIGN | SHLE | ) assignmentExpression]
 
+conditionalOrExpression ::= equalityExpression // level 11
+                              {LOGICAL_OR bitwiseExpression}
+
 conditionalAndExpression ::= equalityExpression // level 10
                                {LAND bitwiseExpression}
-                               
+                              
 bitwiseExpression ::= equalityExpression  // level 7
                         {(OR | XOR | AND) equalityExpression}
 
 equalityExpression ::= relationalExpression  // level 6
                          {EQUAL relationalExpression}
 
-<<<<<<< HEAD
 relationalExpression ::= additiveExpression       // level 5
                            [(GT | LT | LE) additiveExpression
-=======
-relationalExpression ::= hiftExpression       // level 5
-                           [(GT | LE) shiftExpression
->>>>>>> main
+
                            | INSTANCEOF referenceType]
 
 shiftExpression ::= additiveExpression    // level 4
