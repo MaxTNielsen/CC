@@ -1036,7 +1036,7 @@ public class Parser {
     private JExpression conditionalORExpression() {
         int line = scanner.token().line();
         boolean more = true;
-        JExpression lhs = conditionalORExpression();
+        JExpression lhs = conditionalAndExpression();
         while (more) {
             if (have(LOR)) {
                 lhs = new JLogicalOROp(line, lhs, conditionalAndExpression());
@@ -1134,6 +1134,8 @@ public class Parser {
         JExpression lhs = shiftExpression();
         if (have(GT)) {
             return new JGreaterThanOp(line, lhs, shiftExpression());
+        } else if (have(LT)) {
+            return new JLessThanOp(line, lhs, shiftExpression());
         } else if (have(LE)) {
             return new JLessEqualOp(line, lhs, shiftExpression());
         } else if (have(INSTANCEOF)) {
