@@ -121,7 +121,6 @@ class JEqualOp extends JBooleanBinaryExpression {
                     targetLabel);
         }
     }
-
 }
 
 /**
@@ -190,7 +189,6 @@ class JLogicalAndOp extends JBooleanBinaryExpression {
             rhs.codegen(output, targetLabel, false);
         }
     }
-
 }
 
 /**
@@ -259,5 +257,4 @@ class JLogicalOROp extends JBooleanBinaryExpression {
             output.addLabel(trueLabel);
         }
     }
-
 }
