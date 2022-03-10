@@ -54,6 +54,14 @@ CONTINUE	::= "continue"
 FLOAT		::= "float"
 INTERFACE	::= "interface"
 THROW		::= "throw"
+BREAK		::= "break"
+BYTE		::= "byte"
+DEFAULT		::= "default"
+DO			::= "do"
+CASE		::= "case"
+CATCH		::= "catch"
+
+
 
 //max
 LONG		::= "long"
@@ -94,7 +102,12 @@ UCOM		::= "~"
 OR 			::= "|"
 XOR			::= "^"
 AND 		::= "&"
+QMARK		::= "?"
+MINUS_ASSIGN::= "-="
+DEC			::= "--"
+SHL_ASSIGN	::= "<<="
 ANDEQ       ::= "&="
+
 
 //max
 DIV_ASSIGN 	::= "/="
