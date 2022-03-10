@@ -18,7 +18,7 @@ enum TokenKind {
     ELSE("else"), EXTENDS("extends"), FINAL("final"), FINALLY("finally"), FLOAT("float"), FOR("for"),
     GOTO("goto"), IF("if"), IMPLEMENTS("implements"), IMPORT("import"), 
     INSTANCEOF("instanceof"), INT("int"), NEW("new"), PACKAGE("package"), 
-    PRIVATE("private"), PROTECTED("protected"), PUBLIC("public"), 
+    PRIVATE("private"), PROTECTED("protected"), PUBLIC("public"),
     RETURN("return"), STATIC("static"), SUPER("super"), THIS("this"), 
     VOID("void"), WHILE("while"), 
     BREAK("break"), BYTE("byte"),
