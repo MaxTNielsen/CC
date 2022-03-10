@@ -1038,7 +1038,7 @@ public class Parser {
         boolean more = true;
         JExpression lhs = conditionalAndExpression();
         while (more) {
-            if (have(LOR)) {
+            if (have(LOGICAL_OR)) {
                 lhs = new JLogicalOROp(line, lhs, conditionalAndExpression());
             } else {
                 more = false;

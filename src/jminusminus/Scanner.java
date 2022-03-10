@@ -184,7 +184,7 @@ class Scanner {
             }
             else if(ch=='|'){
                 nextCh();
-                return new TokenInfo(LOR, line);
+                return new TokenInfo(LOGICAL_OR, line);
             }
             else return new TokenInfo(OR, line);
         case '^':
@@ -384,9 +384,6 @@ class Scanner {
         case '.':
             nextCh();
             return new TokenInfo(DOT, line);
-        case '?':
-            nextCh();
-            return new TokenInfo(TERNY, line);
         case EOFCH:
             return new TokenInfo(EOF, line);
         case '0':
