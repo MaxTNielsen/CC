@@ -75,19 +75,19 @@ GT          ::= ">"
 LT 			::= "<"
 INC         ::= "++"
 BAND		::= "&"
-BOR 		::= "^"
 LAND        ::= "&&"
 LE          ::= "<="
 SHLE		::= "<<="		
 LNOT        ::= "!"
 MINUS       ::= "-"
-DECR		::= "--"
+DEC			::= "--"
 PLUS        ::= "+"
 PLUS_ASSIGN ::= "+="
 STAR        ::= "*"
 STAR_ASSIGN	::= "*="
 DIV			::= "/"
 REM_ASSIGN	::= "%="
+TERNY		::= "?"
 
 
 //MINE
@@ -112,8 +112,9 @@ ANDEQ       ::= "&="
 //max
 DIV_ASSIGN 	::= "/="
 RIGHTSHIFT_ASSIGN ::= ">>="
-LOGICAL_OR  ::= "||"
+LOR  ::= "||"
 OR_ASSIGN   ::= "|="
+MINUS_ASSIGN ::= "-="
 
 // Separators
 COMMA       ::= ","
@@ -125,6 +126,7 @@ RBRACK      ::= "]"
 RCURLY      ::= "}"
 RPAREN      ::= ")"
 SEMI        ::= ";"
+COLON       ::= ":"
 
 // Identifiers
 IDENTIFIER ::= ("a"-"z"|"A"-"Z"|"_"|"$") {"a"-"z"|"A"-"Z"|"_"|"0"-"9"|"$"}

@@ -18,7 +18,7 @@ enum TokenKind {
     ELSE("else"), EXTENDS("extends"), FINAL("final"), FINALLY("finally"), FLOAT("float"), FOR("for"),
     GOTO("goto"), IF("if"), IMPLEMENTS("implements"), IMPORT("import"), 
     INSTANCEOF("instanceof"), INT("int"), NEW("new"), PACKAGE("package"), 
-    PRIVATE("private"), PROTECTED("protected"), PUBLIC("public"), 
+    PRIVATE("private"), PROTECTED("protected"), PUBLIC("public"),
     RETURN("return"), STATIC("static"), SUPER("super"), THIS("this"), 
     VOID("void"), WHILE("while"), 
     BREAK("break"), BYTE("byte"),
@@ -26,14 +26,13 @@ enum TokenKind {
     
 
     // Operators
-    REM("%"), REM_ASSIGN("%="), STAR_ASSIGN("*="), BOR("^"), BAND("&"), SHLE("<<="), BNOT("~"), STRICTFP("strictfp"),
+    REM("%"), REM_ASSIGN("%="), STAR_ASSIGN("*="), BAND("&"), SHLE("<<="), STRICTFP("strictfp"),
     SYNCRHONIZED("synchronized"), THROW("throw"),THROWS("throws"),TRANSIENT("transient"),TRY("try"),VOLATILE("volatile"),CONST("const"),
     CONTINUE("continue"), INTERFACE("interface"),LONG("long"), SHORT("short"), NATIVE("native"),
     ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LT("<"), LAND("&&"),
     LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"),
     DIV("/"),MOD("%"),USHIFTRIGHT_ASSIGN(">>>="),AND("&"),GREATEROREQ(">="),
     ANDEQ("&="), SHR(">>"),SHL("<<"), USHR(">>>"), UCOMP("~"), OR("|"), XOR("^"), DIV_ASSIGN("/="),
-
     RIGHTSHIFT_ASSIGN(">>="),LOGICAL_OR("||"), OR_ASSIGN("|="),
     SHL_ASSIGN("<<="), MINUS_ASSIGN("-="), QMARK("?"),
     // Separators

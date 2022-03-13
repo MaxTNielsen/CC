@@ -75,8 +75,14 @@ statementExpression ::= expression // but must have side-effect, eg i++
 
 expression ::= assignmentExpression
 
-assignmentExpression ::= conditionalAndExpression  // must be a valid lhs
-                           [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | REM_ASSIGN | SHLE | ) assignmentExpression]
+assignmentExpression ::= conditionalExpression  // must be a valid lhs
+                           [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | DIV_ASSIGN | REM_ASSIGN | SHLE | RIGHTSHIFT_ASSIGN | USHIFTRIGHT_ASSIGN | OR_ASSIGN | MINUS_ASSIGN) assignmentExpression]
+
+conditionalExpression   :: conditionalOrExpression // 12
+                            [TERNY assignmentExpression COLON conditionalExpression]
+
+conditionalOrExpression ::= conditionalAndExpression // 11
+                              {LOR conditionalAndExpression}
 
 conditionalOrExpression ::= equalityExpression // level 11
                               {LOGICAL_OR bitwiseExpression}
@@ -90,9 +96,10 @@ bitwiseExpression ::= equalityExpression  // level 7
 equalityExpression ::= relationalExpression  // level 6
                          {EQUAL relationalExpression}
 
-relationalExpression ::= additiveExpression       // level 5
-                           [(GT | LT | LE) additiveExpression
 
+
+relationalExpression ::= shiftExpression       // level 5
+                           [(GT | LT | LE) shiftExpression
                            | INSTANCEOF referenceType]
 
 shiftExpression ::= additiveExpression    // level 4
@@ -105,11 +112,11 @@ multiplicativeExpression ::= unaryExpression       // level 2
                                {(STAR | MOD | DIV) unaryExpression}
 
 unaryExpression ::= INC unaryExpression  // level 1
-                  | DECR unaryExpression
+                  | DEC unaryExpression
                   | MINUS unaryExpression
                   | PLUS unaryExpression
                   | UCOMP unaryExpression 
-                  | simpleUnaryExpression
+                  | simpleUnaryExpressionz½
 
 
 simpleUnaryExpression ::= LNOT unaryExpression
@@ -120,7 +127,7 @@ simpleUnaryExpression ::= LNOT unaryExpression
                           RPAREN simpleUnaryExpression
                         | postfixExpression 
 
-postfixExpression ::= primary {selector} {DEC}
+postfixExpression ::= primary {selector} {DEC|INC}
 
 selector ::= DOT qualifiedIdentifier [arguments]
            | LBRACK expression RBRACK
