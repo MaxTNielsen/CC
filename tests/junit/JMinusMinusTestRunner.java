@@ -35,6 +35,12 @@ public class JMinusMinusTestRunner {
         suite.addTestSuite(DivisionAssignTest.class);
         suite.addTestSuite(OrAssignTest.class);
         suite.addTestSuite(LogicalORTest.class);
+        suite.addTestSuite(PostfixIncrementTest.class);
+        suite.addTestSuite(MinusAssignTest.class);
+        suite.addTestSuite(StarAssignTest.class);
+        suite.addTestSuite(PrefixDecrementTest.class);
+        suite.addTestSuite(ForLoopTest.class);
+        suite.addTestSuite(ConditionalTest.class);
         return suite;
     }
 

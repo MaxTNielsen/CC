@@ -23,6 +23,7 @@ enum TokenKind {
     THROW("throw"),THROWS("throws"),TRANSIENT("transient"),TRY("try"),VOLATILE("volatile"),CONST("const"),
     FINALLY("finally"), CONTINUE("continue"), FLOAT("float"),
     INTERFACE("interface"),LONG("long"), SHORT("short"), NATIVE("native"),
+    BREAK("break"), BYTE("byte"), DEFAULT("default"), DO("do"), CASE("case"), CATCH("catch"),
 
     // Operators
     ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"),
