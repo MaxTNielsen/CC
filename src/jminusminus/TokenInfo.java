@@ -22,14 +22,12 @@ enum TokenKind {
     RETURN("return"), STATIC("static"), SUPER("super"), THIS("this"),
     VOID("void"), WHILE("while"),STRICTFP("strictfp"),SYNCRHONIZED("synchronized"),
     THROW("throw"),THROWS("throws"),TRANSIENT("transient"),TRY("try"),VOLATILE("volatile"),CONST("const"),
-    FINALLY("finally"), CONTINUE("continue"), FLOAT("float"),
+    CONTINUE("continue"), 
     INTERFACE("interface"),LONG("long"), SHORT("short"), NATIVE("native"),
     BREAK("break"), BYTE("byte"), DEFAULT("default"), DO("do"), CASE("case"), CATCH("catch"),
 
     // Operators
-    REM("%"), REM_ASSIGN("%="), STAR_ASSIGN("*="), BAND("&"), SHLE("<<="), STRICTFP("strictfp"),
-    SYNCRHONIZED("synchronized"), THROW("throw"),THROWS("throws"),TRANSIENT("transient"),TRY("try"),VOLATILE("volatile"),CONST("const"),
-    CONTINUE("continue"), INTERFACE("interface"),LONG("long"), SHORT("short"), NATIVE("native"),
+    REM("%"), REM_ASSIGN("%="), STAR_ASSIGN("*="), BAND("&"), SHLE("<<="), 
     ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LT("<"), LAND("&&"),
     LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"),
     DIV("/"),MOD("%"),USHIFTRIGHT_ASSIGN(">>>="),AND("&"),GREATEROREQ(">="),
