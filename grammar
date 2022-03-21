@@ -12,7 +12,8 @@ typeDeclaration ::= modifiers classDeclaration
 modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT | STRICTFP | SYNCHRONIZED | TRANSIENT | INTERFACE}
 
 classDeclaration ::= CLASS IDENTIFIER 
-                       [EXTENDS qualifiedIdentifier] 
+                       [EXTENDS qualifiedIdentifier]
+                       [IMPLEMENTS qualifiedIdentifier] 
                        classBody
 
 classBody ::= LCURLY {modifiers memberDecl} RCURLY
@@ -32,11 +33,13 @@ blockStatement ::= localVariableDeclarationStatement
 statement ::= block
             | IF parExpression statement [ELSE statement]
             | WHILE parExpression statement 
+            | FOR parExpression statement
             | RETURN [expression] SEMI
             | SEMI 
+            | FINALLY statement
             | statementExpression SEMI
             | CONTINUE
-            | THROW [exception];
+            | THROW statementExpression SEMI;
             | FINALLY
 formalParameters ::= LPAREN 
                        [formalParameter {COMMA formalParameter}]
@@ -63,7 +66,7 @@ arguments ::= LPAREN [expression {COMMA expression}] RPAREN
 
 type ::= referenceType | basicType
 
-basicType ::= BOOLEAN | CHAR | INT | FLOAT | CONST
+basicType ::= BOOLEAN | CHAR | INT | FLOAT | CONST | DOUBLE
 
 referenceType ::= basicType LBRACK RBRACK {LBRACK RBRACK}
                 | qualifiedIdentifier {LBRACK RBRACK}
@@ -72,20 +75,31 @@ statementExpression ::= expression // but must have side-effect, eg i++
 
 expression ::= assignmentExpression
 
-assignmentExpression ::= conditionalAndExpression  // must be a valid lhs
-                           [(ASSIGN | PLUS_ASSIGN) assignmentExpression]
+assignmentExpression ::= conditionalExpression  // must be a valid lhs
+                           [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | DIV_ASSIGN | REM_ASSIGN | SHLE | RIGHTSHIFT_ASSIGN | USHIFTRIGHT_ASSIGN | OR_ASSIGN | MINUS_ASSIGN) assignmentExpression]
+
+conditionalExpression   :: conditionalOrExpression // 12
+                            [TERNY assignmentExpression COLON conditionalExpression]
+
+conditionalOrExpression ::= conditionalAndExpression // 11
+                              {LOR conditionalAndExpression}
+
+conditionalOrExpression ::= equalityExpression // level 11
+                              {LOGICAL_OR bitwiseExpression}
 
 conditionalAndExpression ::= equalityExpression // level 10
                                {LAND bitwiseExpression}
-                               
+                              
 bitwiseExpression ::= equalityExpression  // level 7
                         {(OR | XOR | AND) equalityExpression}
 
 equalityExpression ::= relationalExpression  // level 6
                          {EQUAL relationalExpression}
 
-relationalExpression ::= hiftExpression       // level 5
-                           [(GT | LE) shiftExpression
+
+
+relationalExpression ::= shiftExpression       // level 5
+                           [(GT | LT | LE) shiftExpression
                            | INSTANCEOF referenceType]
 
 shiftExpression ::= additiveExpression    // level 4
@@ -98,19 +112,22 @@ multiplicativeExpression ::= unaryExpression       // level 2
                                {(STAR | MOD | DIV) unaryExpression}
 
 unaryExpression ::= INC unaryExpression  // level 1
+                  | DEC unaryExpression
                   | MINUS unaryExpression
                   | PLUS unaryExpression
                   | UCOMP unaryExpression 
-                  | simpleUnaryExpression
+                  | simpleUnaryExpressionz½
+
 
 simpleUnaryExpression ::= LNOT unaryExpression
+                        | BNOT
                         | LPAREN basicType RPAREN unaryExpression //casted
                         | LPAREN // casted               
                             referenceType
                           RPAREN simpleUnaryExpression
                         | postfixExpression 
 
-postfixExpression ::= primary {selector} {DEC}
+postfixExpression ::= primary {selector} {DEC|INC}
 
 selector ::= DOT qualifiedIdentifier [arguments]
            | LBRACK expression RBRACK
@@ -123,6 +140,7 @@ primary ::= parExpression
           | literal
           | NEW creator
           | qualifiedIdentifier [arguments]
+          | IMPLEMENTS creator
 
 creator ::= (basicType | qualifiedIdentifier) 
               ( arguments

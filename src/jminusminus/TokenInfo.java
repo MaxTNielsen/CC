@@ -14,8 +14,9 @@ enum TokenKind {
     EOF("<EOF>"),
 
     // Reserved words
-    ABSTRACT("abstract"), BOOLEAN("boolean"), CHAR("char"), CLASS("class"),
-    ELSE("else"), EXTENDS("extends"), IF("if"), IMPORT("import"),
+    ABSTRACT("abstract"), BOOLEAN("boolean"), CHAR("char"), CLASS("class"), DOUBLE("double"),
+    ELSE("else"), EXTENDS("extends"), FINAL("final"), FINALLY("finally"), FLOAT("float"), FOR("for"),
+    GOTO("goto"), IF("if"), IMPLEMENTS("implements"), IMPORT("import"),
     INSTANCEOF("instanceof"), INT("int"), NEW("new"), PACKAGE("package"),
     PRIVATE("private"), PROTECTED("protected"), PUBLIC("public"),
     RETURN("return"), STATIC("static"), SUPER("super"), THIS("this"),
@@ -26,12 +27,15 @@ enum TokenKind {
     BREAK("break"), BYTE("byte"), DEFAULT("default"), DO("do"), CASE("case"), CATCH("catch"),
 
     // Operators
-    ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"),
+    REM("%"), REM_ASSIGN("%="), STAR_ASSIGN("*="), BAND("&"), SHLE("<<="), STRICTFP("strictfp"),
+    SYNCRHONIZED("synchronized"), THROW("throw"),THROWS("throws"),TRANSIENT("transient"),TRY("try"),VOLATILE("volatile"),CONST("const"),
+    CONTINUE("continue"), INTERFACE("interface"),LONG("long"), SHORT("short"), NATIVE("native"),
+    ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LT("<"), LAND("&&"),
     LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"),
     DIV("/"),MOD("%"),USHIFTRIGHT_ASSIGN(">>>="),AND("&"),GREATEROREQ(">="),
     ANDEQ("&="), SHR(">>"),SHL("<<"), USHR(">>>"), UCOMP("~"), OR("|"), XOR("^"), DIV_ASSIGN("/="),
     RIGHTSHIFT_ASSIGN(">>="),LOGICAL_OR("||"), OR_ASSIGN("|="),
-
+    SHL_ASSIGN("<<="), MINUS_ASSIGN("-="), QMARK("?"),
     // Separators
     LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["),
     RBRACK("]"), SEMI(";"), COMMA(","), DOT("."),COLON(":"),
@@ -41,7 +45,7 @@ enum TokenKind {
 
     // Literals
     NULL("null"), FALSE("false"), TRUE("true"),
-    INT_LITERAL("<INT_LITERAL>"), CHAR_LITERAL("<CHAR_LITERAL>"),
+    INT_LITERAL("<INT_LITERAL>"), CHAR_LITERAL("<CHAR_LITERAL>"), DOUBLE_LITERAL("<DOUBLE_LITERAL"),
     STRING_LITERAL("<STRING_LITERAL>");
 
     /** The token's string representation. */

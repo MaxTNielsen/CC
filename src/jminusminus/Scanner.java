@@ -9,6 +9,8 @@ import java.io.LineNumberReader;
 
 import java.util.Hashtable;
 
+import javax.imageio.ImageIO;
+
 import static jminusminus.TokenKind.*;
 
 /**
@@ -66,10 +68,17 @@ class Scanner {
         reserved.put(BOOLEAN.image(), BOOLEAN);
         reserved.put(CHAR.image(), CHAR);
         reserved.put(CLASS.image(), CLASS);
+        reserved.put(DOUBLE.image(), DOUBLE);
         reserved.put(ELSE.image(), ELSE);
         reserved.put(EXTENDS.image(), EXTENDS);
         reserved.put(FALSE.image(), FALSE);
+        reserved.put(FINAL.image(), FINAL);
+        reserved.put(FINALLY.image(), FINALLY);
+        reserved.put(FLOAT.image(), FLOAT);
+        reserved.put(FOR.image(), FOR);
+        reserved.put(GOTO.image(), GOTO);
         reserved.put(IF.image(), IF);
+        reserved.put(IMPLEMENTS.image(), IMPLEMENTS);
         reserved.put(IMPORT.image(), IMPORT);
         reserved.put(INSTANCEOF.image(), INSTANCEOF);
         reserved.put(INT.image(), INT);
@@ -101,12 +110,15 @@ class Scanner {
         reserved.put(FLOAT.image(), FLOAT);
         reserved.put(INTERFACE.image(),INTERFACE);
         reserved.put(THROW.image(), THROW);
-
-        //max
+        reserved.put(BREAK.image(), BREAK);
+        reserved.put(BYTE.image(),BYTE);
+        reserved.put(DEFAULT.image(),DEFAULT);
+        reserved.put(DO.image(),DO);
+        reserved.put(CASE.image(),CASE);
+        reserved.put(CATCH.image(),CATCH);
         reserved.put(LONG.image(), LONG);
         reserved.put(NATIVE.image(), NATIVE);
         reserved.put(SHORT.image(), SHORT);
-
         // Prime the pump.
         nextCh();
     }
@@ -161,6 +173,9 @@ class Scanner {
         }
         line = input.line();
         switch (ch) {
+        case '?':
+            nextCh();
+            return new TokenInfo(QMARK, line);
         case '|':
             nextCh();
             if(ch == '='){
@@ -221,7 +236,12 @@ class Scanner {
             return new TokenInfo(LNOT, line);
         case '*':
             nextCh();
+            if(ch == '='){
+                nextCh();
+                return new TokenInfo(STAR_ASSIGN, line);
+            }else{
             return new TokenInfo(STAR, line);
+            }
         case '+':
             nextCh();
             if (ch == '=') {
@@ -239,7 +259,11 @@ class Scanner {
             if (ch == '-') {
                 nextCh();
                 return new TokenInfo(DEC, line);
-            } else {
+            } else if (ch == '='){
+                nextCh();
+                return new TokenInfo(MINUS_ASSIGN, line);
+            }
+            else {
                 return new TokenInfo(MINUS, line);
             }
         case '&':
@@ -247,13 +271,14 @@ class Scanner {
             if (ch == '&') {
                 nextCh();
                 return new TokenInfo(LAND, line);
-            } else if (ch == '='){
+            }
+            else if (ch == '='){
                 nextCh();
                 return new TokenInfo(ANDEQ, line);
             }
             else {
                 nextCh();
-                return new TokenInfo(AND, line);
+                return new TokenInfo(BAND, line);
             }
         case '>':
             if (ch == '>') {
@@ -285,16 +310,28 @@ class Scanner {
             }
         case '<':
             nextCh();
-            if (ch == '=') {
+            if (ch == '<'){
+                nextCh();
+                if (ch == '='){
+                    return new TokenInfo(SHLE, line);
+                }
+                else{
+                return new TokenInfo(SHL, line);
+                }         
+            }
+            else if (ch == '=') {
                 nextCh();
                 return new TokenInfo(LE, line);
             } else if (ch == '<'){
                 nextCh();
+                if (ch == '='){
+                    nextCh();
+                    return new TokenInfo(SHL_ASSIGN, line);
+                }
                 return new TokenInfo(SHL, line);
             }
             else {
-                reportScannerError("Operator < is not supported in j--.");
-                return getNextToken();
+                return new TokenInfo(LT, line);
             }
         case '\'':
             buffer = new StringBuffer();
@@ -367,7 +404,16 @@ class Scanner {
                 buffer.append(ch);
                 nextCh();
             }
-            return new TokenInfo(INT_LITERAL, buffer.toString(), line);
+            if (ch == '.'){ // Is it a double?
+                buffer.append(ch);
+                nextCh();
+                while (isDigit(ch)) {
+                    buffer.append(ch);
+                    nextCh();
+                }
+                return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
+            }
+            else return new TokenInfo(INT_LITERAL, buffer.toString(), line);
         default:
             if (isIdentifierStart(ch)) {
                 buffer = new StringBuffer();

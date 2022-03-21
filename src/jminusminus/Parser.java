@@ -277,14 +277,14 @@ public class Parser {
      * Are we looking at a basic type? ie.
      *
      * <pre>
-     * BOOLEAN | CHAR | INT
+     * BOOLEAN | CHAR | INT | DOUBLE
      * </pre>
      *
      * @return true iff we're looking at a basic type; false otherwise.
      */
 
     private boolean seeBasicType() {
-        return (see(BOOLEAN) || see(CHAR) || see(INT));
+        return (see(BOOLEAN) || see(CHAR) || see(INT) || see(DOUBLE));
     }
 
     /**
@@ -303,7 +303,7 @@ public class Parser {
             return true;
         } else {
             scanner.recordPosition();
-            if (have(BOOLEAN) || have(CHAR) || have(INT)) {
+            if (have(BOOLEAN) || have(CHAR) || have(INT) || have(DOUBLE)) {
                 if (have(LBRACK) && see(RBRACK)) {
                     scanner.returnToPosition();
                     return true;
@@ -931,7 +931,7 @@ public class Parser {
      * Parse a basic type.
      *
      * <pre>
-     *   basicType ::= BOOLEAN | CHAR | INT
+     *   basicType ::= BOOLEAN | CHAR | INT | DOUBLE
      * </pre>
      *
      * @return an instance of Type.
@@ -944,6 +944,8 @@ public class Parser {
             return Type.CHAR;
         } else if (have(INT)) {
             return Type.INT;
+        } else if (have(DOUBLE)){
+            return Type.DOUBLE;
         } else {
             reportParserError("Type sought where %s found", scanner.token()
                     .image());
@@ -1032,7 +1034,8 @@ public class Parser {
      *       conditionalAndExpression // level 13
      *           [( ASSIGN  // conditionalExpression
      *            | PLUS_ASSIGN // must be valid lhs
-     *            )
+     *            | DIV_ASSIGN
+     * )
      *            assignmentExpression]
      * </pre>
      *
@@ -1046,9 +1049,42 @@ public class Parser {
             return new JAssignOp(line, lhs, assignmentExpression());
         } else if (have(PLUS_ASSIGN)) {
             return new JPlusAssignOp(line, lhs, assignmentExpression());
+        } else if (have(DIV_ASSIGN)) {
+            return new JDivAssignOp(line, lhs, assignmentExpression());
+        } else if (have(MINUS_ASSIGN)) {
+            return new JMinusAssignOp(line, lhs, assignmentExpression());
+        } else if (have(STAR_ASSIGN)) {
+            return new JStarAssignOp(line, lhs, assignmentExpression());
+        } else if (have(REM_ASSIGN)) {
+            return new JRemAssignOp(line, lhs, assignmentExpression());
         } else {
             return lhs;
         }
+    }
+   /**
+     * Parse a conditional-OR expression.
+     *
+     * <pre>
+     *   conditionalORExpression ::= conditionalAndExpression // 11
+                                         {LOR conditionalAndExpression}
+     * </pre>
+     *
+     * @return an AST for a conditionalExpression.
+     */
+
+    private JExpression conditionalORExpression() {
+        int line = scanner.token().line();
+        boolean more = true;
+        JExpression lhs = conditionalAndExpression();
+        while (more) {
+            if (have(LOGICAL_OR)) {
+                lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
+
+            } else {
+                more = false;
+            }
+        }
+        return lhs;
     }
 
     private JExpression conditionalExpression() {
@@ -1176,6 +1212,8 @@ public class Parser {
         JExpression lhs = shiftExpression();
         if (have(GT)) {
             return new JGreaterThanOp(line, lhs, shiftExpression());
+        } else if (have(LT)) {
+            return new JLessThanOp(line, lhs, shiftExpression());
         } else if (have(LE)) {
             return new JLessEqualOp(line, lhs, shiftExpression());
         } else if (have(INSTANCEOF)) {
@@ -1278,6 +1316,8 @@ public class Parser {
         int line = scanner.token().line();
         if (have(INC)) {
             return new JPreIncrementOp(line, unaryExpression());
+        } else if (have(DEC)) {
+            return new JPreDecrementOp(line, unaryExpression());
         } else if (have(MINUS)) {
             return new JNegateOp(line, unaryExpression());
         } else if (have(PLUS)){
@@ -1341,6 +1381,9 @@ public class Parser {
         }
         while (have(DEC)) {
             primaryExpr = new JPostDecrementOp(line, primaryExpr);
+        }
+        while (have(INC)) {
+            primaryExpr = new JPostIncrementOp(line, primaryExpr);
         }
         return primaryExpr;
     }
@@ -1523,6 +1566,7 @@ public class Parser {
      * <pre>
      *   literal ::= INT_LITERAL | CHAR_LITERAL | STRING_LITERAL
      *             | TRUE        | FALSE        | NULL
+     *             | DOUBLE_LITERAL
      * </pre>
      *
      * @return an AST for a literal.
@@ -1530,7 +1574,9 @@ public class Parser {
 
     private JExpression literal() {
         int line = scanner.token().line();
-        if (have(INT_LITERAL)) {
+        if (have(DOUBLE_LITERAL)){
+            return new JLiteralDouble(line, scanner.previousToken().image());
+        } else if (have(INT_LITERAL)) {
             return new JLiteralInt(line, scanner.previousToken().image());
         } else if (have(CHAR_LITERAL)) {
             return new JLiteralChar(line, scanner.previousToken().image());
