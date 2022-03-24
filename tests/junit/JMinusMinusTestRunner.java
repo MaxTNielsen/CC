@@ -39,6 +39,8 @@ public class JMinusMinusTestRunner {
         suite.addTestSuite(MinusAssignTest.class);
         suite.addTestSuite(StarAssignTest.class);
         suite.addTestSuite(PrefixDecrementTest.class);
+        suite.addTestSuite(ForLoopTest.class);
+        suite.addTestSuite(ConditionalTest.class);
         return suite;
     }
 
