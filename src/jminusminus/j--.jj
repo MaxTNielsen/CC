@@ -151,9 +151,12 @@ TOKEN: {
 | <EXTENDS: "extends">
 | <FALSE: "false">
 | <IF: "if">
+| <INTERFACE: "interface">
 | <IMPORT: "import">
 | <INSTANCEOF: "instanceof">
 | <INT: "int">
+| <LONG: "long">
+| <NATIVE: "native">
 | <NEW: "new">
 | <NULL: "null">
 | <PACKAGE: "package">
@@ -163,6 +166,7 @@ TOKEN: {
 | <RETURN: "return">
 | <STATIC: "static">
 | <SUPER: "super">
+| <SHORT: "short">
 | <THIS: "this">
 | <TRUE: "true">
 | <VOID: "void">
@@ -174,15 +178,23 @@ TOKEN: {
   <PLUS: "+">
 | <ASSIGN: "=">
 | <DEC: "--">
+| <DIV: "/">
+| <DIV_ASSIGN: "/=">
 | <EQUAL: "==">
 | <GT: ">">
 | <INC: "++">
 | <LAND: "&&">
+| <LOR: "||">
 | <LE: "<=">
 | <LNOT: "!">
 | <MINUS: "-">
+| <OR: "|">
+| <OR_ASSIGN: "|=">
 | <PLUS_ASSIGN: "+=">
+| <RSHIFT: ">>">
 | <STAR: "*">
+| <URSHIFT_ASSIGN: ">>>="
+| <URSHIFT: ">>>">
 }
 
 // Separators (these could be combined with the reserved words)
@@ -194,6 +206,7 @@ TOKEN: {
 | <LBRACK: "[">
 | <RBRACK: "]">
 | <SEMI: ";">
+| <COLON: ":">
 | <COMMA: ",">
 | <DOT: ".">
 }
