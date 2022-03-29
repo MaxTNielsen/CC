@@ -188,12 +188,16 @@ TOKEN: {
 | <LE: "<=">
 | <LNOT: "!">
 | <MINUS: "-">
+| <MIN_ASSIGN: "-=">
 | <OR: "|">
 | <OR_ASSIGN: "|=">
 | <PLUS_ASSIGN: "+=">
+| <REM: "%">
+| <REM_ASSIGN: "%=">
 | <RSHIFT: ">>">
 | <STAR: "*">
-| <URSHIFT_ASSIGN: ">>>="
+| <STAR_ASSIGN: "*=">
+| <URSHIFT_ASSIGN: ">>>=">
 | <URSHIFT: ">>>">
 }
 
@@ -1135,7 +1139,10 @@ private JExpression expression(): {
  *   assignmentExpression ::= 
  *       conditionalAndExpression                // level 13
  *           [( ASSIGN       // must be valid lhs
- *            | PLUS_ASSIGN 
+ *            | PLUS_ASSIGN
+ *            | STAR_ASSIGN
+ *            | DIV_ASSIGN
+ *            | REM_ASSIGN
  *            )
  *            assignmentExpression]
  * </pre>
@@ -1157,7 +1164,23 @@ private JExpression assignmentExpression(): {
             
             <PLUS_ASSIGN>
             rhs = assignmentExpression()
-            { lhs = new JPlusAssignOp(line, lhs, rhs); }
+            { lhs = new JPlusAssignOp(line, lhs, rhs); } |
+
+            <MIN_ASSIGN>
+            rhs = assignmentExpression()
+            { lhs = new JMinusAssignOp(line, lhs, rhs); } |
+
+            <STAR_ASSIGN>
+            rhs = assignmentExpression()
+            { lhs = new JStarAssignOp(line, lhs, rhs); } |
+
+            <DIV_ASSIGN>
+            rhs = assignmentExpression()
+            { lhs = new JDivAssignOp(line, lhs, rhs); } |
+
+            <REM_ASSIGN>
+            rhs = assignmentExpression()
+            { lhs = new JRemAssignOp(line, lhs, rhs); }
         ]
     }
     catch (ParseException e) {
@@ -1171,7 +1194,7 @@ private JExpression assignmentExpression(): {
  * 
  * <pre>
  *   conditionalAndExpression ::= equalityExpression        // level 10
- *                                  {LAND equalityExpression}
+ *                                  {(LAND|LOR) equalityExpression}
  * </pre>
  * 
  * @return an AST for a conditionalExpression.
@@ -1187,7 +1210,10 @@ private JExpression conditionalAndExpression(): {
         (
             <LAND>
             rhs = equalityExpression()
-            { lhs = new JLogicalAndOp(line, lhs, rhs); }
+            { lhs = new JLogicalAndOp(line, lhs, rhs); } |
+            <LOR>
+            rhs = equalityExpression()
+            { lhs = new JLogicalOrOp(line, lhs, rhs); }
         )*
     }
     catch (ParseException e) {
@@ -1271,7 +1297,7 @@ private JExpression relationalExpression(): {
  * 
  * <pre>
  *   additiveExpression ::= multiplicativeExpression         // level 3
- *                            {MINUS multiplicativeExpression}
+ *                            {(PLUS|MINUS) multiplicativeExpression}
  * </pre>
  * 
  * @return an AST for an additiveExpression.
@@ -1305,7 +1331,7 @@ private JExpression additiveExpression(): {
  * 
  * <pre>
  *   multiplicativeExpression ::= unaryExpression        // level 2
- *                                  {STAR unaryExpression}
+ *                                  {(STAR|DIV|REM) unaryExpression}
  * </pre>
  * 
  * @return an AST for a multiplicativeExpression.
@@ -1321,7 +1347,13 @@ private JExpression multiplicativeExpression(): {
         (
             <STAR>
             rhs = unaryExpression()
-            { lhs = new JMultiplyOp(line, lhs, rhs); }
+            { lhs = new JMultiplyOp(line, lhs, rhs); } |
+            <DIV>
+            rhs = unaryExpression()
+            { lhs = new JDivisionOp(line, lhs, rhs); } |
+            <REM>
+            rhs = unaryExpression()
+            { lhs = new JRemainderOp(line, lhs, rhs); } 
         )*
     }
     catch (ParseException e) {
