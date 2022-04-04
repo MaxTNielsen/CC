@@ -1086,7 +1086,16 @@ public class Parser {
         }
         return lhs;
     }
-
+     /**
+     * Parse a conditional expression.
+     *
+     * <pre>
+     *   conditionalExpression ::= conditionalExpression // 11
+                                         {QMARK COLON JConditionalExpression}
+     * </pre>
+     *
+     * @return an AST for a conditionalExpression.
+     */
     private JExpression conditionalExpression() {
         JExpression lhs = conditionalORExpression();
         if(have(QMARK)) {

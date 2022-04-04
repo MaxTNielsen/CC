@@ -2,7 +2,10 @@ package pass;
 
 public class ForLoop {
     public int additionForLoop(int x) {
-        for (int result = x; result < 100; result++) {
+        result = 0;
+        String[] cars = {"BMW", "BMW 2"};
+        for (String car : cars) {
+            result = result+1;
         }
         return result;
     }

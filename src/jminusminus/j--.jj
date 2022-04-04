@@ -167,6 +167,16 @@ TOKEN: {
 | <TRUE: "true">
 | <VOID: "void">
 | <WHILE: "while">
+| <STRICTFP: "strictfp">
+| <SWITCH: "switch">
+| <SYNCHRONIZED: "synchronized">
+| <THROW: "throw">
+| <THROWS: "throws">
+| <TRANSIENT: "transient">
+| <TRY: "try">
+| <VOLATILE: "volatile">
+| <FOR: "for">
+
 }
 
 // Operators (these could be combined with the reserved words)
@@ -183,6 +193,12 @@ TOKEN: {
 | <MINUS: "-">
 | <PLUS_ASSIGN: "+=">
 | <STAR: "*">
+| <QMARK: "?">
+| <USHIFTRIGHT_ASSIGN: ">>>=">
+| <AND: "&">
+| <GE: ">=">
+| <ANDEQ: "&=">
+
 }
 
 // Separators (these could be combined with the reserved words)
@@ -196,6 +212,7 @@ TOKEN: {
 | <SEMI: ";">
 | <COMMA: ",">
 | <DOT: ".">
+| <COLON: ":">
 }
 
 // Identifiers
@@ -666,6 +683,19 @@ private JStatement statement(): {
         body = statement()
         { statement = new JWhileStatement(line, test, body); } |
 
+
+        <FOR> {line = token.beginLine; }
+
+        <LPAREN>
+        init = forInit()
+        <SEMI>
+        test = expression()
+        <SEMI>
+        update = forUpdate()
+        <RPAREN>
+        body = statement()
+        { statement = new JForStatement(line,init,test,update,body);}|
+
         <RETURN> { line = token.beginLine; }
         [
             expr = expression()
@@ -686,6 +716,37 @@ private JStatement statement(): {
     }
     { return statement; }
 }
+
+ private JVariableDeclaration forInit(): {
+        ArrayList<JVariableDeclarator> vdelcs = null;
+
+    }
+    {
+        try {
+            vdelcs = variableDeclarators(type())
+        }
+        catch (ParseException e){
+             recoverFromError(new int[] { SEMI, EOF }, e);
+        }
+        {return JVariableDeclaration(scanner.token().line(), new ArrayList<String>(), vdelcs);}
+    }
+
+private ArrayList<JStatement> forUpdate(): {
+        ArrayList<JStatement> update = new ArrayList<JStatement>();
+        JStatement aUpdate = null;
+        }
+        {
+            try {
+                (
+                <COMMA> aUpdate = statementExpression()
+                { update.add(aUpdate ); }
+                )*
+        }
+        catch (ParseException e) {
+        recoverFromError(new int[] { SEMI, EOF }, e);
+        }
+        { return update;}
+    }
 
 /**
  * Parse formal parameters.
@@ -893,6 +954,8 @@ private JExpression variableInitializer(Type expected): {
     { return initializer; }
 }
 
+
+
 /**
  * Parse an array initializer.
  * 
@@ -1092,6 +1155,7 @@ private JStatement statementExpression(): {
     { return new JStatementExpression( line, expr ); }
 }
 
+
 /**
  * An expression.
  * 
@@ -1152,7 +1216,35 @@ private JExpression assignmentExpression(): {
     }
     { return lhs; }
 }
+/**
+* Parse a conditionalExpression.
+*
+*
+*
+*
+*
+*/
+private JExpression conditionalExpression(): {
+    JExpression expr = null;
+}
+{
+    try {
+        lhs = conditionalOrExpression() { line = lhs.line(); }
+        [
+            <QMARK>
+             consequent = assignmentExpression()
+            <COLON>
+             alternate = conditionalExpression()
+           { lhs = JConditionalExpression(scanner.token().line(),lhs,consequent,alternate); }
 
+        ]
+    }
+    catch (ParseException e) {
+        recoverFromError(new int[]{SEMI, EOF }, e);
+
+    }
+    {return lhs;}
+}
 /**
  * Parse a conditional-and expression.
  * 
