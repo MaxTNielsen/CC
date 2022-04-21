@@ -687,13 +687,21 @@ private JStatement statement(): {
         <FOR> {line = token.beginLine; }
 
         <LPAREN>
-        init = forInit()
+
+        [init = forInit()]
+
         <SEMI>
-        test = expression()
+
+        [test = expression()]
+
         <SEMI>
-        update = forUpdate()
+
+        [update = forUpdate()]
+
         <RPAREN>
+
         body = statement()
+
         { statement = new JForStatement(line,init,test,update,body);}|
 
         <RETURN> { line = token.beginLine; }
@@ -719,10 +727,14 @@ private JStatement statement(): {
 
  private JVariableDeclaration forInit(): {
         ArrayList<JVariableDeclarator> vdelcs = null;
-
+        JStatement init = null;
     }
     {
         try {
+            init = statementExpression()
+            <COMMA>
+            { init = new JVariableDeclaration(line, expr); } |
+            
             vdelcs = variableDeclarators(type())
         }
         catch (ParseException e){
@@ -737,6 +749,7 @@ private ArrayList<JStatement> forUpdate(): {
         }
         {
             try {
+                aUpdate = statementExpression()
                 (
                 <COMMA> aUpdate = statementExpression()
                 { update.add(aUpdate ); }
@@ -1216,6 +1229,25 @@ private JExpression assignmentExpression(): {
     }
     { return lhs; }
 }
+
+ private JExpression conditionalOrExpression(): {
+            JExpression expr = null;
+        }
+        {
+            try {
+                lhs = conditionalAndExpression() { line = lhs.line(); }
+                (
+                    <LOGICAL_OR>
+                    lhs = JLogicalOrOp(line, lhs, conditionalAndExpression())
+                )*
+            }
+            catch (ParseException e) {
+                recoverFromError(new int[]{SEMI, EOF }, e);
+
+            }
+            {return lhs;}
+    }
+
 /**
 * Parse a conditionalExpression.
 *

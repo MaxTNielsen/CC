@@ -15,7 +15,7 @@ public class ForLoopTest extends TestCase{
     }
 
     
-    public void testCompute() {
+    public void testCompute() { 
         assertEquals(forloop.additionForLoop(1), 100);
         assertEquals(forloop.additionForLoop(-1), 100);
         assertEquals(forloop.additionForLoop(100), 100);

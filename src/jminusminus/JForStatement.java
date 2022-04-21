@@ -1,29 +1,35 @@
+/**
+ * 
+ */
 package jminusminus;
 
 import java.util.ArrayList;
 import static jminusminus.CLConstants.*;
 
-
+/**
+ * @author KyleD
+ *
+ */
 public class JForStatement extends JStatement {
 	
 	private JVariableDeclaration init;
-
 	private JExpression condition;
-
-	private ArrayList<JStatement> incrementer;
-
+	private ArrayList<JStatement> increments;
 	private JStatement body;
 	
 	public JForStatement(int line, JVariableDeclaration init, 
-			JExpression condition, ArrayList<JStatement> incrementer, 
+			JExpression condition, ArrayList<JStatement> increments, 
 			JStatement body) {
 		super(line);
 		this.init = init;
 		this.condition = condition;
-		this.incrementer = incrementer;
+		this.increments = increments;
 		this.body = body;
 	}
 
+	/* (non-Javadoc)
+	 * @see jminusminus.JAST#analyze(jminusminus.Context)
+	 */
 	@Override
 	public JAST analyze(Context context) {
 		if (init != null) {
@@ -33,17 +39,20 @@ public class JForStatement extends JStatement {
 			condition = condition.analyze(context);
         	condition.type().mustMatchExpected(line(), Type.BOOLEAN);
 		}
-		if (incrementer != null) {
-	        for (int i = 0; i < incrementer.size(); i++) {
-	        	JStatement temp = incrementer.get(i);
+		if (increments != null) {
+	        for (int i = 0; i < increments.size(); i++) {
+	        	JStatement temp = increments.get(i);
 	        	temp = (JStatement) temp.analyze(context);
-	        	incrementer.set(i, temp);
+	        	increments.set(i, temp);
 	        }
 		}
 		body = (JStatement) body.analyze(context);
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see jminusminus.JAST#codegen(jminusminus.CLEmitter)
+	 */
 	@Override
 	public void codegen(CLEmitter output) {
 		if (init != null) {
@@ -58,15 +67,19 @@ public class JForStatement extends JStatement {
 		}
 		
 		body.codegen(output);
-		if (incrementer != null) {
-			for (JStatement inc : incrementer) {
+		if (increments != null) {
+			for (JStatement inc : increments) {
 				inc.codegen(output);
 			}
 		}
 		output.addBranchInstruction(GOTO, test);
+		
 		output.addLabel(out);
 	}
 
+	/* (non-Javadoc)
+	 * @see jminusminus.JAST#writeToStdOut(jminusminus.PrettyPrinter)
+	 */
 	@Override
 	public void writeToStdOut(PrettyPrinter p) {
 		p.printf("<JForStatement line=\"%d\">\n", line());
@@ -89,8 +102,8 @@ public class JForStatement extends JStatement {
         p.indentLeft();
         p.printf("<ForUpdate>\n");
         p.indentRight();
-        if (incrementer != null) {
-        	for (JStatement inc : incrementer) {
+        if (increments != null) {
+        	for (JStatement inc : increments) {
         		inc.writeToStdOut(p);
         	}
         } else {

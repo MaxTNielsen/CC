@@ -657,8 +657,62 @@ public class Parser {
             JStatement statement = statement();
             return new JWhileStatement(line, test, statement);
         } else if  (have(FOR)) {
+            
             mustBe(LPAREN);
-            JVariableDeclaration init;
+			if (seeBasicType() | seeReferenceType()) { // checks if data type is instantiated in the
+									// loop
+                JVariableDeclarator init = variableDeclarator(type());
+				if (have(COLON)) { // enhanced for-loop
+					JExpression array = primary();
+					mustBe(RPAREN);
+					JBlock consequent = block();
+					return new JColonForStatement(line, init, array,
+							consequent);
+				} else {
+                    JVariableDeclaration initialize = null;
+                    if(have(SEMI)) {
+                    } else {
+                        initialize = forInit();
+                        mustBe(SEMI);
+                    }
+                    JExpression test;
+                    if(have(SEMI)) {
+                        test = null;
+                    } else {
+                            test = expression();
+                            mustBe(SEMI);
+                    }
+                    ArrayList<JStatement> update;
+                    if (have(RPAREN)) {
+                        update = null;
+                    } else {
+                        update = forUpdate();
+                        mustBe(RPAREN);
+                    }
+                    JStatement body = statement();
+                    return new JForStatement(line,initialize,test,update,body);
+				}
+			} else {
+                JVariableDeclaration init = null;
+                mustBe(SEMI);
+                JExpression test;
+                if(have(SEMI)) {
+                    test = null;
+                } else {
+                        test = expression();
+                        mustBe(SEMI);
+                }
+                ArrayList<JStatement> update;
+                if (have(RPAREN)) {
+                    update = null;
+                } else {
+                    update = forUpdate();
+                    mustBe(RPAREN);
+                }
+                JStatement body = statement();
+                return new JForStatement(line,init,test,update,body);
+			}
+            /*JVariableDeclaration init;
             if(have(SEMI)) {
                 init = null;
             } else {
@@ -681,6 +735,7 @@ public class Parser {
             }
             JStatement body = statement();
             return new JForStatement(line,init,test,update,body);
+            */
         } else if (have(RETURN)) {
             if (have(SEMI)) {
                 return new JReturnStatement(line, null);
@@ -998,6 +1053,8 @@ public class Parser {
         JExpression expr = expression();
         if (expr instanceof JAssignment || expr instanceof JPreIncrementOp
                                         || expr instanceof JPostDecrementOp
+                                        || expr instanceof JPreDecrementOp
+                                        || expr instanceof  JPostIncrementOp
                                         || expr instanceof JMessageExpression
                                         || expr instanceof JSuperConstruction
                                         || expr instanceof JThisConstruction

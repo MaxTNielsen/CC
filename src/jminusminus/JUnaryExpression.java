@@ -430,7 +430,7 @@ class JPreIncrementOp extends JUnaryExpression {
 }
 
 /**
- * The AST node for a ++expr expression.
+ * The AST node for a --expr expression.
  */
 
 class JPreDecrementOp extends JUnaryExpression {
