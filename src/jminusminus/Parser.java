@@ -997,7 +997,9 @@ public class Parser {
         int line = scanner.token().line();
         JExpression expr = expression();
         if (expr instanceof JAssignment || expr instanceof JPreIncrementOp
+                                        || expr instanceof JPreDecrementOp
                                         || expr instanceof JPostDecrementOp
+                                        || expr instanceof JPostIncrementOp
                                         || expr instanceof JMessageExpression
                                         || expr instanceof JSuperConstruction
                                         || expr instanceof JThisConstruction

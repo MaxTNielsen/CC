@@ -1348,12 +1348,12 @@ private JExpression multiplicativeExpression(): {
             <STAR>
             rhs = unaryExpression()
             { lhs = new JMultiplyOp(line, lhs, rhs); } |
-            <DIV>
-            rhs = unaryExpression()
-            { lhs = new JDivisionOp(line, lhs, rhs); } |
             <REM>
             rhs = unaryExpression()
-            { lhs = new JRemainderOp(line, lhs, rhs); } 
+            { lhs = new JRemainderOp(line, lhs, rhs); } |
+            <DIV>
+            rhs = unaryExpression()
+            { lhs = new JDivideOp(line, lhs, rhs); }
         )*
     }
     catch (ParseException e) {
