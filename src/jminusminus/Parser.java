@@ -553,9 +553,19 @@ public class Parser {
             mustBe(IDENTIFIER);
             String name = scanner.previousToken().image();
             ArrayList<JFormalParameter> params = formalParameters();
-            JBlock body = block();
-            memberDecl = new JConstructorDeclaration(line, mods, name, params,
-                    body);
+            ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+            if (have(THROWS)){
+                mods.add("throws");
+                exceptions.add(qualifiedIdentifier());
+                while(have(COMMA)){
+                    exceptions.add(qualifiedIdentifier());
+                }
+            }
+            JBlock body = have(SEMI) ? null : block();
+             memberDecl = new JConstructorDeclaration(line, mods, name,
+                    params, body, exceptions);
+
+
         } else {
             Type type = null;
             if (have(VOID)) {
@@ -564,9 +574,19 @@ public class Parser {
                 mustBe(IDENTIFIER);
                 String name = scanner.previousToken().image();
                 ArrayList<JFormalParameter> params = formalParameters();
+                
+                ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+                if (have(THROWS)){
+                    mods.add("throws");
+                    exceptions.add(qualifiedIdentifier());
+                    while(have(COMMA)){
+                        exceptions.add(qualifiedIdentifier());
+                    }
+                }
                 JBlock body = have(SEMI) ? null : block();
                 memberDecl = new JMethodDeclaration(line, mods, name, type,
-                        params, body);
+                            params, body, exceptions);
+                
             } else {
                 type = type();
                 if (seeIdentLParen()) {
@@ -574,9 +594,19 @@ public class Parser {
                     mustBe(IDENTIFIER);
                     String name = scanner.previousToken().image();
                     ArrayList<JFormalParameter> params = formalParameters();
+                    ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+                    if (have(THROWS)){
+                        mods.add("throws");
+                        exceptions.add(qualifiedIdentifier());
+                        while(have(COMMA)){
+                            exceptions.add(qualifiedIdentifier());
+                        }
+                    }
                     JBlock body = have(SEMI) ? null : block();
+
                     memberDecl = new JMethodDeclaration(line, mods, name, type,
-                            params, body);
+                            params, body, exceptions);
+
                 } else {
                     // Field
                     memberDecl = new JFieldDeclaration(line, mods,
@@ -642,7 +672,14 @@ public class Parser {
      *
      * @return an AST for a statement.
      */
+    private JCatchStatement catchStatement(){
+        int line = scanner.token().line();
+        mustBe(LPAREN);
+                JFormalParameter temp = formalParameter();
+        mustBe(RPAREN);
 
+        return new JCatchStatement(line,temp, block());
+    }
     private JStatement statement() {
         int line = scanner.token().line();
         if (see(LCURLY)) {
