@@ -4,6 +4,8 @@ package jminusminus;
 
 import java.util.ArrayList;
 
+import javax.sound.sampled.AudioFileFormat.Type;
+
 import static jminusminus.TokenKind.*;
 
 /**
@@ -497,9 +499,9 @@ public class Parser {
         mustBe(IDENTIFIER);
         String name = scanner.previousToken().image();
         Type superClass;
-        if (have(EXTENDS)) {
+        if (have(EXTENDS) || have(IMPLEMENTS)) {
             superClass = qualifiedIdentifier();
-        } else {
+        }else{
             superClass = Type.OBJECT;
         }
         return new JClassDeclaration(line, mods, name, superClass, classBody());
@@ -525,6 +527,48 @@ public class Parser {
         }
         mustBe(RCURLY);
         return members;
+    }
+
+    private JInterfaceDeclaration interfaceDeclaration(ArrayList<String> mods){
+        Type superClass;
+        int line = scanner.token().line();
+        mustBe(INTERFACE);
+        mustBe(IDENTIFIER);
+        String name = scanner.previousToken().image();
+        ArrayList<Type> interfaces = new ArrayList<>();
+        if (have(EXTENDS)){
+            interfaces.add(qualifiedIdentifier());
+            while(!see(LCURLY)){
+                mustBe(COMMA);
+                interfaces.add(qualifiedIdentifier());
+            }
+        }
+        return new JInterfaceDeclaration(line, mods, name, interfaces, null);
+
+    }
+
+    private ArrayList<JMember> interfaceBody(){
+        ArrayList<JMember> members = new ArrayList<>();
+        mustBe(LCURLY);
+        while(!see(LCURLY) && !see(EOF)){
+            members.add(interfaceDeclaration(modifiers()));
+        }
+        mustBe(RCURLY);
+        return members;
+    }
+
+    private JMember interfaceMemberDeclaration(){
+        if (!mods.contains("public")){
+            mods.add("public");
+        }
+
+        int line = scanner.token().line();
+        JMember interfaceMemberDeclaration = null;
+        Type type = null;
+
+        if(have(VOID)){
+            
+        }
     }
 
     /**
@@ -558,7 +602,14 @@ public class Parser {
                     body);
         } else {
             Type type = null;
-            if (have(VOID)) {
+            if (seeBlock()) { 
+                if (mods.contains("static")) { 
+                    memberDecl = block(mods);
+                } else {
+                    memberDecl = block();
+                } 
+            }
+            else if (have(VOID)) {
                 // void method
                 type = Type.VOID;
                 mustBe(IDENTIFIER);
@@ -597,6 +648,18 @@ public class Parser {
      *
      * @return an AST for a block.
      */
+
+
+     private JBlock staticBlock(){
+        int line = scanner.token().line();
+        ArrayList<JStatement> statements = new ArrayList<JStatement>();
+        mustBe(STATIC);
+        while (!see(RCURLY) && !see(EOF)) {
+            statements.add(blockStatement());
+        }
+        mustBe(RCURLY);
+        return new JBlock(line, statements, null);
+     }
 
     private JBlock block() {
         int line = scanner.token().line();

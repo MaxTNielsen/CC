@@ -20,6 +20,8 @@ class JBlock extends JStatement {
      */
     private LocalContext context;
 
+    private ArrayList<String> mods;
+
     /**
      * Constructs an AST node for a block given its line number, and the list of
      * statements forming the block body.
@@ -30,9 +32,10 @@ class JBlock extends JStatement {
      *            list of statements forming the block body.
      */
 
-    public JBlock(int line, ArrayList<JStatement> statements) {
+    public JBlock(int line, ArrayList<JStatement> statements, ArrayList<String> mods) {
         super(line);
         this.statements = statements;
+        this.mods = mods;
     }
 
     /**
@@ -45,6 +48,9 @@ class JBlock extends JStatement {
         return statements;
     }
 
+    public ArrayList<String> mods() {
+        return mods;
+    }
     /**
      * Analyzing a block consists of creating a new nested context for that
      * block and analyzing each of its statements within that context.
