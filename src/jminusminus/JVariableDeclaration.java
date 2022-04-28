@@ -60,14 +60,14 @@ class JVariableDeclaration extends JStatement {
      *            context in which names are resolved.
      * @return the analyzed (and possibly rewritten) AST subtree.
      */
-
+    LocalVariableDefn defn;
     public JStatement analyze(Context context) {
         for (JVariableDeclarator decl : decls) {
             // Local variables are declared here (fields are
             // declared
             // in preAnalyze())
             int offset = ((LocalContext) context).nextOffset();
-            LocalVariableDefn defn = new LocalVariableDefn(decl.type().resolve(
+            defn = new LocalVariableDefn(decl.type().resolve(
                     context), offset);
 
             // First, check for shadowing

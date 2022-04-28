@@ -277,8 +277,7 @@ class Scanner {
                 return new TokenInfo(ANDEQ, line);
             }
             else {
-                nextCh();
-                return new TokenInfo(BAND, line);
+                return new TokenInfo(AND, line);
             }
         case '>':
             if (ch == '>') {

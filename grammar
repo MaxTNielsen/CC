@@ -9,7 +9,8 @@ qualifiedIdentifier ::= IDENTIFIER {DOT IDENTIFIER}
 
 typeDeclaration ::= modifiers classDeclaration
 
-modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT | STRICTFP | SYNCHRONIZED | TRANSIENT | INTERFACE}
+modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT | STRICTFP | SYNCHRONIZED |
+               TRANSIENT | INTERFACE}
 
 classDeclaration ::= CLASS IDENTIFIER 
                        [EXTENDS qualifiedIdentifier]
@@ -19,9 +20,9 @@ classDeclaration ::= CLASS IDENTIFIER
 classBody ::= LCURLY {modifiers memberDecl} RCURLY
 
 memberDecl ::= IDENTIFIER            // constructor
-                 formalParameters block
+                 formalParameters [THROWS qualifiedIdentifier {COMMA qualifiedIdentifier}] block
              | (VOID | type) IDENTIFIER  // method
-                 formalParameters
+                 formalParameters [THROWS qualifiedIdentifier {COMMA qualifiedIdentifier}]
                  (block | SEMI)
              | type variableDeclarators SEMI // field
 
@@ -36,11 +37,12 @@ statement ::= block
             | FOR parExpression statement
             | RETURN [expression] SEMI
             | SEMI 
-            | FINALLY statement
             | statementExpression SEMI
             | CONTINUE
-            | THROW statementExpression SEMI;
-            | FINALLY
+            | TRY block {CATCH (formalParameter) block} [FINALLY block] //must be precent if no catches
+            | THROW expression SEMI
+
+
 formalParameters ::= LPAREN 
                        [formalParameter {COMMA formalParameter}]
                      RPAREN
@@ -116,7 +118,7 @@ unaryExpression ::= INC unaryExpression  // level 1
                   | MINUS unaryExpression
                   | PLUS unaryExpression
                   | UCOMP unaryExpression 
-                  | simpleUnaryExpressionz½
+                  | simpleUnaryExpression
 
 
 simpleUnaryExpression ::= LNOT unaryExpression
@@ -152,4 +154,4 @@ newArrayDeclarator ::= LBRACK expression RBRACK
                          {LBRACK expression RBRACK} {LBRACK RBRACK}
 
 literal ::= INT_LITERAL | CHAR_LITERAL | STRING_LITERAL
-          | TRUE        | FALSE        | NULL
+          | TRUE        | FALSE        | NULL 

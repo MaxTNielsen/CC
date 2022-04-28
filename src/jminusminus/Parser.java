@@ -4,6 +4,8 @@ package jminusminus;
 
 import java.util.ArrayList;
 
+//import com.java2html.secondparse.Token;
+
 import static jminusminus.TokenKind.*;
 
 /**
@@ -553,9 +555,19 @@ public class Parser {
             mustBe(IDENTIFIER);
             String name = scanner.previousToken().image();
             ArrayList<JFormalParameter> params = formalParameters();
-            JBlock body = block();
-            memberDecl = new JConstructorDeclaration(line, mods, name, params,
-                    body);
+            ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+            if (have(THROWS)){
+                mods.add("throws");
+                exceptions.add(qualifiedIdentifier());
+                while(have(COMMA)){
+                    exceptions.add(qualifiedIdentifier());
+                }
+            }
+            JBlock body = have(SEMI) ? null : block();
+             memberDecl = new JConstructorDeclaration(line, mods, name,
+                    params, body, exceptions);
+
+
         } else {
             Type type = null;
             if (have(VOID)) {
@@ -564,9 +576,19 @@ public class Parser {
                 mustBe(IDENTIFIER);
                 String name = scanner.previousToken().image();
                 ArrayList<JFormalParameter> params = formalParameters();
+                
+                ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+                if (have(THROWS)){
+                    mods.add("throws");
+                    exceptions.add(qualifiedIdentifier());
+                    while(have(COMMA)){
+                        exceptions.add(qualifiedIdentifier());
+                    }
+                }
                 JBlock body = have(SEMI) ? null : block();
                 memberDecl = new JMethodDeclaration(line, mods, name, type,
-                        params, body);
+                            params, body, exceptions);
+                
             } else {
                 type = type();
                 if (seeIdentLParen()) {
@@ -574,9 +596,19 @@ public class Parser {
                     mustBe(IDENTIFIER);
                     String name = scanner.previousToken().image();
                     ArrayList<JFormalParameter> params = formalParameters();
+                    ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+                    if (have(THROWS)){
+                        mods.add("throws");
+                        exceptions.add(qualifiedIdentifier());
+                        while(have(COMMA)){
+                            exceptions.add(qualifiedIdentifier());
+                        }
+                    }
                     JBlock body = have(SEMI) ? null : block();
+
                     memberDecl = new JMethodDeclaration(line, mods, name, type,
-                            params, body);
+                            params, body, exceptions);
+
                 } else {
                     // Field
                     memberDecl = new JFieldDeclaration(line, mods,
@@ -642,15 +674,48 @@ public class Parser {
      * 
      * @return an AST for a statement.
      */
+    private JCatchStatement catchStatement(){
+        int line = scanner.token().line();
+        mustBe(LPAREN);
+                JFormalParameter temp = formalParameter();
+        mustBe(RPAREN);
+
+        return new JCatchStatement(line,temp, block());
+    }
 
     private JStatement statement() {
         int line = scanner.token().line();
         if (see(LCURLY)) {
             return block();
-        } else if (have(IF)) {
-            JExpression test = parExpression();
+        } else if(have(TRY)){
+            
+            JBlock tryBlock = block();
+
+
+            ArrayList<JCatchStatement> catches = new ArrayList<JCatchStatement>();
+            while (have(CATCH)){
+                catches.add(catchStatement());
+            }
+            
+            JBlock finallyBlock;
+            if (catches.isEmpty()){
+                mustBe(FINALLY);
+                finallyBlock = block();
+            }
+            else {finallyBlock = have(FINALLY) ? block() : null;}
+        
+            
+            return new JTryStatement(line, tryBlock, catches, finallyBlock);
+
+        } else if (have(THROW)){
+            JExpression exception = expression();
+            //mustBe(SEMI);
+            return new JThrowStatement(line, exception);
+        }else if (have(IF)) {
+            
             JStatement consequent = statement();
             JStatement alternate = have(ELSE) ? statement() : null;
+            JExpression test = parExpression();
             return new JIfStatement(line, test, consequent, alternate);
         } else if (have(WHILE)) {
             JExpression test = parExpression();
@@ -1005,7 +1070,7 @@ public class Parser {
 
     private JExpression assignmentExpression() {
         int line = scanner.token().line();
-        JExpression lhs = conditionalORExpression();
+        JExpression lhs = conditionalOrExpression();
 
         if (have(ASSIGN)) {
             return new JAssignOp(line, lhs, assignmentExpression());
@@ -1034,7 +1099,7 @@ public class Parser {
      * @return an AST for a conditionalExpression.
      */
 
-    private JExpression conditionalORExpression() {
+    private JExpression conditionalOrExpression() {
         int line = scanner.token().line();
         boolean more = true;
         JExpression lhs = conditionalAndExpression();

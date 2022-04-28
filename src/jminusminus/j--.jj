@@ -167,6 +167,12 @@ TOKEN: {
 | <TRUE: "true">
 | <VOID: "void">
 | <WHILE: "while">
+| <THROWS: "throws">
+| <THROW: "throw">
+| <TRY: "try">
+| <CATCH: "catch">
+| <FINALLY: "finally">
+| <DOUBLE: "double">
 }
 
 // Operators (these could be combined with the reserved words)
@@ -183,6 +189,7 @@ TOKEN: {
 | <MINUS: "-">
 | <PLUS_ASSIGN: "+=">
 | <STAR: "*">
+| <DIV: "/">
 }
 
 // Separators (these could be combined with the reserved words)
@@ -196,6 +203,7 @@ TOKEN: {
 | <SEMI: ";">
 | <COMMA: ",">
 | <DOT: ".">
+
 }
 
 // Identifiers
@@ -512,6 +520,7 @@ private JMember memberDecl(ArrayList<String> mods): {
     JBlock body = null;
     ArrayList<JVariableDeclarator> variableDeclarators = null;
     JMember memberDecl = null;
+    ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
 }
 {
     try {
@@ -523,10 +532,14 @@ private JMember memberDecl(ArrayList<String> mods): {
                 name = token.image;
             }
             params = formalParameters()
+            [
+                <THROWS>{mods.add("throws"); exceptions.add(qualifiedIdentifier());}
+                (<COMMA>{exceptions.add(qualifiedIdentifier());})*
+            ]
             body = block()
             {
                 memberDecl = new JConstructorDeclaration(line, mods,
-                                                         name, params, body);
+                                                         name, params, body, exceptions);
             }
         ) |
         LOOKAHEAD((<VOID> | type()) <IDENTIFIER> <LPAREN>)
@@ -535,16 +548,22 @@ private JMember memberDecl(ArrayList<String> mods): {
                 <VOID> { type = Type.VOID; } |
                 type = type()
             )
+
+
             { line = token.beginLine; }
             <IDENTIFIER> { name = token.image; }
-            params = formalParameters() 
+            params = formalParameters()
+            [
+                <THROWS>{mods.add("throws"); exceptions.add(qualifiedIdentifier());}
+                (<COMMA>{exceptions.add(qualifiedIdentifier());})*
+            ]
             (
                 body = block() |
                 <SEMI>
             )
             {
                 memberDecl = new JMethodDeclaration(line, mods, name,
-                                                    type, params, body);
+                                                    type, params, body, exceptions);
             }
         ) |
         (
@@ -619,6 +638,8 @@ private JStatement blockStatement(): {
     { return statement; }
 }
 
+
+
 /**
  * Parse a statement.
  * 
@@ -634,6 +655,7 @@ private JStatement blockStatement(): {
  * @return an AST for a statement.
  */
 
+
 private JStatement statement(): {
     int line = 0;
     JStatement statement  = null;
@@ -642,11 +664,33 @@ private JStatement statement(): {
     JStatement alternate  = null;
     JStatement body       = null;
     JExpression expr      = null;
+    ArrayList<JCatchStatement> catches = new ArrayList<JCatchStatement>();
+    JBlock tryBlock = null;
+    JBlock finallyBlock = null;
 }
 {
     try {
         statement = block() |
+
+
+        <THROW> {line = token.beginLine; }
+        expr = expression()
+        {statement = new JThrowStatement(line, expr);} |
+
+        <TRY> { line = token.beginLine; }
         
+        tryBlock = block()
+        (
+            <CATCH> {catches.add(catchStatement());}
+        )*
+        
+        [
+            LOOKAHEAD(<FINALLY>)
+            <FINALLY> finallyBlock = block()
+        ]
+        {statement = new JTryStatement(line,tryBlock, catches, finallyBlock);} |
+        //---
+
         <IF> { line = token.beginLine; }
         test = parExpression()
         consequent = statement()
@@ -686,6 +730,25 @@ private JStatement statement(): {
     }
     { return statement; }
 }
+
+private JCatchStatement catchStatement(): {
+        int line    = 0;
+        Type type   = null;
+        JFormalParameter temp = null;
+
+    }
+    {
+        try{
+            {line = token.beginLine;}
+            <LPAREN>
+               temp = formalParameter()
+            <RPAREN>
+        }
+        catch (ParseException e) {
+            recoverFromError(new int[] { SEMI, EOF }, e);
+        }
+        {return new JCatchStatement(line,temp, block());}
+    }
 
 /**
  * Parse formal parameters.
@@ -732,7 +795,6 @@ private ArrayList<JFormalParameter> formalParameters(): {
  * 
  * @return an AST for a formalParameter.
  */
-
 private JFormalParameter formalParameter(): {
     int line    = 0;
     Type type   = null;
@@ -1008,7 +1070,8 @@ private Type basicType(): {
     try {
         <BOOLEAN> { type = Type.BOOLEAN; } |
         <CHAR> { type = Type.CHAR; } |
-        <INT> { type = Type.INT; }
+        <INT> { type = Type.INT; } |
+        <DOUBLE> {type = Type.DOUBLE;}
     }
     catch (ParseException e) {
         recoverFromError(new int[] { SEMI, EOF }, e);
@@ -1279,6 +1342,7 @@ private JExpression additiveExpression(): {
             <MINUS>
             rhs = multiplicativeExpression()
             { lhs = new JSubtractOp(line, lhs, rhs); }
+            
         )*
     }
     catch (ParseException e) {
@@ -1308,7 +1372,10 @@ private JExpression multiplicativeExpression(): {
         (
             <STAR>
             rhs = unaryExpression()
-            { lhs = new JMultiplyOp(line, lhs, rhs); }
+            { lhs = new JMultiplyOp(line, lhs, rhs); } |
+            <DIV>
+            rhs = unaryExpression()
+            { lhs = new JDivideOp(line, lhs, rhs); }
         )*
     }
     catch (ParseException e) {
@@ -1687,7 +1754,10 @@ private JExpression literal(): {
         { expr = new JLiteralFalse(token.beginLine); } |
 
         <NULL>
-        { expr = new JLiteralNull(token.beginLine); }
+        { expr = new JLiteralNull(token.beginLine); } |
+
+        <DOUBLE>
+        { expr = new JLiteralDouble(token.beginLine); } 
     }
     catch (ParseException e) {
         expr = new JWildExpression(token.beginLine);

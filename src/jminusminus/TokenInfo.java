@@ -26,12 +26,12 @@ enum TokenKind {
     
 
     // Operators
-    REM("%"), REM_ASSIGN("%="), STAR_ASSIGN("*="), BAND("&"), SHLE("<<="), STRICTFP("strictfp"),
+    REM("%"), REM_ASSIGN("%="), STAR_ASSIGN("*="), AND("&"), SHLE("<<="), STRICTFP("strictfp"),
     SYNCRHONIZED("synchronized"), THROW("throw"),THROWS("throws"),TRANSIENT("transient"),TRY("try"),VOLATILE("volatile"),CONST("const"),
     CONTINUE("continue"), INTERFACE("interface"),LONG("long"), SHORT("short"), NATIVE("native"),
     ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LT("<"), LAND("&&"),
     LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"),
-    DIV("/"),MOD("%"),USHIFTRIGHT_ASSIGN(">>>="),AND("&"),GREATEROREQ(">="),
+    DIV("/"),MOD("%"),USHIFTRIGHT_ASSIGN(">>>="),GREATEROREQ(">="),
     ANDEQ("&="), SHR(">>"),SHL("<<"), USHR(">>>"), UCOMP("~"), OR("|"), XOR("^"), DIV_ASSIGN("/="),
     RIGHTSHIFT_ASSIGN(">>="),LOGICAL_OR("||"), OR_ASSIGN("|="),
     SHL_ASSIGN("<<="), MINUS_ASSIGN("-="), QMARK("?"),

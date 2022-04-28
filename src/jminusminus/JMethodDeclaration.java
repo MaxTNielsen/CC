@@ -4,7 +4,7 @@ package jminusminus;
 
 import java.util.ArrayList;
 import static jminusminus.CLConstants.*;
-
+import java.lang.Exception;
 /**
  * The AST node for a method declaration.
  */
@@ -41,6 +41,7 @@ class JMethodDeclaration extends JAST implements JMember {
     /** Is this method private? */
     protected boolean isPrivate;
 
+    protected ArrayList<TypeName> exceptions;
     /**
      * Constructs an AST node for a method declaration given the
      * line number, method name, return type, formal parameters,
@@ -63,7 +64,7 @@ class JMethodDeclaration extends JAST implements JMember {
 
     public JMethodDeclaration(int line, ArrayList<String> mods,
         String name, Type returnType,
-        ArrayList<JFormalParameter> params, JBlock body)
+        ArrayList<JFormalParameter> params, JBlock body, ArrayList<TypeName> exceptions)
 
     {
         super(line);
@@ -75,8 +76,8 @@ class JMethodDeclaration extends JAST implements JMember {
         this.isAbstract = mods.contains("abstract");
         this.isStatic = mods.contains("static");
         this.isPrivate = mods.contains("private");
+        this.exceptions = exceptions;
     }
-
     /**
      * Declares this method in the parent (class) context.
      * 
@@ -87,15 +88,22 @@ class JMethodDeclaration extends JAST implements JMember {
      *                for producing the partial class).
      */
 
+
     public void preAnalyze(Context context, CLEmitter partial) {
         // Resolve types of the formal parameters
         for (JFormalParameter param : params) {
             param.setType(param.type().resolve(context));
         }
+        for (TypeName e : exceptions) {
+                TypeName temp = new TypeName(line, e.jvmName());
+                temp.resolve(context);
+        }
+        
 
         // Resolve return type
         returnType = returnType.resolve(context);
 
+    
         // Check proper local use of abstract
         if (isAbstract && body != null) {
             JAST.compilationUnit.reportSemanticError(line(),
@@ -110,7 +118,6 @@ class JMethodDeclaration extends JAST implements JMember {
             JAST.compilationUnit.reportSemanticError(line(),
                 "static method cannot be declared abstract");
         }
-
         // Compute descriptor
         descriptor = "(";
         for (JFormalParameter param : params) {
@@ -141,13 +148,14 @@ class JMethodDeclaration extends JAST implements JMember {
                                                         returnType);
         this.context = methodContext;
 
+        
         if (!isStatic) {
             // Offset 0 is used to address "this".
             this.context.nextOffset();
         }
-
         // Declare the parameters. We consider a formal parameter 
         // to be always initialized, via a function call.
+      
         for (JFormalParameter param : params) {
             LocalVariableDefn defn = new LocalVariableDefn(param.type(), 
                 this.context.nextOffset());
@@ -161,6 +169,8 @@ class JMethodDeclaration extends JAST implements JMember {
                             "Non-void method must have a return statement");
             }
         }
+
+
         return this;
     }
 
@@ -244,6 +254,15 @@ class JMethodDeclaration extends JAST implements JMember {
             }
             p.println("</FormalParameters>");
         }
+        
+        p.println("</Exceptions>");
+        for (TypeName exception : exceptions) {
+            p.indentRight();
+            p.println("<"+exception.toString()+">");
+            p.indentLeft();
+        }
+        p.println("</Exceptions>");
+        
         if (body != null) {
             p.println("<Body>");
             p.indentRight();

@@ -3,7 +3,7 @@
 package jminusminus;
 
 import java.util.ArrayList;
-
+import java.lang.Exception;
 /**
  * The abstract syntax tree (AST) node representing a compilation unit, and so
  * the root of the AST.
@@ -150,7 +150,6 @@ class JCompilationUnit extends JAST {
         // java.lang.String
         context.addType(0, Type.OBJECT);
         context.addType(0, Type.STRING);
-
         // Declare any imported types
         for (TypeName imported : imports) {
             try {

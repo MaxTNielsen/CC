@@ -8,7 +8,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Hashtable;
-
+import java.lang.Exception;
 /**
  * For representing j-- types. All types are represented underneath (in the
  * classRep field) by Java objects of type {@code Class}. These objects 
@@ -62,7 +62,6 @@ class Type {
 
     /** The null void. */
     public final static Type NULLTYPE = new Type(java.lang.Object.class);
-
     /**
      * A type marker indicating a constructor (having no return type).
      */
