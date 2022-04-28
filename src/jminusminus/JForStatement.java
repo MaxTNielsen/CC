@@ -1,15 +1,9 @@
-/**
- * 
- */
 package jminusminus;
 
 import java.util.ArrayList;
 import static jminusminus.CLConstants.*;
 
-/**
- * @author KyleD
- *
- */
+
 public class JForStatement extends JStatement {
 	
 	private JVariableDeclaration init;
@@ -27,22 +21,22 @@ public class JForStatement extends JStatement {
 		this.body = body;
 	}
 
-	/* (non-Javadoc)
-	 * @see jminusminus.JAST#analyze(jminusminus.Context)
-	 */
 	@Override
 	public JAST analyze(Context context) {
 		if (init != null) {
 			init = (JVariableDeclaration) init.analyze(context);
 		}
+		// Condition must be boolean (duh)
 		if (condition != null) {
 			condition = condition.analyze(context);
         	condition.type().mustMatchExpected(line(), Type.BOOLEAN);
 		}
+		//Analyze each loop through temp.
 		if (increments != null) {
 	        for (int i = 0; i < increments.size(); i++) {
 	        	JStatement temp = increments.get(i);
 	        	temp = (JStatement) temp.analyze(context);
+				// Replace i with temp.
 	        	increments.set(i, temp);
 	        }
 		}
@@ -50,36 +44,33 @@ public class JForStatement extends JStatement {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see jminusminus.JAST#codegen(jminusminus.CLEmitter)
-	 */
+
 	@Override
 	public void codegen(CLEmitter output) {
 		if (init != null) {
 			init.codegen(output);
 		}
-		String test = output.createLabel();
+		String loop = output.createLabel();
 		String out = output.createLabel();
 
-		output.addLabel(test);
+		output.addLabel(loop);
+		// Check the condition. branch out of loop if false
 		if (condition != null) {
 			condition.codegen(output, out, false);
 		}
-		
+		// Increment the incrementer and generate code.
 		body.codegen(output);
 		if (increments != null) {
-			for (JStatement inc : increments) {
-				inc.codegen(output);
+			for (JStatement x : increments) {
+				x.codegen(output);
 			}
 		}
-		output.addBranchInstruction(GOTO, test);
+		// Loop while condition is true.
+		output.addBranchInstruction(GOTO, loop);
 		
 		output.addLabel(out);
 	}
 
-	/* (non-Javadoc)
-	 * @see jminusminus.JAST#writeToStdOut(jminusminus.PrettyPrinter)
-	 */
 	@Override
 	public void writeToStdOut(PrettyPrinter p) {
 		p.printf("<JForStatement line=\"%d\">\n", line());

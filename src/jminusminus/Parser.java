@@ -1,4 +1,4 @@
-// Copyright 2013 Bill Campbell, Swami Iyer and Bahar Akbal-Delibas
+// Copyright 2013 Bill Campbell, swami Iyer and Bahar Akbal-Delibas
 
 package jminusminus;
 
@@ -657,14 +657,19 @@ public class Parser {
             JStatement statement = statement();
             return new JWhileStatement(line, test, statement);
         } else if  (have(FOR)) {
-            
+
             mustBe(LPAREN);
 			if (seeBasicType() | seeReferenceType()) { // checks if data type is instantiated in the
 									// loop
+                                    // enhanced for-loop grammar is for( FormalParameter : expression ) statement
+                // Using variable declarator instead of formalParameter.
                 JVariableDeclarator init = variableDeclarator(type());
+                //Check if COLON, if not, it is not enhanced for loop
 				if (have(COLON)) { // enhanced for-loop
+                    // Primary expression for array
 					JExpression array = primary();
 					mustBe(RPAREN);
+                    //Using block instead of statement to be more specific
 					JBlock consequent = block();
 					return new JColonForStatement(line, init, array,
 							consequent);
@@ -692,6 +697,7 @@ public class Parser {
                     JStatement body = statement();
                     return new JForStatement(line,initialize,test,update,body);
 				}
+            // For loop where init is null, other case handled above
 			} else {
                 JVariableDeclaration init = null;
                 mustBe(SEMI);
@@ -711,31 +717,7 @@ public class Parser {
                 }
                 JStatement body = statement();
                 return new JForStatement(line,init,test,update,body);
-			}
-            /*JVariableDeclaration init;
-            if(have(SEMI)) {
-                init = null;
-            } else {
-                init = forInit();
-                mustBe(SEMI);
             }
-            JExpression test;
-            if(have(SEMI)) {
-                test = null;
-            } else {
-                    test = expression();
-                    mustBe(SEMI);
-            }
-            ArrayList<JStatement> update;
-            if (have(RPAREN)) {
-                update = null;
-            } else {
-                update = forUpdate();
-                mustBe(RPAREN);
-            }
-            JStatement body = statement();
-            return new JForStatement(line,init,test,update,body);
-            */
         } else if (have(RETURN)) {
             if (have(SEMI)) {
                 return new JReturnStatement(line, null);
@@ -1054,7 +1036,7 @@ public class Parser {
         if (expr instanceof JAssignment || expr instanceof JPreIncrementOp
                                         || expr instanceof JPostDecrementOp
                                         || expr instanceof JPreDecrementOp
-                                        || expr instanceof  JPostIncrementOp
+                                        || expr instanceof JPostIncrementOp
                                         || expr instanceof JMessageExpression
                                         || expr instanceof JSuperConstruction
                                         || expr instanceof JThisConstruction
@@ -1110,10 +1092,10 @@ public class Parser {
             return new JDivAssignOp(line, lhs, assignmentExpression());
         } else if (have(MINUS_ASSIGN)) {
             return new JMinusAssignOp(line, lhs, assignmentExpression());
-        } else if (have(REM_ASSIGN)) {
-            return new JRemAssignOp(line, lhs, assignmentExpression());
         } else if (have(STAR_ASSIGN)) {
             return new JStarAssignOp(line, lhs, assignmentExpression());
+        } else if (have(REM_ASSIGN)) {
+            return new JRemAssignOp(line, lhs, assignmentExpression());
         } else {
             return lhs;
         }
@@ -1136,7 +1118,6 @@ public class Parser {
         while (more) {
             if (have(LOGICAL_OR)) {
                 lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
-
             } else {
                 more = false;
             }

@@ -227,7 +227,6 @@ TOKEN: {
 | <COLON: ":">
 | <COMMA: ",">
 | <DOT: ".">
-| <COLON: ":">
 }
 
 // Identifiers
@@ -698,8 +697,22 @@ private JStatement statement(): {
         body = statement()
         { statement = new JWhileStatement(line, test, body); } |
 
-
+        
         <FOR> {line = token.beginLine; }
+        (LOOKAHEAD(<LPAREN> type() <IDENTIFIER> <COLON> expression() <RPAREN> statement())
+        <LPAREN>
+        
+        initializer = variableDeclarators(type())
+        <COLON>
+        consequent = expression()
+
+        <RPAREN>
+
+        body = statement()
+
+        { statement = new JColonForStatement(line,initializer,consequent,body);}|
+
+        LOOKAHEAD(<LPAREN>)
 
         <LPAREN>
 
@@ -717,7 +730,7 @@ private JStatement statement(): {
 
         body = statement()
 
-        { statement = new JForStatement(line,init,test,update,body);}|
+        { statement = new JForStatement(line,init,test,update,body);})|
 
         <RETURN> { line = token.beginLine; }
         [
@@ -742,14 +755,18 @@ private JStatement statement(): {
 
  private JVariableDeclaration forInit(): {
         ArrayList<JVariableDeclarator> vdelcs = null;
-        JStatement init = null;
+        JStatement init1 = null;
+        JStatement init2 = null;
     }
     {
         try {
-            init = statementExpression()
+            LOOKAHEAD(statementExpression())
+            init1 = statementExpression()
+            (
             <COMMA>
-            { init = new JVariableDeclaration(line, expr); } |
-
+            {init2 = statementExpression(); } 
+            )*|
+            LOOKAHEAD(type() <IDENTIFIER>)
             vdelcs = variableDeclarators(type())
         }
         catch (ParseException e){
@@ -1164,6 +1181,8 @@ private JStatement statementExpression(): {
             if (expr instanceof JAssignment
              || expr instanceof JPreIncrementOp
              || expr instanceof JPostDecrementOp
+             || expr instanceof JPreDecrementOp
+             || expr instanceof JPostIncrementOp
              || expr instanceof JMessageExpression
              || expr instanceof JSuperConstruction
              || expr instanceof JThisConstruction
@@ -1271,8 +1290,8 @@ private JExpression assignmentExpression(): {
             try {
                 lhs = conditionalAndExpression() { line = lhs.line(); }
                 (
-                    <LOGICAL_OR>
-                    lhs = JLogicalOrOp(line, lhs, conditionalAndExpression())
+                    <LOR>
+                    {lhs = JLogicalOrOp(line, lhs, conditionalAndExpression()); }
                 )*
             }
             catch (ParseException e) {
@@ -1316,7 +1335,7 @@ private JExpression conditionalExpression(): {
  *
  * <pre>
  *   conditionalAndExpression ::= equalityExpression        // level 10
- *                                  {(LAND|LOR) equalityExpression}
+ *                                  {LAND equalityExpression}
  * </pre>
  *
  * @return an AST for a conditionalExpression.
@@ -1332,10 +1351,7 @@ private JExpression conditionalAndExpression(): {
         (
             <LAND>
             rhs = equalityExpression()
-            { lhs = new JLogicalAndOp(line, lhs, rhs); } |
-            <LOR>
-            rhs = equalityExpression()
-            { lhs = new JLogicalOrOp(line, lhs, rhs); }
+            { lhs = new JLogicalAndOp(line, lhs, rhs); } 
         )*
     }
     catch (ParseException e) {
