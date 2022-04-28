@@ -698,10 +698,16 @@ private JStatement statement(): {
     int line = 0;
     JStatement statement  = null;
     JExpression test      = null;
+    JBlock consequence = null;
+    JExpression array = null;
     JStatement consequent = null;
     JStatement alternate  = null;
     JStatement body       = null;
     JExpression expr      = null;
+    JVariableDeclaration init = null;
+    JVariableDeclarator initializer = null;
+    ArrayList<JStatement> update = null;
+
     ArrayList<JCatchStatement> catches = new ArrayList<JCatchStatement>();
     JBlock tryBlock = null;
     JBlock finallyBlock = null;
@@ -753,15 +759,17 @@ private JStatement statement(): {
         (LOOKAHEAD(<LPAREN> type() <IDENTIFIER> <COLON> expression() <RPAREN> statement())
         <LPAREN>
 
-        initializer = variableDeclarators(type())
+        initializer = variableDeclarator(type())
+
         <COLON>
-        consequent = expression()
+
+        array = expression()
 
         <RPAREN>
 
-        body = statement()
+        consequence = block()
 
-        { statement = new JColonForStatement(line,initializer,consequent,body);}|
+        { statement = new JColonForStatement(line,initializer,array,consequence);}|
 
         LOOKAHEAD(<LPAREN>)
 
@@ -810,10 +818,11 @@ private JVariableDeclaration forInit(): {
         ArrayList<JVariableDeclarator> vdelcs = null;
         JStatement init1 = null;
         JStatement init2 = null;
+        int line = 0;
     }
     {
-        try {
-            LOOKAHEAD(statementExpression())
+        try {      
+            {line = token.beginLine; }
             init1 = statementExpression()
             (
             <COMMA>
@@ -825,7 +834,7 @@ private JVariableDeclaration forInit(): {
         catch (ParseException e){
              recoverFromError(new int[] { SEMI, EOF }, e);
         }
-        {return JVariableDeclaration(scanner.token().line(), new ArrayList<String>(), vdelcs);}
+        {return new JVariableDeclaration(line, new ArrayList<String>(), vdelcs);}
     }
 
 private ArrayList<JStatement> forUpdate(): {
@@ -1301,7 +1310,8 @@ private JExpression expression(): {
 
 private JExpression assignmentExpression(): {
     int line = 0;
-    JExpression lhs = null, rhs = null;
+    JExpression lhs = null;
+    JExpression rhs = null;
 }
 {
     try {
@@ -1340,13 +1350,15 @@ private JExpression assignmentExpression(): {
 
  private JExpression conditionalOrExpression(): {
             JExpression expr = null;
+            JExpression lhs = null;
+            int line = 0;
         }
         {
             try {
                 lhs = conditionalAndExpression() { line = lhs.line(); }
                 (
                     <LOR>
-                    {lhs = JLogicalOrOp(line, lhs, conditionalAndExpression()); }
+                    {lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression()); }
                 )*
             }
             catch (ParseException e) {
@@ -1366,6 +1378,10 @@ private JExpression assignmentExpression(): {
 */
 private JExpression conditionalExpression(): {
     JExpression expr = null;
+    JExpression consequent = null;
+    JExpression alternate = null;
+    int line = 0;
+    JExpression lhs = null;
 }
 {
     try {
@@ -1375,7 +1391,7 @@ private JExpression conditionalExpression(): {
              consequent = assignmentExpression()
             <COLON>
              alternate = conditionalExpression()
-           { lhs = JConditionalExpression(scanner.token().line(),lhs,consequent,alternate); }
+           { lhs = new JConditionalExpression(line,lhs,consequent,alternate); }
 
         ]
     }
