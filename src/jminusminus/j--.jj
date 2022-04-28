@@ -685,6 +685,9 @@ private JStatement statement(): {
     JStatement alternate  = null;
     JStatement body       = null;
     JExpression expr      = null;
+    ArrayList<JCatchStatement> catches = new ArrayList<JCatchStatement>();
+    JBlock tryBlock = null;
+    JBlock finallyBlock = null;
 }
 {
     try {
@@ -783,8 +786,27 @@ private JStatement statement(): {
     }
     { return statement; }
 }
+private JCatchStatement catchStatement(): {
+        int line    = 0;
+        Type type   = null;
+        JFormalParameter temp = null;
 
- private JVariableDeclaration forInit(): {
+    }
+    {
+        try{
+            {line = token.beginLine;}
+            <LPAREN>
+               temp = formalParameter()
+            <RPAREN>
+        }
+        catch (ParseException e) {
+            recoverFromError(new int[] { SEMI, EOF }, e);
+        }
+        {return new JCatchStatement(line,temp, block());}
+    }
+
+
+private JVariableDeclaration forInit(): {
         ArrayList<JVariableDeclarator> vdelcs = null;
         JStatement init1 = null;
         JStatement init2 = null;
