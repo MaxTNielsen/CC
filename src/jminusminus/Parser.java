@@ -647,6 +647,30 @@ public class Parser {
         int line = scanner.token().line();
         if (see(LCURLY)) {
             return block();
+        }else if(have(TRY)){
+            
+            JBlock tryBlock = block();
+
+
+            ArrayList<JCatchStatement> catches = new ArrayList<JCatchStatement>();
+            while (have(CATCH)){
+                catches.add(catchStatement());
+            }
+            
+            JBlock finallyBlock;
+            if (catches.isEmpty()){
+                mustBe(FINALLY);
+                finallyBlock = block();
+            }
+            else {finallyBlock = have(FINALLY) ? block() : null;}
+        
+            
+            return new JTryStatement(line, tryBlock, catches, finallyBlock);
+
+        } else if (have(THROW)){
+            JExpression exception = expression();
+            //mustBe(SEMI);
+            return new JThrowStatement(line, exception);
         } else if (have(IF)) {
             JExpression test = parExpression();
             JStatement consequent = statement();

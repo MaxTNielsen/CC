@@ -180,6 +180,9 @@ TOKEN: {
 | <TRY: "try">
 | <VOLATILE: "volatile">
 | <FOR: "for">
+| <CATCH: "catch">
+| <FINALLY: "finally">
+| <DOUBLE: "double">
 
 }
 
@@ -543,6 +546,7 @@ private JMember memberDecl(ArrayList<String> mods): {
     JBlock body = null;
     ArrayList<JVariableDeclarator> variableDeclarators = null;
     JMember memberDecl = null;
+    ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
 }
 {
     try {
@@ -554,10 +558,14 @@ private JMember memberDecl(ArrayList<String> mods): {
                 name = token.image;
             }
             params = formalParameters()
+            [
+                <THROWS>{mods.add("throws"); exceptions.add(qualifiedIdentifier());}
+                (<COMMA>{exceptions.add(qualifiedIdentifier());})*
+            ]
             body = block()
             {
                 memberDecl = new JConstructorDeclaration(line, mods,
-                                                         name, params, body);
+                                                         name, params, body, exceptions);
             }
         ) |
         LOOKAHEAD((<VOID> | type()) <IDENTIFIER> <LPAREN>)
@@ -569,13 +577,17 @@ private JMember memberDecl(ArrayList<String> mods): {
             { line = token.beginLine; }
             <IDENTIFIER> { name = token.image; }
             params = formalParameters()
+            [
+                <THROWS>{mods.add("throws"); exceptions.add(qualifiedIdentifier());}
+                (<COMMA>{exceptions.add(qualifiedIdentifier());})*
+            ]
             (
                 body = block() |
                 <SEMI>
             )
             {
                 memberDecl = new JMethodDeclaration(line, mods, name,
-                                                    type, params, body);
+                                                    type, params, body, exceptions);
             }
         ) |
         (
@@ -677,6 +689,25 @@ private JStatement statement(): {
 {
     try {
         statement = block() |
+
+        <THROW> {line = token.beginLine; }
+        expr = expression()
+        {statement = new JThrowStatement(line, expr);} |
+
+        <TRY> { line = token.beginLine; }
+        
+        tryBlock = block()
+        (
+            <CATCH> {catches.add(catchStatement());}
+        )*
+        
+        [
+            LOOKAHEAD(<FINALLY>)
+            <FINALLY> finallyBlock = block()
+        ]
+        {statement = new JTryStatement(line,tryBlock, catches, finallyBlock);} |
+        //---
+
 
         <IF> { line = token.beginLine; }
         test = parExpression()
