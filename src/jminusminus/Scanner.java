@@ -195,7 +195,11 @@ class Scanner {
             return new TokenInfo(UCOMP, line);
         case '%':
             nextCh();
-            return new TokenInfo(MOD, line);
+            if(ch == '='){
+                nextCh();
+                return new TokenInfo(REM_ASSIGN, line);
+            }
+            else return new TokenInfo(MOD, line);
         case '(':
             nextCh();
             return new TokenInfo(LPAREN, line);
@@ -277,10 +281,11 @@ class Scanner {
                 return new TokenInfo(ANDEQ, line);
             }
             else {
-                nextCh();
+                nextCh(); //er dette ikke forkert?
                 return new TokenInfo(BAND, line);
             }
         case '>':
+            nextCh();
             if (ch == '>') {
                 nextCh();
                 if(ch == '>') {
@@ -297,7 +302,6 @@ class Scanner {
                     return new TokenInfo(RIGHTSHIFT_ASSIGN, line);
                 }
                 else {
-                    nextCh();
                     return new TokenInfo(SHR, line);
                 }
 
