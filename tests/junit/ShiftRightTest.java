@@ -1,6 +1,6 @@
 package junit;
-import junit.framework.TestCase;
 import pass.ShiftRight;
+import junit.framework.TestCase;
 public class ShiftRightTest extends TestCase{
     private ShiftRight shiftRight;
 

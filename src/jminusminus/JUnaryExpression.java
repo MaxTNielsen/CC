@@ -223,13 +223,13 @@ class JPostIncrementOp extends JUnaryExpression {
     }
 
     /**
-     * In generating code for a post-decrement operation, we treat simple
+     * In generating code for a post-increment operation, we treat simple
      * variable ({@link JVariable}) operands specially since the JVM has an 
      * increment instruction. 
      * Otherwise, we rely on the {@link JLhs} code generation support for
      * generating the proper code. Notice that we distinguish between
      * expressions that are statement expressions and those that are not; we
-     * insure the proper value (before the decrement) is left atop the stack in
+     * insure the proper value (before the increment) is left atop the stack in
      * the latter case.
      * 
      * @param output
@@ -430,7 +430,7 @@ class JPreIncrementOp extends JUnaryExpression {
 }
 
 /**
- * The AST node for a ++expr expression.
+ * The AST node for a --expr expression.
  */
 
 class JPreDecrementOp extends JUnaryExpression {
@@ -492,7 +492,7 @@ class JPreDecrementOp extends JUnaryExpression {
             // have replaced it with an explicit field selection.
             int offset = ((LocalVariableDefn) ((JVariable) arg).iDefn())
                     .offset();
-            output.addIINCInstruction(offset, 1);
+            output.addIINCInstruction(offset, -1);
             if (!isStatementExpression) {
                 // Loading its original rvalue
                 arg.codegen(output);

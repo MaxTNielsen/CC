@@ -10,7 +10,7 @@ import static jminusminus.CLConstants.*;
  * <p>
  * Most binary expressions returning booleans can be recognized by their
  * syntax. We take advantage of this to define a common {@code codegen} method,
- * which relies on the short-circuiting code generation for control and pushes 
+ * which relies on the short-circuiting code generation for control and pushes
  * either a 1 or a 0 onto the stack.
  */
 
@@ -18,7 +18,7 @@ abstract class JBooleanBinaryExpression extends JBinaryExpression {
 
     /**
      * Constructs an AST node for a boolean binary expression.
-     * 
+     *
      * @param line
      *            line in which the boolean binary expression occurs in the
      *            source file.
@@ -36,10 +36,10 @@ abstract class JBooleanBinaryExpression extends JBinaryExpression {
     }
 
     /**
-     * Generates code for the case where we actually want a boolean value 
-     * ({@code true} or {@code false}) computed onto the stack, for example, 
+     * Generates code for the case where we actually want a boolean value
+     * ({@code true} or {@code false}) computed onto the stack, for example,
      * for assignment to a boolean variable.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
@@ -67,7 +67,7 @@ class JEqualOp extends JBooleanBinaryExpression {
 
     /**
      * Constructs an AST node for an equality expression.
-     * 
+     *
      * @param line
      *            line number in which the equality expression occurs in the
      *            source file.
@@ -84,7 +84,7 @@ class JEqualOp extends JBooleanBinaryExpression {
     /**
      * Analyzing an equality expression means analyzing its operands and
      * checking that the types match.
-     * 
+     *
      * @param context
      *            context in which names are resolved.
      * @return the analyzed (and possibly rewritten) AST subtree.
@@ -100,7 +100,7 @@ class JEqualOp extends JBooleanBinaryExpression {
 
     /**
      * Branching code generation for == operation.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
@@ -122,70 +122,9 @@ class JEqualOp extends JBooleanBinaryExpression {
         }
     }
 }
-class JLogicalOrOp extends JBooleanBinaryExpression {
 
-    /**
-     * Constructs an AST node for a logical AND expression given its line number,
-     * and lhs and rhs operands.
-     * 
-     * @param line
-     *            line in which the logical AND expression occurs in the source
-     *            file.
-     * @param lhs
-     *            lhs operand.
-     * @param rhs
-     *            rhs operand.
-     */
-
-    public JLogicalOrOp(int line, JExpression lhs, JExpression rhs) {
-        super(line, "||", lhs, rhs);
-    }
-    /**
-     * Analyzing a logical AND expression involves analyzing its operands and
-     * insuring they are boolean; the result type is of course boolean.
-     * 
-     * @param context
-     *            context in which names are resolved.
-     * @return the analyzed (and possibly rewritten) AST subtree.
-     */
-
-    public JExpression analyze(Context context) {
-        lhs = (JExpression) lhs.analyze(context);
-        rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.BOOLEAN);
-        rhs.type().mustMatchExpected(line(), Type.BOOLEAN);
-        type = Type.BOOLEAN;
-        return this;
-    }
-
-    /**
-     * The semantics of j-- require that we implement short-circuiting branching
-     * in implementing the logical AND.
-     * 
-     * @param output
-     *            the code emitter (basically an abstraction for producing the
-     *            .class file).
-     * @param targetLabel
-     *            target for generated branch instruction.
-     * @param onTrue
-     *            should we branch on true?
-     */
-
-    public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
-        if (onTrue) {
-            lhs.codegen(output, targetLabel, true);
-            rhs.codegen(output, targetLabel, true);
-        } else {
-            String trueLabel = output.createLabel();
-            lhs.codegen(output, trueLabel, true);
-            rhs.codegen(output, targetLabel, false);
-            output.addLabel(trueLabel);
-        }
-    }
-
-}
 /**
- * The AST node for a logical AND (&amp;&amp;) expression. Implements 
+ * The AST node for a logical AND (&amp;&amp;) expression. Implements
  * short-circuiting branching.
  */
 
@@ -194,7 +133,7 @@ class JLogicalAndOp extends JBooleanBinaryExpression {
     /**
      * Constructs an AST node for a logical AND expression given its line number,
      * and lhs and rhs operands.
-     * 
+     *
      * @param line
      *            line in which the logical AND expression occurs in the source
      *            file.
@@ -211,7 +150,7 @@ class JLogicalAndOp extends JBooleanBinaryExpression {
     /**
      * Analyzing a logical AND expression involves analyzing its operands and
      * insuring they are boolean; the result type is of course boolean.
-     * 
+     *
      * @param context
      *            context in which names are resolved.
      * @return the analyzed (and possibly rewritten) AST subtree.
@@ -229,7 +168,7 @@ class JLogicalAndOp extends JBooleanBinaryExpression {
     /**
      * The semantics of j-- require that we implement short-circuiting branching
      * in implementing the logical AND.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
@@ -253,16 +192,16 @@ class JLogicalAndOp extends JBooleanBinaryExpression {
 }
 
 /**
- * The AST node for a logical OR (&amp;&amp;) expression. Implements 
+ * The AST node for a logical OR (&amp;&amp;) expression. Implements
  * short-circuiting branching.
  */
 
-class JLogicalOROp extends JBooleanBinaryExpression {
+class JLogicalOrOp extends JBooleanBinaryExpression {
 
     /**
      * Constructs an AST node for a logical OR expression given its line number,
      * and lhs and rhs operands.
-     * 
+     *
      * @param line
      *            line in which the logical AND expression occurs in the source
      *            file.
@@ -272,14 +211,14 @@ class JLogicalOROp extends JBooleanBinaryExpression {
      *            rhs operand.
      */
 
-    public JLogicalOROp(int line, JExpression lhs, JExpression rhs) {
+    public JLogicalOrOp(int line, JExpression lhs, JExpression rhs) {
         super(line, "||", lhs, rhs);
     }
 
     /**
      * Analyzing a logical OR expression involves analyzing its operands and
      * insuring they are boolean; the result type is of course boolean.
-     * 
+     *
      * @param context
      *            context in which names are resolved.
      * @return the analyzed (and possibly rewritten) AST subtree.
@@ -297,7 +236,7 @@ class JLogicalOROp extends JBooleanBinaryExpression {
     /**
      * The semantics of j-- require that we implement short-circuiting branching
      * in implementing the logical OR.
-     * 
+     *
      * @param output
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
