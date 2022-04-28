@@ -1,6 +1,8 @@
 package junit;
+
 import junit.framework.TestCase;
 import pass.And;
+
 public class AndTest extends TestCase{
     private And and;
 

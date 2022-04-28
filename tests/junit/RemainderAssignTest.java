@@ -2,12 +2,13 @@ package junit;
 import junit.framework.TestCase;
 import pass.RemainderAssign;
 
-public class RemainderAssignTest {
+public class RemainderAssignTest extends TestCase{
+
     private RemainderAssign remainderAssign;
 
     protected void setUp() throws Exception {
         super.setUp();
-        rightShiftAssign = new RightShiftAssign();
+        remainderAssign = new RemainderAssign();
     }
 
     protected void tearDown() throws Exception {
