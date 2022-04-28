@@ -697,11 +697,11 @@ private JStatement statement(): {
         body = statement()
         { statement = new JWhileStatement(line, test, body); } |
 
-        
+
         <FOR> {line = token.beginLine; }
         (LOOKAHEAD(<LPAREN> type() <IDENTIFIER> <COLON> expression() <RPAREN> statement())
         <LPAREN>
-        
+
         initializer = variableDeclarators(type())
         <COLON>
         consequent = expression()
@@ -764,7 +764,7 @@ private JStatement statement(): {
             init1 = statementExpression()
             (
             <COMMA>
-            {init2 = statementExpression(); } 
+            {init2 = statementExpression(); }
             )*|
             LOOKAHEAD(type() <IDENTIFIER>)
             vdelcs = variableDeclarators(type())
@@ -1180,6 +1180,8 @@ private JStatement statementExpression(): {
             line = expr.line();
             if (expr instanceof JAssignment
              || expr instanceof JPreIncrementOp
+             || expr instanceof JPreDecrementOp
+             || expr instanceof JPostIncrementOp
              || expr instanceof JPostDecrementOp
              || expr instanceof JPreDecrementOp
              || expr instanceof JPostIncrementOp
@@ -1351,7 +1353,7 @@ private JExpression conditionalAndExpression(): {
         (
             <LAND>
             rhs = equalityExpression()
-            { lhs = new JLogicalAndOp(line, lhs, rhs); } 
+            { lhs = new JLogicalAndOp(line, lhs, rhs); }
         )*
     }
     catch (ParseException e) {
@@ -1486,12 +1488,12 @@ private JExpression multiplicativeExpression(): {
             <STAR>
             rhs = unaryExpression()
             { lhs = new JMultiplyOp(line, lhs, rhs); } |
-            <DIV>
-            rhs = unaryExpression()
-            { lhs = new JDivisionOp(line, lhs, rhs); } |
             <REM>
             rhs = unaryExpression()
-            { lhs = new JRemainderOp(line, lhs, rhs); }
+            { lhs = new JRemainderOp(line, lhs, rhs); } |
+            <DIV>
+            rhs = unaryExpression()
+            { lhs = new JDivideOp(line, lhs, rhs); }
         )*
     }
     catch (ParseException e) {
@@ -1521,6 +1523,10 @@ private JExpression unaryExpression(): {
         <INC> { line = token.beginLine; }
         unaryExpr = unaryExpression()
         { expr = new JPreIncrementOp(line, unaryExpr); } |
+
+        <DEC> { line = token.beginLine; }
+        unaryExpr = unaryExpression()
+        { expr = new JPreDecrementOp(line, unaryExpr); } |
 
         <MINUS> { line = token.beginLine; }
         unaryExpr = unaryExpression()
@@ -1602,6 +1608,10 @@ private JExpression postfixExpression(): {
         primaryExpr = primary() { line = primaryExpr.line(); }
         (
             primaryExpr = selector(primaryExpr)
+        )*
+        (
+            <INC>
+            { primaryExpr = new JPostIncrementOp(line, primaryExpr); }
         )*
         (
             <DEC>

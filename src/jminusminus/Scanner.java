@@ -136,8 +136,6 @@ class Scanner {
             while (isWhitespace(ch)) {
                 nextCh();
             }
-            /*
-            */
             if (ch == '/') {
                 nextCh();
                 if (ch == '*') {
@@ -260,6 +258,10 @@ class Scanner {
             }
         case '-':
             nextCh();
+            if (ch == '>'){
+                nextCh();
+                return new TokenInfo(LAMBDA, line);
+            }
             if (ch == '-') {
                 nextCh();
                 return new TokenInfo(DEC, line);

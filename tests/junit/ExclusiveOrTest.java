@@ -1,7 +1,9 @@
 package junit;
-import junit.framework.TestCase;
+
 import pass.ExclusiveOr;
+import junit.framework.TestCase;
 public class ExclusiveOrTest extends TestCase{
+
     private ExclusiveOr exclusiveOr;
 
     protected void setUp() throws Exception {

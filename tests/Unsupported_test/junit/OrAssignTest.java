@@ -1,7 +1,7 @@
-package junit;
+package Unsupported_test.junit;
 
 
-import pass.OrAssign;
+import Unsupported_test.pass.OrAssign;
 import junit.framework.TestCase;
 
 public class OrAssignTest extends TestCase{
