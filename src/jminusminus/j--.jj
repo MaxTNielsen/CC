@@ -676,7 +676,24 @@ private JStatement blockStatement(): {
  *
  * @return an AST for a statement.
  */
+private JCatchStatement catchStatement(): {
+        int line    = 0;
+        Type type   = null;
+        JFormalParameter temp = null;
 
+    }
+    {
+        try{
+            {line = token.beginLine;}
+            <LPAREN>
+               temp = formalParameter()
+            <RPAREN>
+        }
+        catch (ParseException e) {
+            recoverFromError(new int[] { SEMI, EOF }, e);
+        }
+        {return new JCatchStatement(line,temp, block());}
+    }
 private JStatement statement(): {
     int line = 0;
     JStatement statement  = null;
@@ -786,24 +803,7 @@ private JStatement statement(): {
     }
     { return statement; }
 }
-private JCatchStatement catchStatement(): {
-        int line    = 0;
-        Type type   = null;
-        JFormalParameter temp = null;
 
-    }
-    {
-        try{
-            {line = token.beginLine;}
-            <LPAREN>
-               temp = formalParameter()
-            <RPAREN>
-        }
-        catch (ParseException e) {
-            recoverFromError(new int[] { SEMI, EOF }, e);
-        }
-        {return new JCatchStatement(line,temp, block());}
-    }
 
 
 private JVariableDeclaration forInit(): {
