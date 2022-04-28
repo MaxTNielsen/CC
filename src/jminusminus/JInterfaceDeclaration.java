@@ -7,17 +7,20 @@ import static jminusminus.CLConstants.*;
 
 class JInterfaceDeclaration extends JAST implements JTypeDecl{
 
-     public JInterfaceDeclaration(int line, ArrayList<String> mods, String name, ArrayList<javax.sound.sampled.AudioFileFormat.Type> interfaces, ArrayList<JMember> interfaceBlock) {
+     public JInterfaceDeclaration(int line, ArrayList<String> mods, String name, ArrayList<Type> extend, ArrayList<JMember> interfaceBlock) {
         super(line);
         mods.add("interface");
         mods.add("abstract");
         this.interfaceBlock = interfaceBlock;
-        this.interfaceSuperType = interfaces;
+        this.interfaceSuperType = extend;
         this.mods = mods;
         this.name = name;
+        this.staticFieldDeclaration = this.interfaceBlock.stream()
+            .filter(x -> x instanceof JFieldDeclaration)
+            .map(x -> (JFieldDeclaration) x)
+            .collect(Collectors.toCollection(ArrayList::new));
         instanceFieldInitializations = new ArrayList<JFieldDeclaration>();
         staticFieldDeclaration = new ArrayList<JFieldDeclaration>();
-        //TODO Auto-generated constructor stub
     }
 
     /** Class modifiers. */
