@@ -1,4 +1,4 @@
-// Copyright 2013 Bill Campbell, swami Iyer and Bahar Akbal-Delibas
+// Copyright 2013 Bill Campbell, Swami Iyer and Bahar Akbal-Delibas
 
 package jminusminus;
 
@@ -405,7 +405,15 @@ public class Parser {
 
     private JAST typeDeclaration() {
         ArrayList<String> mods = modifiers();
-        return classDeclaration(mods);
+        JAST declaration = null;
+        if (see(CLASS)) {
+            declaration = classDeclaration(mods);
+        } else if (see(INTERFACE)) {
+            declaration = interfaceDeclaration(mods);
+        } else {
+            reportParserError("Error: expected class or interface");
+        }
+        return declaration;
     }
 
     /**
@@ -557,7 +565,7 @@ public class Parser {
         return members;
     }
 
-    private JMember interfaceMemberDeclaration(){
+    private JMember interfaceMemberDeclaration(ArrayList<String> mods){
         if (!mods.contains("public")){
             mods.add("public");
         }
@@ -567,8 +575,56 @@ public class Parser {
         Type type = null;
 
         if(have(VOID)){
-            
+            if (!mods.contains("abstract")) {
+                mods.add("abstract");
         }
+        type = Type.VOID;
+        mustBe(IDENTIFIER);
+        String name = scanner.previousToken().image();
+        ArrayList<JFormalParameter> parameters = formalParameters();
+        ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+        if (have(THROWS)){
+            mods.add("throws");
+            exceptions.add(qualifiedIdentifier());
+            while(have(COMMA)){
+                exceptions.add(qualifiedIdentifier());
+            }
+        }
+        mustBe(SEMI);
+        interfaceMemberDeclaration = new JMethodDeclaration(line, mods, name, type, parameters, exceptions);
+    }
+    else{
+        type = type();
+        if(seeIdentLParen()){
+          if (!mods.contains("abstract")){
+              mods.add("abstract");
+        }
+        mustBe(IDENTIFIER);
+        String name = scanner.previousToken().image();
+        ArrayList<JFormalParameter> parameters = formalParameters();
+        ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+        if (have(THROWS)){
+            mods.add("throws");
+            exceptions.add(qualifiedIdentifier());
+            while(have(COMMA)){
+                exceptions.add(qualifiedIdentifier());
+            }
+        }
+        mustBe(SEMI);
+        interfaceMemberDeclaration = new JMethodDeclaration(line, mods, name, type, parameters, exceptions);
+    }
+    else{
+        if (!mods.contains("static")) {
+            mods.add("static");
+        }
+        if (!mods.contains("final")) {
+            mods.add("final");
+        }
+        interfaceMemberDeclaration = new JFieldDeclaration(line, mods, variableDeclarators(type));
+        mustBe(SEMI);
+    }
+}
+return interfaceMemberDeclaration;
     }
 
     /**
@@ -656,8 +712,7 @@ public class Parser {
                     JBlock body = have(SEMI) ? null : block();
 
                     memberDecl = new JMethodDeclaration(line, mods, name, type,
-                            params, body, exceptions);
-
+                            params, body);
                 } else {
                     // Field
                     memberDecl = new JFieldDeclaration(line, mods,
@@ -679,7 +734,7 @@ public class Parser {
      * @return an AST for a block.
      */
 
-
+/** første udkast, som jeg dog stærkt tvivler er det jeg skal gå med, men istedet sætte parametre/conditions op i memberdeclaration 
      private JBlock staticBlock(){
         int line = scanner.token().line();
         ArrayList<JStatement> statements = new ArrayList<JStatement>();
@@ -690,17 +745,17 @@ public class Parser {
         mustBe(RCURLY);
         return new JBlock(line, statements, null);
      }
-
-    private JBlock block() {
-        int line = scanner.token().line();
-        ArrayList<JStatement> statements = new ArrayList<JStatement>();
-        mustBe(LCURLY);
-        while (!see(RCURLY) && !see(EOF)) {
-            statements.add(blockStatement());
-        }
-        mustBe(RCURLY);
-        return new JBlock(line, statements);
+*/
+ private JBlock block() {
+    int line = scanner.token().line();
+    ArrayList<JStatement> statements = new ArrayList<JStatement>();
+    mustBe(LCURLY);
+    while (!see(RCURLY) && !see(EOF)) {
+        statements.add(blockStatement());
     }
+    mustBe(RCURLY);
+    return new JBlock(line, statements);
+}
 
     /**
      * Parse a block statement.
@@ -743,6 +798,7 @@ public class Parser {
 
         return new JCatchStatement(line,temp, block());
     }
+
     private JStatement statement() {
         int line = scanner.token().line();
         if (see(LCURLY)) {
@@ -1242,22 +1298,14 @@ public class Parser {
         while (more) {
             if (have(LOGICAL_OR)) {
                 lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
+
             } else {
                 more = false;
             }
         }
         return lhs;
     }
-     /**
-     * Parse a conditional expression.
-     *
-     * <pre>
-     *   conditionalExpression ::= conditionalExpression // 11
-                                         {QMARK COLON JConditionalExpression}
-     * </pre>
-     *
-     * @return an AST for a conditionalExpression.
-     */
+
     private JExpression conditionalExpression() {
         JExpression lhs = conditionalORExpression();
         if(have(QMARK)) {
