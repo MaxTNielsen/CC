@@ -7,20 +7,17 @@ import static jminusminus.CLConstants.*;
 public class JForStatement extends JStatement {
 	
 	private JVariableDeclaration init;
-
 	private JExpression condition;
-
-	private ArrayList<JStatement> incrementer;
-
+	private ArrayList<JStatement> increments;
 	private JStatement body;
 	
 	public JForStatement(int line, JVariableDeclaration init, 
-			JExpression condition, ArrayList<JStatement> incrementer, 
+			JExpression condition, ArrayList<JStatement> increments, 
 			JStatement body) {
 		super(line);
 		this.init = init;
 		this.condition = condition;
-		this.incrementer = incrementer;
+		this.increments = increments;
 		this.body = body;
 	}
 
@@ -29,41 +26,48 @@ public class JForStatement extends JStatement {
 		if (init != null) {
 			init = (JVariableDeclaration) init.analyze(context);
 		}
+		// Condition must be boolean (duh)
 		if (condition != null) {
 			condition = condition.analyze(context);
         	condition.type().mustMatchExpected(line(), Type.BOOLEAN);
 		}
-		if (incrementer != null) {
-	        for (int i = 0; i < incrementer.size(); i++) {
-	        	JStatement temp = incrementer.get(i);
+		//Analyze each loop through temp.
+		if (increments != null) {
+	        for (int i = 0; i < increments.size(); i++) {
+	        	JStatement temp = increments.get(i);
 	        	temp = (JStatement) temp.analyze(context);
-	        	incrementer.set(i, temp);
+				// Replace i with temp.
+	        	increments.set(i, temp);
 	        }
 		}
 		body = (JStatement) body.analyze(context);
 		return this;
 	}
 
+
 	@Override
 	public void codegen(CLEmitter output) {
 		if (init != null) {
 			init.codegen(output);
 		}
-		String test = output.createLabel();
+		String loop = output.createLabel();
 		String out = output.createLabel();
 
-		output.addLabel(test);
+		output.addLabel(loop);
+		// Check the condition. branch out of loop if false
 		if (condition != null) {
 			condition.codegen(output, out, false);
 		}
-		
+		// Increment the incrementer and generate code.
 		body.codegen(output);
-		if (incrementer != null) {
-			for (JStatement inc : incrementer) {
-				inc.codegen(output);
+		if (increments != null) {
+			for (JStatement x : increments) {
+				x.codegen(output);
 			}
 		}
-		output.addBranchInstruction(GOTO, test);
+		// Loop while condition is true.
+		output.addBranchInstruction(GOTO, loop);
+		
 		output.addLabel(out);
 	}
 
@@ -89,8 +93,8 @@ public class JForStatement extends JStatement {
         p.indentLeft();
         p.printf("<ForUpdate>\n");
         p.indentRight();
-        if (incrementer != null) {
-        	for (JStatement inc : incrementer) {
+        if (increments != null) {
+        	for (JStatement inc : increments) {
         		inc.writeToStdOut(p);
         	}
         } else {

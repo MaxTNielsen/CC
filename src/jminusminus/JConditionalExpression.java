@@ -18,9 +18,11 @@ public class JConditionalExpression extends JExpression {
 
     public JExpression analyze(Context context) {
         condition = (JExpression) condition.analyze(context);
+        // Condition must be boolean(duh)
         condition.type().mustMatchExpected(line, type.BOOLEAN); 
         then = (JExpression) then.analyze(context);
         elsePart = (JExpression) elsePart.analyze(context);
+        // Else and Then part must be of same type.
         elsePart.type().mustMatchExpected(line(), then.type());
         type = then.type();
         return this;
@@ -29,11 +31,16 @@ public class JConditionalExpression extends JExpression {
     public void codegen(CLEmitter output) {
         String elseLabel = output.createLabel();
         String endLabel = output.createLabel();
+        //Check if condition is false, jump to else label if so.
         condition.codegen(output, elseLabel,false);
+        // Else do then part
         then.codegen(output);
+        // Jump to end of label when then part is done, not else.
         output.addBranchInstruction(GOTO, endLabel); 
         output.addLabel(elseLabel);
+        // Do else part 
         elsePart.codegen(output);
+        // Skip else part if then.
         output.addLabel(endLabel);
     }
 

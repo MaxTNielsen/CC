@@ -61,8 +61,6 @@ DO			::= "do"
 CASE		::= "case"
 CATCH		::= "catch"
 
-
-
 //max
 LONG		::= "long"
 NATIVE		::= "native"
@@ -80,7 +78,6 @@ LE          ::= "<="
 SHLE		::= "<<="		
 LNOT        ::= "!"
 MINUS       ::= "-"
-DEC			::= "--"
 PLUS        ::= "+"
 PLUS_ASSIGN ::= "+="
 STAR        ::= "*"
@@ -88,10 +85,10 @@ STAR_ASSIGN	::= "*="
 DIV			::= "/"
 REM_ASSIGN	::= "%="
 TERNY		::= "?"
+LABMDA		::= "->"
 
 
 //MINE
-DIV			::= "/"
 MOD			::= "%"
 SHL			::= "<<"
 SHR			::= ">>"
@@ -107,7 +104,6 @@ MINUS_ASSIGN::= "-="
 DEC			::= "--"
 SHL_ASSIGN	::= "<<="
 ANDEQ       ::= "&="
-
 
 //max
 DIV_ASSIGN 	::= "/="

@@ -71,7 +71,13 @@ referenceType ::= basicType LBRACK RBRACK {LBRACK RBRACK}
 
 statementExpression ::= expression // but must have side-effect, eg i++
 
-expression ::= assignmentExpression
+expression ::= assignmentExpression | lambdaExpression
+
+LambdaExpression ::= LambdaParameters LAMBDA LambdaBody
+
+LambdaParameters ::= formalParameters
+
+LambdaBody ::= assignmentExpression | block
 
 assignmentExpression ::= conditionalAndExpression  // must be a valid lhs
                            [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | REM_ASSIGN | SHLE | ) assignmentExpression]
@@ -82,8 +88,13 @@ conditionalAndExpression ::= equalityExpression // level 10
 equalityExpression ::= relationalExpression  // level 6
                          {EQUAL relationalExpression}
 
+<<<<<<< HEAD
 relationalExpression ::= additiveExpression       // level 5
                            [(GT | LT | LE) additiveExpression
+=======
+relationalExpression ::= shiftExpression       // level 5
+                           [(GT | LT | LE) shiftExpression
+>>>>>>> main
                            | INSTANCEOF referenceType]
 
 shiftExpression ::= additiveExpression    // level 4

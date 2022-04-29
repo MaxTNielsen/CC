@@ -1,4 +1,4 @@
-// Copyright 2013 Bill Campbell, Swami Iyer and Bahar Akbal-Delibas
+// Copyright 2013 Bill Campbell, swami Iyer and Bahar Akbal-Delibas
 
 package jminusminus;
 
@@ -597,9 +597,19 @@ public class Parser {
             mustBe(IDENTIFIER);
             String name = scanner.previousToken().image();
             ArrayList<JFormalParameter> params = formalParameters();
-            JBlock body = block();
-            memberDecl = new JConstructorDeclaration(line, mods, name, params,
-                    body);
+            ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+            if (have(THROWS)){
+                mods.add("throws");
+                exceptions.add(qualifiedIdentifier());
+                while(have(COMMA)){
+                    exceptions.add(qualifiedIdentifier());
+                }
+            }
+            JBlock body = have(SEMI) ? null : block();
+             memberDecl = new JConstructorDeclaration(line, mods, name,
+                    params, body, exceptions);
+
+
         } else {
             Type type = null;
             if (seeBlock()) { 
@@ -615,9 +625,19 @@ public class Parser {
                 mustBe(IDENTIFIER);
                 String name = scanner.previousToken().image();
                 ArrayList<JFormalParameter> params = formalParameters();
+                
+                ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+                if (have(THROWS)){
+                    mods.add("throws");
+                    exceptions.add(qualifiedIdentifier());
+                    while(have(COMMA)){
+                        exceptions.add(qualifiedIdentifier());
+                    }
+                }
                 JBlock body = have(SEMI) ? null : block();
                 memberDecl = new JMethodDeclaration(line, mods, name, type,
-                        params, body);
+                            params, body, exceptions);
+                
             } else {
                 type = type();
                 if (seeIdentLParen()) {
@@ -625,9 +645,19 @@ public class Parser {
                     mustBe(IDENTIFIER);
                     String name = scanner.previousToken().image();
                     ArrayList<JFormalParameter> params = formalParameters();
+                    ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+                    if (have(THROWS)){
+                        mods.add("throws");
+                        exceptions.add(qualifiedIdentifier());
+                        while(have(COMMA)){
+                            exceptions.add(qualifiedIdentifier());
+                        }
+                    }
                     JBlock body = have(SEMI) ? null : block();
+
                     memberDecl = new JMethodDeclaration(line, mods, name, type,
-                            params, body);
+                            params, body, exceptions);
+
                 } else {
                     // Field
                     memberDecl = new JFieldDeclaration(line, mods,
@@ -705,11 +735,42 @@ public class Parser {
      *
      * @return an AST for a statement.
      */
+    private JCatchStatement catchStatement(){
+        int line = scanner.token().line();
+        mustBe(LPAREN);
+                JFormalParameter temp = formalParameter();
+        mustBe(RPAREN);
 
+        return new JCatchStatement(line,temp, block());
+    }
     private JStatement statement() {
         int line = scanner.token().line();
         if (see(LCURLY)) {
             return block();
+        }else if(have(TRY)){
+            
+            JBlock tryBlock = block();
+
+
+            ArrayList<JCatchStatement> catches = new ArrayList<JCatchStatement>();
+            while (have(CATCH)){
+                catches.add(catchStatement());
+            }
+            
+            JBlock finallyBlock;
+            if (catches.isEmpty()){
+                mustBe(FINALLY);
+                finallyBlock = block();
+            }
+            else {finallyBlock = have(FINALLY) ? block() : null;}
+        
+            
+            return new JTryStatement(line, tryBlock, catches, finallyBlock);
+
+        } else if (have(THROW)){
+            JExpression exception = expression();
+            //mustBe(SEMI);
+            return new JThrowStatement(line, exception);
         } else if (have(IF)) {
             JExpression test = parExpression();
             JStatement consequent = statement();
@@ -720,30 +781,67 @@ public class Parser {
             JStatement statement = statement();
             return new JWhileStatement(line, test, statement);
         } else if  (have(FOR)) {
+
             mustBe(LPAREN);
-            JVariableDeclaration init;
-            if(have(SEMI)) {
-                init = null;
-            } else {
-                init = forInit();
+			if (seeBasicType() | seeReferenceType()) { // checks if data type is instantiated in the
+									// loop
+                                    // enhanced for-loop grammar is for( FormalParameter : expression ) statement
+                // Using variable declarator instead of formalParameter.
+                JVariableDeclarator init = variableDeclarator(type());
+                //Check if COLON, if not, it is not enhanced for loop
+				if (have(COLON)) { // enhanced for-loop
+                    // Primary expression for array
+					JExpression array = primary();
+					mustBe(RPAREN);
+                    //Using block instead of statement to be more specific
+					JBlock consequent = block();
+					return new JColonForStatement(line, init, array,
+							consequent);
+				} else {
+                    JVariableDeclaration initialize = null;
+                    if(have(SEMI)) {
+                    } else {
+                        initialize = forInit();
+                        mustBe(SEMI);
+                    }
+                    JExpression test;
+                    if(have(SEMI)) {
+                        test = null;
+                    } else {
+                            test = expression();
+                            mustBe(SEMI);
+                    }
+                    ArrayList<JStatement> update;
+                    if (have(RPAREN)) {
+                        update = null;
+                    } else {
+                        update = forUpdate();
+                        mustBe(RPAREN);
+                    }
+                    JStatement body = statement();
+                    return new JForStatement(line,initialize,test,update,body);
+				}
+            // For loop where init is null, other case handled above
+			} else {
+                JVariableDeclaration init = null;
                 mustBe(SEMI);
+                JExpression test;
+                if(have(SEMI)) {
+                    test = null;
+                } else {
+                        test = expression();
+                        mustBe(SEMI);
+                }
+                ArrayList<JStatement> update;
+                if (have(RPAREN)) {
+                    update = null;
+                } else {
+                    update = forUpdate();
+                    mustBe(RPAREN);
+                }
+                JStatement body = statement();
+                return new JForStatement(line,init,test,update,body);
             }
-            JExpression test;
-            if(have(SEMI)) {
-                test = null;
-            } else {
-                    test = expression();
-                    mustBe(SEMI);
-            }
-            ArrayList<JStatement> update;
-            if (have(RPAREN)) {
-                update = null;
-            } else {
-                update = forUpdate();
-                mustBe(RPAREN);
-            }
-            JStatement body = statement();
-            return new JForStatement(line,init,test,update,body);
         } else if (have(RETURN)) {
             if (have(SEMI)) {
                 return new JReturnStatement(line, null);
@@ -1060,7 +1158,9 @@ public class Parser {
         int line = scanner.token().line();
         JExpression expr = expression();
         if (expr instanceof JAssignment || expr instanceof JPreIncrementOp
+                                        || expr instanceof JPreDecrementOp
                                         || expr instanceof JPostDecrementOp
+                                        || expr instanceof JPostIncrementOp
                                         || expr instanceof JMessageExpression
                                         || expr instanceof JSuperConstruction
                                         || expr instanceof JThisConstruction
@@ -1142,14 +1242,22 @@ public class Parser {
         while (more) {
             if (have(LOGICAL_OR)) {
                 lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
-
             } else {
                 more = false;
             }
         }
         return lhs;
     }
-
+     /**
+     * Parse a conditional expression.
+     *
+     * <pre>
+     *   conditionalExpression ::= conditionalExpression // 11
+                                         {QMARK COLON JConditionalExpression}
+     * </pre>
+     *
+     * @return an AST for a conditionalExpression.
+     */
     private JExpression conditionalExpression() {
         JExpression lhs = conditionalORExpression();
         if(have(QMARK)) {

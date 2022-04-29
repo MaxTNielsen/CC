@@ -31,16 +31,18 @@ public class JMinusMinusTestRunner {
         suite.addTestSuite(ExclusiveOrTest.class);
         suite.addTestSuite(UcompTest.class);
         suite.addTestSuite(UnaryPlusTest.class);
-        suite.addTestSuite(RightShiftAssignTest.class);
+        //suite.addTestSuite(RightShiftAssignTest.class);
         suite.addTestSuite(DivisionAssignTest.class);
-        suite.addTestSuite(OrAssignTest.class);
-        suite.addTestSuite(LogicalORTest.class);
+        //suite.addTestSuite(OrAssignTest.class);
+        suite.addTestSuite(LogicalOrTest.class);
+        //suite.addTestSuite(LeftSignTest.class);
         suite.addTestSuite(PostfixIncrementTest.class);
         suite.addTestSuite(MinusAssignTest.class);
         suite.addTestSuite(StarAssignTest.class);
         suite.addTestSuite(PrefixDecrementTest.class);
         suite.addTestSuite(ForLoopTest.class);
         suite.addTestSuite(ConditionalTest.class);
+        suite.addTestSuite(LTTest.class);
         return suite;
     }
 

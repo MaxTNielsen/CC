@@ -1,8 +1,7 @@
 package junit;
 
-import junit.framework.TestCase;
-
 import pass.RightShiftAssign;
+import junit.framework.TestCase;
 
 public class RightShiftAssignTest extends TestCase{
     private RightShiftAssign rightShiftAssign;

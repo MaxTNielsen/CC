@@ -31,7 +31,11 @@ enum TokenKind {
     DIV("/"),MOD("%"),USHIFTRIGHT_ASSIGN(">>>="),AND("&"),GREATEROREQ(">="),
     ANDEQ("&="), SHR(">>"),SHL("<<"), USHR(">>>"), UCOMP("~"), OR("|"), XOR("^"), DIV_ASSIGN("/="),
     RIGHTSHIFT_ASSIGN(">>="),LOGICAL_OR("||"), OR_ASSIGN("|="),
+<<<<<<< HEAD
 
+=======
+    SHL_ASSIGN("<<="), MINUS_ASSIGN("-="), QMARK("?"),LAMBDA("->"),
+>>>>>>> main
     // Separators
     LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["),
     RBRACK("]"), SEMI(";"), COMMA(","), DOT("."),COLON(":"),

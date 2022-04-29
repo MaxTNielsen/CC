@@ -1,6 +1,6 @@
 package junit;
-import junit.framework.TestCase;
 import pass.Ucomp;
+import junit.framework.TestCase;
 public class UcompTest extends TestCase{
     private Ucomp ucomp;
 
