@@ -61,7 +61,7 @@ class JClassDeclaration extends JAST implements JTypeDecl {
      */
 
     public JClassDeclaration(int line, ArrayList<String> mods, String name,
-            javax.sound.sampled.AudioFileFormat.Type superClass, ArrayList<JMember> classBlock) {
+            Type superClass, ArrayList<JMember> classBlock) {
         super(line);
         this.mods = mods;
         this.name = name;
