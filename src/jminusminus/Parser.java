@@ -720,24 +720,30 @@ public class Parser {
         } else if  (have(FOR)) {
 
             mustBe(LPAREN);
+            scanner.recordPosition();
 			if (seeBasicType() | seeReferenceType()) { // checks if data type is instantiated in the
 									// loop
                                     // enhanced for-loop grammar is for( FormalParameter : expression ) statement
-                // Using variable declarator instead of formalParameter.
-                JVariableDeclarator init = variableDeclarator(type());
-                //Check if COLON, if not, it is not enhanced for loop
-				if (have(COLON)) { // enhanced for-loop
+                // Create own lookahead function
+                scanner.next();
+                //Check for identifier and COLON, or else not colon for statement
+                if(have(IDENTIFIER) && have(COLON)) {
+                    scanner.returnToPosition();
+                    JVariableDeclarator init = variableDeclarator(type());
+                    mustBe(COLON);
                     // Primary expression for array
-					JExpression array = primary();
-					mustBe(RPAREN);
+                    JExpression array = primary();
+                    mustBe(RPAREN);
                     //Using block instead of statement to be more specific
-					JBlock consequent = block();
-					return new JColonForStatement(line, init, array,
+                    JBlock consequent = block();
+                    return new JColonForStatement(line, init, array,
 							consequent);
-				} else {
+                } else {
+                    scanner.returnToPosition();
                     JVariableDeclaration initialize = null;
                     if(have(SEMI)) {
-                    } else {
+                    } 
+                    else {
                         initialize = forInit();
                         mustBe(SEMI);
                     }
