@@ -412,7 +412,9 @@ class Scanner {
                 }
                 return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
             }
-            else return new TokenInfo(INT_LITERAL, buffer.toString(), line);
+            else {
+                return new TokenInfo(INT_LITERAL, buffer.toString(), line);
+            }
         default:
             if (isIdentifierStart(ch)) {
                 buffer = new StringBuffer();
