@@ -144,7 +144,6 @@ class Scanner {
                             nextCh();
                             if (ch == '/' && ch != EOFCH){
                                 //break out
-                                nextCh();
                                 skip = false;
 
                             }

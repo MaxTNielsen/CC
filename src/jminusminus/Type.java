@@ -427,6 +427,7 @@ class Type {
         return cls == null ? "V" : cls == void.class ? "V"
                 : cls.isArray() ? "[" + descriptorFor(cls.getComponentType())
                         : cls.isPrimitive() ? (cls == int.class ? "I"
+                            : cls == double.class ? "D"
                                 : cls == char.class ? "C"
                                         : cls == boolean.class ? "Z" : "?")
                                 : "L" + cls.getName().replace('.', '/') + ";";

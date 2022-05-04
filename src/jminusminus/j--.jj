@@ -183,6 +183,14 @@ TOKEN: {
 | <CATCH: "catch">
 | <FINALLY: "finally">
 | <DOUBLE: "double">
+| <DO: "do">
+| <DEFAULT: "default">
+| <FINAL: "final">
+| <BREAK: "break">
+| <BYTE: "byte">
+| <CASE: "case">
+| <CONST: "const">
+| <CONTINUE: "continue">
 
 }
 
@@ -1178,7 +1186,8 @@ private Type basicType(): {
     try {
         <BOOLEAN> { type = Type.BOOLEAN; } |
         <CHAR> { type = Type.CHAR; } |
-        <INT> { type = Type.INT; }
+        <INT> { type = Type.INT; } |
+        <DOUBLE> {type = Type.DOUBLE; }
     }
     catch (ParseException e) {
         recoverFromError(new int[] { SEMI, EOF }, e);
