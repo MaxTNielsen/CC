@@ -105,11 +105,8 @@ class Scanner {
 
         //MINE
         reserved.put(CONST.image(), CONST);
-        reserved.put(FINALLY.image(), FINALLY);
         reserved.put(CONTINUE.image(), CONTINUE);
-        reserved.put(FLOAT.image(), FLOAT);
         reserved.put(INTERFACE.image(),INTERFACE);
-        reserved.put(THROW.image(), THROW);
         reserved.put(BREAK.image(), BREAK);
         reserved.put(BYTE.image(),BYTE);
         reserved.put(DEFAULT.image(),DEFAULT);
@@ -119,6 +116,7 @@ class Scanner {
         reserved.put(LONG.image(), LONG);
         reserved.put(NATIVE.image(), NATIVE);
         reserved.put(SHORT.image(), SHORT);
+        reserved.put(CHAR.image(), CHAR);
         // Prime the pump.
         nextCh();
     }
