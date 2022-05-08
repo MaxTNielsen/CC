@@ -150,7 +150,6 @@ class JCompilationUnit extends JAST {
         // java.lang.String
         context.addType(0, Type.OBJECT);
         context.addType(0, Type.STRING);
-
         // Declare any imported types
         for (TypeName imported : imports) {
             try {
