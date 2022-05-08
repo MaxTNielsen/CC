@@ -38,6 +38,12 @@ class JBlock extends JStatement {
         this.mods = mods;
     }
 
+    public JBlock(int line, ArrayList<JStatement> statements) {
+        super(line);
+        this.statements = statements;
+        
+    }
+
     /**
      * Returns the list of statements comprising the block.
      * 

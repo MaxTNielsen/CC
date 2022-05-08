@@ -63,8 +63,8 @@ class JMethodDeclaration extends JAST implements JMember {
      */
 
     public JMethodDeclaration(int line, ArrayList<String> mods,
-        String name, javax.sound.sampled.AudioFileFormat.Type type,
-        ArrayList<JFormalParameter> params, JBlock body)
+        String name, Type type,
+        ArrayList<JFormalParameter> params, JBlock body, ArrayList<TypeName> exceptions)
 
     {
         super(line);

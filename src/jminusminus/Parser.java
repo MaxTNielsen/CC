@@ -1,6 +1,6 @@
 // Copyright 2013 Bill Campbell, Swami Iyer and Bahar Akbal-Delibas
 
-package jminusminus;
+package jminusminus;   
 
 import java.util.ArrayList;
 
@@ -537,8 +537,18 @@ public class Parser {
         return members;
     }
 
+    private boolean hasBlock() {
+        scanner.recordPosition();
+        if (!have(LCURLY)) {
+            scanner.returnToPosition();
+            return false;
+        }
+        scanner.returnToPosition();
+        return true;
+    }
+
     private JInterfaceDeclaration interfaceDeclaration(ArrayList<String> mods){
-        Type superClass;
+        Type superClass = type().OBJECT;
         int line = scanner.token().line();
         mustBe(INTERFACE);
         mustBe(IDENTIFIER);
@@ -551,7 +561,7 @@ public class Parser {
                 interfaces.add(qualifiedIdentifier());
             }
         }
-        return new JInterfaceDeclaration(line, mods, name, interfaces, null);
+        return new JInterfaceDeclaration(line, mods, name, interfaces, superClass, interfaceBody());
 
     }
 
@@ -559,7 +569,7 @@ public class Parser {
         ArrayList<JMember> members = new ArrayList<>();
         mustBe(LCURLY);
         while(!see(LCURLY) && !see(EOF)){
-            members.add(interfaceDeclaration(modifiers()));
+            members.add(interfaceMemberDeclaration(modifiers()));
         }
         mustBe(RCURLY);
         return members;
@@ -591,7 +601,7 @@ public class Parser {
             }
         }
         mustBe(SEMI);
-        interfaceMemberDeclaration = new JMethodDeclaration(line, mods, name, type, parameters, exceptions);
+        interfaceMemberDeclaration = new JMethodDeclaration(line, mods, name, type, parameters, null, exceptions);
     }
     else{
         type = type();
@@ -611,7 +621,7 @@ public class Parser {
             }
         }
         mustBe(SEMI);
-        interfaceMemberDeclaration = new JMethodDeclaration(line, mods, name, type, parameters, exceptions);
+        interfaceMemberDeclaration = new JMethodDeclaration(line, mods, name, type, parameters, null, exceptions);
     }
     else{
         if (!mods.contains("static")) {
@@ -623,8 +633,10 @@ public class Parser {
         interfaceMemberDeclaration = new JFieldDeclaration(line, mods, variableDeclarators(type));
         mustBe(SEMI);
     }
+    return interfaceMemberDeclaration;
 }
-return interfaceMemberDeclaration;
+        return interfaceMemberDeclaration;
+
     }
 
     /**
@@ -666,9 +678,9 @@ return interfaceMemberDeclaration;
                     params, body, exceptions);
 
 
-        } else {
+        } else {    
             Type type = null;
-            if (seeBlock()) { 
+            if (hasBlock()) { 
                 if (mods.contains("static")) { 
                     memberDecl = block(mods);
                 } else {
@@ -712,7 +724,7 @@ return interfaceMemberDeclaration;
                     JBlock body = have(SEMI) ? null : block();
 
                     memberDecl = new JMethodDeclaration(line, mods, name, type,
-                            params, body);
+                            params, body, exceptions);
                 } else {
                     // Field
                     memberDecl = new JFieldDeclaration(line, mods,
@@ -755,6 +767,17 @@ return interfaceMemberDeclaration;
     }
     mustBe(RCURLY);
     return new JBlock(line, statements);
+}
+
+private JBlock block(ArrayList<String> mods) {
+    int line = scanner.token().line();
+    ArrayList<JStatement> statements = new ArrayList<JStatement>();
+    mustBe(LCURLY);
+    while (!see(RCURLY) && !see(EOF)) {
+        statements.add(blockStatement());
+    }
+    mustBe(RCURLY);
+    return new JBlock(line, statements, mods);
 }
 
     /**
