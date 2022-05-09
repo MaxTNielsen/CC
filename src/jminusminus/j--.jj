@@ -142,7 +142,7 @@ SKIP: {" "|"\t"|"\n"|"\r"|"\f"}
 SKIP: {<SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>}
 
 // Multi line comment -- ignored
-SKIP: {<MULTI_LINE_COMMENT: "/*" (~[])* "*/">}
+SKIP: {<MULTI_LINE_COMMENT: "/*" (~[])* ("*/"| EOF)>}
 
 // Reserved words
 TOKEN: {
@@ -255,7 +255,7 @@ TOKEN: {
   <INT_LITERAL: ("0" | <NON_ZERO_DIGIT> (<DIGIT>)*) >
 | <CHAR_LITERAL: "'" (<ESC> | ~["'","\\","\n","\r"]) "'" >
 | <STRING_LITERAL: "\"" (<ESC> | ~["\"","\\","\n","\r"])* "\"" >
-| <DOUBLE_LITERAL: ( (<DIGIT>)* <DOT> (<DIGIT>)* ) >
+| <DOUBLE_LITERAL: ("0" <DOT> (<DIGIT>)* | <NON_ZERO_DIGIT> (<DIGIT>)* <DOT> (<DIGIT>)*) >
 | <#ESC: "\\" ["n","t","b","r","f","\\","'","\""] >
 }
 

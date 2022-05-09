@@ -45,7 +45,7 @@ public class JColonForStatement extends JStatement {
 	public JAST analyze(Context context) {
 		// None of this is optional, therefore no Null checks.
 		
-		LocalContext localContext = new LocalContext(context)
+		LocalContext localContext = new LocalContext(context);
 
 		init = (JVariableDeclarator) init.analyze(localContext);
 		array = array.analyze(localContext);
