@@ -44,15 +44,15 @@ public class JLiteralDouble extends JExpression {
 
     public void codegen(CLEmitter output) {
         double d = Double.parseDouble(text);
-        switch (d) {
-        case (0.0):
+        
+        if (d == 0.0){
             output.addNoArgInstruction(DCONST_0);
-            break;
-        case (1.0):
+        }
+        else if (d == 1.0){
             output.addNoArgInstruction(DCONST_1);
-            break;
-        default:
-                output.addLDCInstruction(d);
+        }
+        else{
+            output.addLDCInstruction(d);
         }
     }
 
