@@ -9,15 +9,13 @@ import static jminusminus.CLConstants.*;
 public class JColonForStatement extends JStatement {
 
 	// Initialize a variable. 
-	private JFormalParameter init;
-
-	private JFormalParameter param;
+	private JVariableDeclarator init;
 
 	// Statement that holds the array 
 	private JExpression array;
 
 	// Statement that occurs on every loop 
-	protected JStatement consequent;
+	protected JBlock consequent;
 
 	// Expression for arrayLength
 	protected JExpression arrayLength;
@@ -25,37 +23,41 @@ public class JColonForStatement extends JStatement {
 	// Statement for incrementing
 	protected JStatement impUp;
 
-	protected JVariableDeclaration forInit;
+	protected JVariableDeclaration initializer;
 	
-	public JColonForStatement(int line, JFormalParameter init, JExpression array, JStatement consequent) {
+	public JColonForStatement(int line, JVariableDeclarator init, JExpression array, JBlock consequent) {
 		super(line);
-		this.param = init;
+		this.init = init;
 		this.array = array;
 		this.consequent = consequent;
+		
 
-		// No need to set variables, since I use blocks, primary expressions and JVariableDeclarator
-
-		ArrayList<JVariableDeclarator> forParams = new ArrayList<>();
-        String randomName = "r" + (new Random().nextInt(10000));
-        JVariable indexVar = new JVariable(line, randomName);
-        forParams.add(new JVariableDeclarator(line, indexVar.name(), Type.INT, new JLiteralInt(line, "0")));
-        this.forInit = new JVariableDeclaration(line, null, forParams);
-
-		ArrayList<JVariableDeclarator> blockParams = new ArrayList<>();
-		blockParams.add(new JVariableDeclarator(line, param.name(), param.type(), new JArrayExpression(line, array, indexVar)));
-
+		// Block parameters must be set to a list of statements. Seems redundant but will get 
+		// errors otherwise
 		if (consequent instanceof JBlock == false) {
 			ArrayList<JStatement> statements = new ArrayList<>();
 			statements.add(consequent);
 			this.consequent = new JBlock(line, statements);
 		}
-		((JBlock) this.consequent).statements.add(0, new JVariableDeclaration(line, null, blockParams));
+		((JBlock) this.consequent).statements.add(0, new JVariableDeclaration(line, null, block));
+
+
+		//First create index variable
+		String randomizer = "x" + (new Random().nextInt(999));
+        JVariable indexVar = new JVariable(line, randomizer);
+
+		// Must set variables for context
+		ArrayList<JVariableDeclarator> parameters = new ArrayList<>();
+		
+        parameters.add(new JVariableDeclarator(line, indexVar.name(), Type.INT, new JLiteralInt(line, "0")));
+        this.initializer = new JVariableDeclaration(line, null, parameters);
+
+		ArrayList<JVariableDeclarator> block = new ArrayList<>();
+		block.add(new JVariableDeclarator(line, init.name(), init.type(), new JArrayExpression(line, array, indexVar)));
 
 		// Have to create array.length by using JLessOP, check microsoft teams help channel
 		// For more insight should i need it
-		// String randomizer = "r"+(new Random().nextInt(100000));
-		//First create index variable
-		// JVariable i = new JVariable(line, randomizer);
+	
 		//Use condition to make array length, by making sure variable is less than array
 		this.arrayLength = new JLessThanOp(line, indexVar, new JFieldSelection(line, array, "length"));
 		//Most now create expression to increment #i (see javase/specs chapter 14.14.2)
@@ -68,9 +70,9 @@ public class JColonForStatement extends JStatement {
 		// None of this is optional, therefore no Null checks.
 
 		LocalContext localContext = new LocalContext(context);
-		param.analyze(localContext);
+		init.analyze(localContext);
 		array.analyze(localContext);
-		forInit.analyze(localContext);
+		init.analyze(localContext);
 		arrayLength.analyze(localContext);
 		arrayLength.type().mustMatchExpected(line, Type.BOOLEAN);
 		impUp.analyze(localContext);

@@ -875,13 +875,13 @@ private JBlock block(ArrayList<String> mods) {
                 //Check for identifier and COLON, or else not colon for statement
                 if(have(IDENTIFIER) && have(COLON)) {
                     scanner.returnToPosition();
-                    JFormalParameter init = formalParameter();
+                    JVariableDeclarator init = variableDeclarator(type());
                     mustBe(COLON);
                     // Primary expression for array
                     JExpression array = primary();
                     mustBe(RPAREN);
                     //Using block instead of statement to be more specific
-                    JStatement consequent = block();
+                    JBlock consequent = block();
                     return new JColonForStatement(line, init, array,
 							consequent);
                 } else {
