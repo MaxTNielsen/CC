@@ -767,7 +767,7 @@ private JStatement statement(): {
 
 
         <FOR> {line = token.beginLine; }
-        (LOOKAHEAD(<LPAREN> type() <IDENTIFIER> <COLON> expression() <RPAREN> statement())
+        (LOOKAHEAD(basicType() | referenceType() |<LPAREN> type() <IDENTIFIER> <COLON> expression() )
         <LPAREN>
 
         initializer = variableDeclarator(type())
