@@ -912,7 +912,6 @@ private JBlock block(ArrayList<String> mods) {
 				}
             // For loop where init is null, other case handled above
 			} else {
-                scanner.returnToPosition();
                 JVariableDeclaration init = null;
                 mustBe(SEMI);
                 JExpression test;
@@ -1444,6 +1443,8 @@ private JBlock block(ArrayList<String> mods) {
             return new JGreaterThanOp(line, lhs, shiftExpression());
         } else if (have(LT)) {
             return new JLessThanOp(line, lhs, shiftExpression());
+        } else if (have(GREATEROREQ)) {
+            return new JGreaterEqualOp(line, lhs, shiftExpression());
         } else if (have(LE)) {
             return new JLessEqualOp(line, lhs, shiftExpression());
         } else if (have(INSTANCEOF)) {
