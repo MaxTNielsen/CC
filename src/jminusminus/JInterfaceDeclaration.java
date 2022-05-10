@@ -280,18 +280,18 @@ private void codegenClassInit(CLEmitter output) {
     output.addNoArgInstruction(RETURN);
 }
 
-private void codegenPartialImplicitConstructor(CLEmitter partial) {
+//private void codegenPartialImplicitConstructor(CLEmitter partial) {
     // Invoke super constructor
-    ArrayList<String> mods = new ArrayList<String>();
-    mods.add("public");
-    partial.addMethod(mods, "<init>", "()V", null, false);
-    partial.addNoArgInstruction(ALOAD_0);
-    partial.addMemberAccessInstruction(INVOKESPECIAL, superType.jvmName(),
-            "<init>", "()V");
+  //  ArrayList<String> mods = new ArrayList<String>();
+   // mods.add("public");
+    //partial.addMethod(mods, "<init>", "()V", null, false);
+    //partial.addNoArgInstruction(ALOAD_0);
+    //partial.addMemberAccessInstruction(INVOKESPECIAL, superType.jvmName(),
+      //      "<init>", "()V");
 
     // Return
-    partial.addNoArgInstruction(RETURN);
-}
+    //partial.addNoArgInstruction(RETURN);
+//}
     
 }
 
