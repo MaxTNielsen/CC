@@ -865,7 +865,6 @@ private JBlock block(ArrayList<String> mods) {
             JStatement statement = statement();
             return new JWhileStatement(line, test, statement);
         } else if  (have(FOR)) {
-
             mustBe(LPAREN);
             scanner.recordPosition();
 			if (seeBasicType() | seeReferenceType()) { // checks if data type is instantiated in the
@@ -913,6 +912,7 @@ private JBlock block(ArrayList<String> mods) {
 				}
             // For loop where init is null, other case handled above
 			} else {
+                scanner.returnToPosition();
                 JVariableDeclaration init = null;
                 mustBe(SEMI);
                 JExpression test;

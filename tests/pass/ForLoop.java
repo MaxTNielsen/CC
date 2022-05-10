@@ -19,7 +19,7 @@ public class ForLoop {
 
         // i = 2
         // Result = 12
-        for(;i >= array.length; i--) {
+        for( i ; i >= array.length; i--) {
             result--;
         }
 
@@ -27,7 +27,7 @@ public class ForLoop {
         // l = 2
         // j = 2
         // Result = 14
-        for(j=0,l=0;j<3 && l<3 && i > 0; i--,l++,j++){
+        for(j = 0, l = 0;j<3 && l<3 && i > 0; i--,l++,j++){
             result++;
         }
 
