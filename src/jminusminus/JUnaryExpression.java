@@ -1,6 +1,7 @@
 // Copyright 2013 Bill Campbell, Swami Iyer and Bahar Akbal-Delibas
 
 package jminusminus;
+import java.lang.System;
 
 import static jminusminus.CLConstants.*;
 
