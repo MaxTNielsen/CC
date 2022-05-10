@@ -875,13 +875,13 @@ private JBlock block(ArrayList<String> mods) {
                 //Check for identifier and COLON, or else not colon for statement
                 if(have(IDENTIFIER) && have(COLON)) {
                     scanner.returnToPosition();
-                    JVariableDeclarator init = variableDeclarator(type());
+                    JFormalParameter init = formalParameter();
                     mustBe(COLON);
                     // Primary expression for array
                     JExpression array = primary();
                     mustBe(RPAREN);
                     //Using block instead of statement to be more specific
-                    JBlock consequent = block();
+                    JStatement consequent = block();
                     return new JColonForStatement(line, init, array,
 							consequent);
                 } else {
@@ -912,7 +912,6 @@ private JBlock block(ArrayList<String> mods) {
 				}
             // For loop where init is null, other case handled above
 			} else {
-                scanner.returnToPosition();
                 JVariableDeclaration init = null;
                 mustBe(SEMI);
                 JExpression test;
@@ -1448,6 +1447,8 @@ private JBlock block(ArrayList<String> mods) {
             return new JGreaterThanOp(line, lhs, shiftExpression());
         } else if (have(LT)) {
             return new JLessThanOp(line, lhs, shiftExpression());
+        } else if (have(GREATEROREQ)) {
+            return new JGreaterEqualOp(line, lhs, shiftExpression());
         } else if (have(LE)) {
             return new JLessEqualOp(line, lhs, shiftExpression());
         } else if (have(INSTANCEOF)) {

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 class JBlock extends JStatement implements JMember {
 
     /** List of statements forming the block body. */
-    private ArrayList<JStatement> statements;
+    protected ArrayList<JStatement> statements;
 
     /**
      * The new context (built in analyze()) represented by this block.

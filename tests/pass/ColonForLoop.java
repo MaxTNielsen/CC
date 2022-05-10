@@ -21,7 +21,7 @@ public class ColonForLoop {
     }
     public int test03(){
         int result = 0;
-        int[] array = {"a","b","c"};
+        String[] array = {"a","b","c"};
         // Result = 3
         for(String x : array){
             result++;
