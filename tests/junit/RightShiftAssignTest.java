@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import pass.RightShiftAssign;
 
 public class RightShiftAssignTest extends TestCase{
+
     private RightShiftAssign rightShiftAssign;
 
     protected void setUp() throws Exception {
@@ -16,7 +17,7 @@ public class RightShiftAssignTest extends TestCase{
         super.tearDown();
     }
     
-    public void testRigtSign() {
+    public void testRightShiftAssign() {
         this.assertTrue(rightShiftAssign.doRightShiftAssign(4, 1) == true);
         this.assertTrue(rightShiftAssign.doRightShiftAssign(6, 2) == true);
         this.assertTrue(rightShiftAssign.doRightShiftAssign(2, 3) == true);

@@ -2,6 +2,7 @@ package junit;
 
 import junit.framework.TestCase;
 import pass.Division;
+
 public class DivisionTest extends TestCase{
     private Division division;
 

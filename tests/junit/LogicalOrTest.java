@@ -15,9 +15,8 @@ public class LogicalOrTest extends TestCase{
         super.tearDown();
     }
     
-    public void testRigtSign() {
-        this.assertTrue(logicalOr.doLogicalOr(4, 5) == false);
+    public void testLogicalOr() {
+        this.assertTrue(logicalOr.doLogicalOr(4, 3) == false);
         this.assertTrue(logicalOr.doLogicalOr(6, 7) == true);
-        this.assertTrue(logicalOr.doLogicalOr(2, 3) == true);
     }
 }

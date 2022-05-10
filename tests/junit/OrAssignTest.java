@@ -13,7 +13,7 @@ public class OrAssignTest extends TestCase{
     }
 
     public void testOrAssign() {
-        this.assertEquals(orAssign.doOrAssign(2,4), 7);
+        this.assertEquals(orAssign.doOrAssign(2,4), 6);
         this.assertEquals(orAssign.doOrAssign(1,1), 1);
         this.assertEquals(orAssign.doOrAssign(2,1), 3);
     }

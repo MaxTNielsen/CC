@@ -15,9 +15,7 @@ public class PostfixIncrementTest extends TestCase{
         super.tearDown();
     }
     
-    public void testRigtSign() {
-        this.assertEquals(postfixIncrement.doPostfixInc(1, 7), 8);
-        this.assertEquals(postfixIncrement.doPostfixInc(6, 7), 13);
-        this.assertEquals(postfixIncrement.doPostfixInc(2, 3), 5);
+    public void testPostFixInc() {
+        PostfixIncrementTest.assertEquals(postfixIncrement.doPostfixInc(1), 2);
     }
 }

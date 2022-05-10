@@ -16,8 +16,6 @@ public class PrefixDecrementTest extends TestCase{
     }
     
     public void testRigtSign() {
-        this.assertEquals(prefixDecrement.doPrefixDec(1, 7), 8);
-        this.assertEquals(prefixDecrement.doPrefixDec(6, 7), 13);
-        this.assertEquals(prefixDecrement.doPrefixDec(2, 3), 5);
+        this.assertEquals(prefixDecrement.doPrefixDec(1, 7), 0);
     }
 }

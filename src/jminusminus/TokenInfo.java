@@ -36,7 +36,7 @@ enum TokenKind {
     SHL_ASSIGN("<<="), MINUS_ASSIGN("-="), QMARK("?"),LAMBDA("->"),
     // Separators
     LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["),
-    RBRACK("]"), SEMI(";"), COMMA(","), DOT("."),COLON(":"),
+    RBRACK("]"), SEMI(";"), COMMA(","), DOT("."),COLON(":"),BXOR_ASSIGN("^="),NOT_ASSIGN("!="),
 
     // Identifiers
     IDENTIFIER("<IDENTIFIER>"),

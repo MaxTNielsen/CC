@@ -43,7 +43,7 @@ public class JMinusMinusTestRunner {
         suite.addTestSuite(ForLoopTest.class);
         suite.addTestSuite(ConditionalTest.class);
         suite.addTestSuite(LTTest.class);
-        suite.addTestSuite(DoubleTest.class);
+        suite.addTestSuite(DoubleCTest.class);
         return suite;
     }
 

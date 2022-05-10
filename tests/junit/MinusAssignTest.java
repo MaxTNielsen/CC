@@ -15,9 +15,7 @@ public class MinusAssignTest extends TestCase{
         super.tearDown();
     }
     
-    public void testRigtSign() {
-        this.assertTrue(minusAssign.doMinusAssign(4, 5) == true);
-        this.assertTrue(minusAssign.doMinusAssign(6, 7) == true);
-        this.assertTrue(minusAssign.doMinusAssign(2, 3) == true);
+    public void testMinusAssign() {
+        MinusAssignTest.assertEquals(minusAssign.doMinusAssign(4, 5), -1);
     }
 }

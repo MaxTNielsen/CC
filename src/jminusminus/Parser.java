@@ -1315,7 +1315,15 @@ private JBlock block(ArrayList<String> mods) {
             return new JAndAssignOp(line, lhs, assignmentExpression());
         } else if (have(USHIFTRIGHT_ASSIGN)) {
             return new JUshiftRightAssignOp(line, lhs, assignmentExpression());
-        } else {
+        }  else if (have(BXOR_ASSIGN)) {
+            return new JXORAssignOp(line, lhs, assignmentExpression());
+        }  else if (have(NOT_ASSIGN)) {
+            return new JLNOTAssignOp(line, lhs, assignmentExpression());
+        }  else if (have(SHLE)) {
+            return new JSHLAssignOp(line, lhs, assignmentExpression());
+        }  else if (have(RIGHTSHIFT_ASSIGN)) {
+            return new JSHRAssignOp(line, lhs, assignmentExpression());
+        }else {
             return lhs;
         }
     }

@@ -15,7 +15,7 @@ public class RemainderAssignTest extends TestCase{
         super.tearDown();
     }
     
-    public void testRigtSign() {
+    public void testRemainderAssign() {
         this.assertEquals(remainderAssign.modulo(4, 1), 4);
         this.assertEquals(remainderAssign.modulo(6, 2), 0);
         this.assertEquals(remainderAssign.modulo(2, 3), 2);

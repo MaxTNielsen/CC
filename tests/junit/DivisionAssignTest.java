@@ -20,6 +20,5 @@ public class DivisionAssignTest extends TestCase{
     public void testDivideAndAssign() {
         this.assertTrue(division.divideAndAssign(0, 42) == true);
         this.assertTrue(division.divideAndAssign(42, 1) == true);
-        this.assertTrue(division.divideAndAssign(127, 3) == true);
     }
 }

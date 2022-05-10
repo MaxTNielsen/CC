@@ -190,6 +190,10 @@ class Scanner {
             else return new TokenInfo(OR, line);
         case '^':
             nextCh();
+            if(ch == '=') {
+                nextCh();
+                return new TokenInfo(BXOR_ASSIGN, line);
+            }
             return new TokenInfo(XOR, line);
         case '~':
             nextCh();
@@ -238,6 +242,10 @@ class Scanner {
             }
         case '!':
             nextCh();
+            if(ch == '=') {
+                nextCh();
+                return new TokenInfo(NOT_ASSIGN, line);
+            }
             return new TokenInfo(LNOT, line);
         case '*':
             nextCh();
@@ -294,7 +302,6 @@ class Scanner {
                         nextCh();
                         return new TokenInfo(USHIFTRIGHT_ASSIGN, line);
                     } else {
-                        nextCh();
                         return new TokenInfo(USHR, line);
                     }
                 } if(ch == '=') {
@@ -317,6 +324,7 @@ class Scanner {
             if (ch == '<'){
                 nextCh();
                 if (ch == '='){
+                    nextCh();
                     return new TokenInfo(SHLE, line);
                 }
                 else{
