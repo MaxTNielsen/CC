@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @see LocalContext
  */
 
-class JBlock extends JStatement {
+class JBlock extends JStatement implements JMember {
 
     /** List of statements forming the block body. */
     protected ArrayList<JStatement> statements;
@@ -19,6 +19,8 @@ class JBlock extends JStatement {
      * The new context (built in analyze()) represented by this block.
      */
     private LocalContext context;
+
+    private ArrayList<String> mods;
 
     /**
      * Constructs an AST node for a block given its line number, and the list of
@@ -30,9 +32,16 @@ class JBlock extends JStatement {
      *            list of statements forming the block body.
      */
 
+    public JBlock(int line, ArrayList<JStatement> statements, ArrayList<String> mods) {
+        super(line);
+        this.statements = statements;
+        this.mods = mods;
+    }
+
     public JBlock(int line, ArrayList<JStatement> statements) {
         super(line);
         this.statements = statements;
+        
     }
 
     /**
@@ -45,6 +54,9 @@ class JBlock extends JStatement {
         return statements;
     }
 
+    public ArrayList<String> mods() {
+        return mods;
+    }
     /**
      * Analyzing a block consists of creating a new nested context for that
      * block and analyzing each of its statements within that context.
@@ -97,6 +109,12 @@ class JBlock extends JStatement {
             p.indentLeft();
         }
         p.printf("</JBlock>\n");
+    }
+
+    @Override
+    public void preAnalyze(Context context, CLEmitter partial) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

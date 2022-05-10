@@ -54,18 +54,18 @@ class JClassDeclaration extends JAST implements JTypeDecl {
      *            class modifiers.
      * @param name
      *            class name.
-     * @param superType
+     * @param superClass
      *            super class type.
      * @param classBlock
      *            class block.
      */
 
     public JClassDeclaration(int line, ArrayList<String> mods, String name,
-            Type superType, ArrayList<JMember> classBlock) {
+            Type superClass, ArrayList<JMember> classBlock) {
         super(line);
         this.mods = mods;
         this.name = name;
-        this.superType = superType;
+        this.superType = superClass;
         this.classBlock = classBlock;
         hasExplicitConstructor = false;
         instanceFieldInitializations = new ArrayList<JFieldDeclaration>();

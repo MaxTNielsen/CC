@@ -1,8 +1,10 @@
-// Copyright 2013 Bill Campbell, swami Iyer and Bahar Akbal-Delibas
+// Copyright 2013 Bill Campbell, Swami Iyer and Bahar Akbal-Delibas
 
-package jminusminus;
+package jminusminus;   
 
 import java.util.ArrayList;
+
+//import javax.sound.sampled.AudioFileFormat.Type;
 
 import static jminusminus.TokenKind.*;
 
@@ -403,7 +405,15 @@ public class Parser {
 
     private JAST typeDeclaration() {
         ArrayList<String> mods = modifiers();
-        return classDeclaration(mods);
+        JAST declaration = null;
+        if (see(CLASS)) {
+            declaration = classDeclaration(mods);
+        } else if (see(INTERFACE)) {
+            declaration = interfaceDeclaration(mods);
+        } else {
+            reportParserError("Error: expected class or interface");
+        }
+        return declaration;
     }
 
     /**
@@ -497,9 +507,9 @@ public class Parser {
         mustBe(IDENTIFIER);
         String name = scanner.previousToken().image();
         Type superClass;
-        if (have(EXTENDS)) {
+        if (have(EXTENDS) || have(IMPLEMENTS)) {
             superClass = qualifiedIdentifier();
-        } else {
+        }else{
             superClass = Type.OBJECT;
         }
         return new JClassDeclaration(line, mods, name, superClass, classBody());
@@ -525,6 +535,111 @@ public class Parser {
         }
         mustBe(RCURLY);
         return members;
+    }
+
+    private boolean hasBlock() {
+        scanner.recordPosition();
+        if (!have(LCURLY)) {
+            scanner.returnToPosition();
+            return false;
+        }
+        scanner.returnToPosition();
+        return true;
+    }
+
+    private JInterfaceDeclaration interfaceDeclaration(ArrayList<String> mods){
+        Type superClass;
+        int line = scanner.token().line();
+        mustBe(INTERFACE);
+        mustBe(IDENTIFIER);
+        String name = scanner.previousToken().image();
+        ArrayList<Type> interfaces = new ArrayList<>();
+        if (have(EXTENDS)){
+            interfaces.add(qualifiedIdentifier());
+            while(!see(LCURLY)){
+                mustBe(COMMA);
+                interfaces.add(qualifiedIdentifier());
+            }
+        }
+        return new JInterfaceDeclaration(line, mods, name, interfaces, interfaceBody());
+
+    }
+
+    private ArrayList<JMember> interfaceBody(){
+        ArrayList<JMember> members = new ArrayList<>();
+        mustBe(LCURLY);
+        while(!see(LCURLY) && !see(EOF)){
+            members.add(interfaceMemberDeclaration(modifiers()));
+        }
+        mustBe(RCURLY);
+        return members;
+    }
+
+    private JMember interfaceMemberDeclaration(ArrayList<String> mods){
+        if (!mods.contains("public")){
+            mods.add("public");
+        }
+
+        int line = scanner.token().line();
+        JMember interfaceMemberDeclaration = null;
+        Type type = null;
+
+        if(have(VOID)){
+            if (!mods.contains("abstract")) {
+                mods.add("abstract");
+        }
+        type = Type.VOID;
+        mustBe(IDENTIFIER);
+        String name = scanner.previousToken().image();
+        ArrayList<JFormalParameter> parameters = formalParameters();
+        ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+        if (have(THROWS)){
+            mods.add("throws");
+            exceptions.add(qualifiedIdentifier());
+            while(have(COMMA)){
+                exceptions.add(qualifiedIdentifier());
+            }
+        }
+        mustBe(SEMI);
+        interfaceMemberDeclaration = new JMethodDeclaration(line, mods, name, type, parameters, null, exceptions);
+    }
+    else{
+        type = type();
+        if(seeIdentLParen()){
+          if (!mods.contains("abstract")){
+              mods.add("abstract");
+        }
+        mustBe(IDENTIFIER);
+        String name = scanner.previousToken().image();
+        ArrayList<JFormalParameter> parameters = formalParameters();
+        ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+        if (have(THROWS)){
+            mods.add("throws");
+            exceptions.add(qualifiedIdentifier());
+            while(have(COMMA)){
+                exceptions.add(qualifiedIdentifier());
+            }
+        }
+        mustBe(SEMI);
+        interfaceMemberDeclaration = new JMethodDeclaration(line, mods, name, type, parameters, null, exceptions);
+    }
+    else{
+        if(!mods.contains("public")) {
+            mods.add("public"); 
+        }
+        if (!mods.contains("static")) {
+            mods.add("static");
+        }
+        if (!mods.contains("final")) {
+            mods.add("final");
+        }
+        interfaceMemberDeclaration = new JFieldDeclaration(line, mods, variableDeclarators(type));
+        mustBe(SEMI);
+    }
+    return interfaceMemberDeclaration;
+}
+        return interfaceMemberDeclaration;
+
     }
 
     /**
@@ -563,14 +678,21 @@ public class Parser {
                     exceptions.add(qualifiedIdentifier());
                 }
             }
-            JBlock body = have(SEMI) ? null : block();
+            JBlock body = block();
              memberDecl = new JConstructorDeclaration(line, mods, name,
                     params, body, exceptions);
 
 
-        } else {
+        } else {    
             Type type = null;
-            if (have(VOID)) {
+            if (hasBlock()) { 
+                if (mods.contains("static")) { 
+                    memberDecl = block(mods);
+                } else {
+                    memberDecl = block();
+                } 
+            }
+            else if (have(VOID)) {
                 // void method
                 type = Type.VOID;
                 mustBe(IDENTIFIER);
@@ -608,7 +730,6 @@ public class Parser {
 
                     memberDecl = new JMethodDeclaration(line, mods, name, type,
                             params, body, exceptions);
-
                 } else {
                     // Field
                     memberDecl = new JFieldDeclaration(line, mods,
@@ -630,16 +751,39 @@ public class Parser {
      * @return an AST for a block.
      */
 
-    private JBlock block() {
+/** første udkast, som jeg dog stærkt tvivler er det jeg skal gå med, men istedet sætte parametre/conditions op i memberdeclaration 
+     private JBlock staticBlock(){
         int line = scanner.token().line();
         ArrayList<JStatement> statements = new ArrayList<JStatement>();
-        mustBe(LCURLY);
+        mustBe(STATIC);
         while (!see(RCURLY) && !see(EOF)) {
             statements.add(blockStatement());
         }
         mustBe(RCURLY);
-        return new JBlock(line, statements);
+        return new JBlock(line, statements, null);
+     }
+*/
+ private JBlock block() {
+    int line = scanner.token().line();
+    ArrayList<JStatement> statements = new ArrayList<JStatement>();
+    mustBe(LCURLY);
+    while (!see(RCURLY) && !see(EOF)) {
+        statements.add(blockStatement());
     }
+    mustBe(RCURLY);
+    return new JBlock(line, statements);
+}
+
+private JBlock block(ArrayList<String> mods) {
+    int line = scanner.token().line();
+    ArrayList<JStatement> statements = new ArrayList<JStatement>();
+    mustBe(LCURLY);
+    while (!see(RCURLY) && !see(EOF)) {
+        statements.add(blockStatement());
+    }
+    mustBe(RCURLY);
+    return new JBlock(line, statements, mods);
+}
 
     /**
      * Parse a block statement.
@@ -682,6 +826,7 @@ public class Parser {
 
         return new JCatchStatement(line,temp, block());
     }
+
     private JStatement statement() {
         int line = scanner.token().line();
         if (see(LCURLY)) {
@@ -720,7 +865,6 @@ public class Parser {
             JStatement statement = statement();
             return new JWhileStatement(line, test, statement);
         } else if  (have(FOR)) {
-
             mustBe(LPAREN);
             scanner.recordPosition();
 			if (seeBasicType() | seeReferenceType()) { // checks if data type is instantiated in the
@@ -768,6 +912,7 @@ public class Parser {
 				}
             // For loop where init is null, other case handled above
 			} else {
+                scanner.returnToPosition();
                 JVariableDeclaration init = null;
                 mustBe(SEMI);
                 JExpression test;
@@ -1187,22 +1332,14 @@ public class Parser {
         while (more) {
             if (have(LOGICAL_OR)) {
                 lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
+
             } else {
                 more = false;
             }
         }
         return lhs;
     }
-     /**
-     * Parse a conditional expression.
-     *
-     * <pre>
-     *   conditionalExpression ::= conditionalExpression // 11
-                                         {QMARK COLON JConditionalExpression}
-     * </pre>
-     *
-     * @return an AST for a conditionalExpression.
-     */
+
     private JExpression conditionalExpression() {
         JExpression lhs = conditionalORExpression();
         if(have(QMARK)) {

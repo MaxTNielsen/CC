@@ -142,7 +142,7 @@ SKIP: {" "|"\t"|"\n"|"\r"|"\f"}
 SKIP: {<SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>}
 
 // Multi line comment -- ignored
-SKIP: {<MULTI_LINE_COMMENT: "/*" (~[])* ("*/"| EOF)>}
+SKIP: {<MULTI_LINE_COMMENT: "/*" (~[])* "*/">}
 
 // Reserved words
 TOKEN: {
@@ -150,10 +150,18 @@ TOKEN: {
 | <BOOLEAN: "boolean">
 | <CHAR: "char">
 | <CLASS: "class">
+| <DO: "do">
+| <DOUBLE: "double">
 | <ELSE: "else">
 | <EXTENDS: "extends">
 | <FALSE: "false">
+| <FINAL: "final">
+| <FINALLY: "finally">
+| <FLOAT: "float">
+| <FOR: "for">
+| <GOTO: "goto">
 | <IF: "if">
+| <IMPLEMENTS: "implements">
 | <INTERFACE: "interface">
 | <IMPORT: "import">
 | <INSTANCEOF: "instanceof">
@@ -200,6 +208,11 @@ TOKEN: {
 TOKEN: {
   <PLUS: "+">
 | <ASSIGN: "=">
+| <XOR: "^">
+| <MOD: "%">
+| <UCOM: "~">
+| <LT: "<">
+| <STAR_ASSIGN: "*=">
 | <DEC: "--">
 | <DIV: "/">
 | <DIV_ASSIGN: "/=">
@@ -209,6 +222,7 @@ TOKEN: {
 | <LAND: "&&">
 | <LOR: "||">
 | <LE: "<=">
+| <SHLE: "<<=">
 | <LNOT: "!">
 | <MINUS: "-">
 | <MIN_ASSIGN: "-=">
@@ -618,6 +632,147 @@ private JMember memberDecl(ArrayList<String> mods): {
 }
 
 /**
+*PARSE AN INTERFACE
+*/
+
+private JInterfaceDeclaration interfaceDeclaration(ArrayList<String> mods): {
+    int line = 0;
+    String name = "";
+    ArrayList<Type> superClass = new ArrayList<Type>;
+    Type superClass = null;
+    ArrayList<JMember> interfaceBody = null;
+}
+{
+    try {
+        <INTERFACE> { line = token.beginLine; }
+        <IDENTIFIER> { name = token.image; }
+    [
+        <EXTENDS>
+        superClass = qualifiedIdentifier;
+        {superclass.add(superClass)}
+        (
+            <COMMA> superClass = qualifiedIdentifier()
+                {superClass.add(superClass);}
+        )
+    ]
+
+    interfaceBody = interfaceBody();
+    }
+    catch (ParseException e) {
+        recoverFromError(new int[] { SEMI, EOF }, e);
+    }
+    {
+        return new JInterfaceDeclaration(line, mods, name, interfaces, interfaceBody());
+    }
+}
+
+/**
+*parse interface body
+*/
+
+private ArrayList<JMember> interfaceBody(): {
+    ArrayList<String> mods = null;
+    JMember aMember = null;
+    ArrayList<JMember> members = new ArrayList<JMember>
+} 
+{
+    try {
+        <LCURLY>
+        (
+            mods = modifiers()
+            {
+                if (!mods.contains("abstract")) {
+                mods.add("abstract");
+            }
+            aMember = interfaceMemberDecl(mods) { members.add(aMember); }
+        )*
+        <RCURLY>
+    }
+    catch (ParseException e) {
+        recoverFromError(new int[] { SEMI, EOF }, e);
+    }
+    { return members; }
+}
+
+/**
+* PARSE MEMBER DECLARATION FOR INTERFACE
+*/
+
+private JMember interfaceMemberDecl(ArrayList<String> mods): {
+    int line = 0;
+    Type type = null;
+    String name = "";
+    ArrayList<JFormalParameter> params = null;
+    JBlock body = null;
+    ArrayList<JVariableDeclarator> variableDeclarators = null;
+    JMember interfaceMemberDecl = null;
+
+    TypeName exception = null;
+    ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
+}
+{
+    try {
+        LOOKAHEAD((<VOID> | type()) <IDENTIFIER> <LPAREN>)
+        (
+            (
+                <VOID> { type = Type.VOID; } |
+                type = type()
+            )
+            { line = token.beginLine; }
+            <IDENTIFIER> { name = token.image; }
+            params = formalParameters() 
+
+            [
+                LOOKAHEAD(<THROWS>)
+                <THROWS>
+                exception = qualifiedIdentifier(){
+                    exception.add(exception);
+                }
+                    (
+                        <COMMA>
+                        exception = qualifiedIdentifier()
+                    { 
+                        exceptions.add(exception); 
+                    }
+                    )*
+
+            ]
+            <SEMI>
+            {
+             if(!mods.contains("public")) {
+                    mods.add("public");
+            }
+             if(!mods.contains("abstract")){
+                 mods.add("abstrack");
+             }
+             interfaceMemberDecl = new JMethodDeclaration(line, mods, name, exceptions, params, type);
+        ) |
+        (
+            type = type() { line = token.beginLine; }
+            variableDeclarators = variableDeclarators(type)
+            <SEMI>
+            {
+
+               if(!mods.contains("public")) {
+                    mods.add("public"); 
+                }
+                if (!mods.contains("static")) { 
+                    mods.add("static");
+                }
+               if (!mods.contains("final")) {
+                    mods.add("final");
+                }                       
+                interfaceMemberDecl = new JFieldDeclaration(line, mods, variableDeclarators(type));
+            }
+        )
+    }
+    catch (ParseException e) { 
+        recoverFromError(new int[] { SEMI, EOF }, e);
+    }
+    { return interfaceMemberDecl; }
+}
+
+/**
  * Parse a block.
  *
  * <pre>
@@ -767,7 +922,7 @@ private JStatement statement(): {
 
 
         <FOR> {line = token.beginLine; }
-        (LOOKAHEAD(<LPAREN> type() <IDENTIFIER> <COLON> expression() <RPAREN> statement())
+        (LOOKAHEAD(basicType() | referenceType() |<LPAREN> type() <IDENTIFIER> <COLON> expression() )
         <LPAREN>
 
         initializer = variableDeclarator(type())

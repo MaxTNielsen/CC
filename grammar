@@ -9,7 +9,7 @@ qualifiedIdentifier ::= IDENTIFIER {DOT IDENTIFIER}
 
 typeDeclaration ::= modifiers classDeclaration
 
-modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT | STRICTFP | SYNCHRONIZED | TRANSIENT | INTERFACE}
+modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT}
 
 classDeclaration ::= CLASS IDENTIFIER 
                        [EXTENDS qualifiedIdentifier]
@@ -39,9 +39,7 @@ statement ::= block
             | SEMI 
             | FINALLY statement
             | statementExpression SEMI
-            | CONTINUE
-            | THROW statementExpression SEMI;
-            | FINALLY
+
 formalParameters ::= LPAREN 
                        [formalParameter {COMMA formalParameter}]
                      RPAREN
@@ -71,7 +69,7 @@ arguments ::= LPAREN [expression {COMMA expression}] RPAREN
 
 type ::= referenceType | basicType
 
-basicType ::= BOOLEAN | CHAR | INT | FLOAT | CONST | DOUBLE
+basicType ::= BOOLEAN | CHAR | DOUBLE | FLOAT | INT 
 
 referenceType ::= basicType LBRACK RBRACK {LBRACK RBRACK}
                 | qualifiedIdentifier {LBRACK RBRACK}
@@ -80,46 +78,37 @@ statementExpression ::= expression // but must have side-effect, eg i++
 
 expression ::= assignmentExpression
 
-assignmentExpression ::= conditionalExpression  // must be a valid lhs
-                           [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | DIV_ASSIGN | REM_ASSIGN | SHLE | RIGHTSHIFT_ASSIGN | USHIFTRIGHT_ASSIGN | OR_ASSIGN | MINUS_ASSIGN) assignmentExpression]
-
-conditionalExpression   :: conditionalOrExpression // 12
-                            [TERNY assignmentExpression COLON conditionalExpression]
-
-conditionalOrExpression ::= conditionalAndExpression // 11
-                              {LOR conditionalAndExpression}
-
-conditionalOrExpression ::= equalityExpression // level 11
-                              {LOGICAL_OR bitwiseExpression}
+assignmentExpression ::= conditionalAndExpression  // must be a valid lhs
+                           [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | REM_ASSIGN | SHLE | ) assignmentExpression]
 
 conditionalAndExpression ::= equalityExpression // level 10
-                               {LAND bitwiseExpression}
-                              
-bitwiseExpression ::= equalityExpression  // level 7
-                        {(OR | XOR | AND) equalityExpression}
+                               {LAND equalityExpression}
 
 equalityExpression ::= relationalExpression  // level 6
                          {EQUAL relationalExpression}
 
+<<<<<<< HEAD
+relationalExpression ::= additiveExpression       // level 5
+                           [(GT | LT | LE) additiveExpression
+=======
 relationalExpression ::= shiftExpression       // level 5
                            [(GT | LT | LE) shiftExpression
+>>>>>>> main
                            | INSTANCEOF referenceType]
 
 shiftExpression ::= additiveExpression    // level 4
                         {(SHL | SHR | USHR) additiveExpression}
-
+  
 additiveExpression ::= multiplicativeExpression // level 3
                          {(PLUS | MINUS) multiplicativeExpression}
 
 multiplicativeExpression ::= unaryExpression       // level 2
-                               {(STAR | MOD | DIV) unaryExpression}
+                               {(STAR | DIV | REM) unaryExpression}
 
 unaryExpression ::= INC unaryExpression  // level 1
-                  | DEC unaryExpression
+                  | DECR unaryExpression
                   | MINUS unaryExpression
-                  | PLUS unaryExpression
-                  | UCOMP unaryExpression 
-                  | simpleUnaryExpressionz½
+                  | simpleUnaryExpression
 
 
 simpleUnaryExpression ::= LNOT unaryExpression
@@ -130,7 +119,7 @@ simpleUnaryExpression ::= LNOT unaryExpression
                           RPAREN simpleUnaryExpression
                         | postfixExpression 
 
-postfixExpression ::= primary {selector} {DEC|INC}
+postfixExpression ::= primary {selector} {DEC}
 
 selector ::= DOT qualifiedIdentifier [arguments]
            | LBRACK expression RBRACK
