@@ -731,13 +731,13 @@ public class Parser {
                 //Check for identifier and COLON, or else not colon for statement
                 if(have(IDENTIFIER) && have(COLON)) {
                     scanner.returnToPosition();
-                    JVariableDeclarator init = variableDeclarator(type());
+                    JFormalParameter init = formalParameter();
                     mustBe(COLON);
                     // Primary expression for array
                     JExpression array = primary();
                     mustBe(RPAREN);
                     //Using block instead of statement to be more specific
-                    JBlock consequent = block();
+                    JStatement consequent = block();
                     return new JColonForStatement(line, init, array,
 							consequent);
                 } else {
