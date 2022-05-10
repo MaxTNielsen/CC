@@ -1356,6 +1356,10 @@ private JExpression assignmentExpression(): {
             rhs = assignmentExpression()
             { lhs = new JDivAssignOp(line, lhs, rhs); } |
 
+            <USHIFTRIGHT_ASSIGN>
+            rhs = assignmentExpression()
+            { lhs = new JDivAssignOp(line, lhs, rhs); } |
+
             <REM_ASSIGN>
             rhs = assignmentExpression()
             { lhs = new JRemAssignOp(line, lhs, rhs); }

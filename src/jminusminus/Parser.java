@@ -1311,6 +1311,10 @@ private JBlock block(ArrayList<String> mods) {
             return new JRemAssignOp(line, lhs, assignmentExpression());
         } else if (have(OR_ASSIGN)) {
             return new JOrAssignOp(line, lhs, assignmentExpression());
+        } else if (have(ANDEQ)) {
+            return new JAndAssignOp(line, lhs, assignmentExpression());
+        } else if (have(USHIFTRIGHT_ASSIGN)) {
+            return new JUshiftRightAssignOp(line, lhs, assignmentExpression());
         } else {
             return lhs;
         }
