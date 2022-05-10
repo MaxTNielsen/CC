@@ -261,10 +261,6 @@ class Scanner {
             }
         case '-':
             nextCh();
-            if (ch == '>'){
-                nextCh();
-                return new TokenInfo(LAMBDA, line);
-            }
             if (ch == '-') {
                 nextCh();
                 return new TokenInfo(DEC, line);
@@ -311,7 +307,7 @@ class Scanner {
 
             } else if (ch == '=') {
                 nextCh();
-                return new TokenInfo(GREATEROREQ, line);
+                return new TokenInfo(GE, line);
             } else {
                 nextCh();
                 return new TokenInfo(GT, line);
