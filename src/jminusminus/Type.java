@@ -33,6 +33,11 @@ class Type {
     /** Maps type names to their Type representations. */
     private static Hashtable<String, Type> types = new Hashtable<String, Type>();
 
+
+    public static final Type DOUBLE = typeFor(double.class);
+    
+    public final static Type BOXED_DOUBLE = typeFor(java.lang.Double.class);
+
     /** The primitive type, int. */
     public final static Type INT = typeFor(int.class);
 
@@ -71,7 +76,7 @@ class Type {
     /** The "any" type (denotes wild expressions). */
     public final static Type ANY = new Type(null);
 
-    public static final Type DOUBLE = typeFor(double.class);
+    
 
     /**
      * Constructs a Type representation for a type from its Java (Class)
@@ -427,6 +432,7 @@ class Type {
         return cls == null ? "V" : cls == void.class ? "V"
                 : cls.isArray() ? "[" + descriptorFor(cls.getComponentType())
                         : cls.isPrimitive() ? (cls == int.class ? "I"
+                            : cls == double.class ? "D"
                                 : cls == char.class ? "C"
                                         : cls == boolean.class ? "Z" : "?")
                                 : "L" + cls.getName().replace('.', '/') + ";";

@@ -141,6 +141,9 @@ SKIP: {" "|"\t"|"\n"|"\r"|"\f"}
 // Single line comment -- ignored
 SKIP: {<SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>}
 
+// Multi line comment -- ignored
+SKIP: {<MULTI_LINE_COMMENT: "/*" (~[])* ("*/"| EOF)>}
+
 // Reserved words
 TOKEN: {
   <ABSTRACT: "abstract">
@@ -163,6 +166,7 @@ TOKEN: {
 | <IMPORT: "import">
 | <INSTANCEOF: "instanceof">
 | <INT: "int">
+| <DOUBLE: "double">
 | <LONG: "long">
 | <NATIVE: "native">
 | <NEW: "new">
@@ -190,7 +194,13 @@ TOKEN: {
 | <FOR: "for">
 | <CATCH: "catch">
 | <FINALLY: "finally">
-| <DOUBLE: "double">
+| <DO: "do">
+| <FINAL: "final">
+| <BREAK: "break">
+| <BYTE: "byte">
+| <CASE: "case">
+| <CONST: "const">
+| <CONTINUE: "continue">
 
 }
 
@@ -259,6 +269,7 @@ TOKEN: {
   <INT_LITERAL: ("0" | <NON_ZERO_DIGIT> (<DIGIT>)*) >
 | <CHAR_LITERAL: "'" (<ESC> | ~["'","\\","\n","\r"]) "'" >
 | <STRING_LITERAL: "\"" (<ESC> | ~["\"","\\","\n","\r"])* "\"" >
+| <DOUBLE_LITERAL: ("0" <DOT> (<DIGIT>)* | <NON_ZERO_DIGIT> (<DIGIT>)* <DOT> (<DIGIT>)*) >
 | <#ESC: "\\" ["n","t","b","r","f","\\","'","\""] >
 }
 
@@ -831,7 +842,24 @@ private JStatement blockStatement(): {
  *
  * @return an AST for a statement.
  */
+private JCatchStatement catchStatement(): {
+        int line    = 0;
+        Type type   = null;
+        JFormalParameter temp = null;
 
+    }
+    {
+        try{
+            {line = token.beginLine;}
+            <LPAREN>
+               temp = formalParameter()
+            <RPAREN>
+        }
+        catch (ParseException e) {
+            recoverFromError(new int[] { SEMI, EOF }, e);
+        }
+        {return new JCatchStatement(line,temp, block());}
+    }
 private JStatement statement(): {
     int line = 0;
     JStatement statement  = null;
@@ -949,24 +977,7 @@ private JStatement statement(): {
     }
     { return statement; }
 }
-private JCatchStatement catchStatement(): {
-        int line    = 0;
-        Type type   = null;
-        JFormalParameter temp = null;
 
-    }
-    {
-        try{
-            {line = token.beginLine;}
-            <LPAREN>
-               temp = formalParameter()
-            <RPAREN>
-        }
-        catch (ParseException e) {
-            recoverFromError(new int[] { SEMI, EOF }, e);
-        }
-        {return new JCatchStatement(line,temp, block());}
-    }
 
 
 private JVariableDeclaration forInit(): {
@@ -1333,7 +1344,8 @@ private Type basicType(): {
     try {
         <BOOLEAN> { type = Type.BOOLEAN; } |
         <CHAR> { type = Type.CHAR; } |
-        <INT> { type = Type.INT; }
+        <INT> { type = Type.INT; } |
+        <DOUBLE> {type = Type.DOUBLE; }
     }
     catch (ParseException e) {
         recoverFromError(new int[] { SEMI, EOF }, e);
@@ -2096,6 +2108,10 @@ private JExpression literal(): {
         <STRING_LITERAL>
         { expr =
               new JLiteralString(token.beginLine, token.image); } |
+        
+        <DOUBLE_LITERAL>
+        { expr =
+              new JLiteralDouble(token.beginLine, token.image); } |
 
         <TRUE>
         { expr = new JLiteralTrue(token.beginLine); } |

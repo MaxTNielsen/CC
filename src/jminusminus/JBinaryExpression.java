@@ -3,7 +3,7 @@
 package jminusminus;
 
 import static jminusminus.CLConstants.*;
-
+import static jminusminus.JCastOp.*; 
 /**
  * This abstract base class is the AST node for a binary expression. 
  * A binary expression has an operator and two operands: a lhs and a rhs.
@@ -108,9 +108,19 @@ class JPlusOp extends JBinaryExpression {
         if (lhs.type() == Type.STRING || rhs.type() == Type.STRING) {
             return (new JStringConcatenationOp(line, lhs, rhs))
                     .analyze(context);
-        } else if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
+        }else if(lhs.type().matchesExpected(Type.DOUBLE) || rhs.type().matchesExpected(Type.DOUBLE) ){
+            if (rhs.type().matchesExpected(Type.INT)){
+                rhs = new JCastOp(line(), Type.DOUBLE, rhs).analyze(context);
+            }
+            if (lhs.type().matchesExpected(Type.INT)){
+                lhs = new JCastOp(line(), Type.DOUBLE, lhs).analyze(context);
+            }
+            type = Type.DOUBLE;
+            return this;
+        } else if (lhs.type() == Type.INT && rhs.type() == Type.INT){
             type = Type.INT;
-        } else {
+            return this;
+        }else {
             type = Type.ANY;
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid operand types for +");
@@ -130,10 +140,16 @@ class JPlusOp extends JBinaryExpression {
      */
 
     public void codegen(CLEmitter output) {
-        if (type == Type.INT) {
+        if (type == Type.INT){
             lhs.codegen(output);
             rhs.codegen(output);
             output.addNoArgInstruction(IADD);
+
+        }
+        if (type == Type.DOUBLE){
+            lhs.codegen(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(DADD);
         }
     }
 
@@ -174,10 +190,22 @@ class JSubtractOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
-        return this;
+        if(lhs.type().matchesExpected(Type.DOUBLE) || rhs.type().matchesExpected(Type.DOUBLE) ){
+            if (rhs.type().matchesExpected(Type.INT)){
+                rhs = new JCastOp(line(), Type.DOUBLE, rhs).analyze(context);
+            }
+            if (lhs.type().matchesExpected(Type.INT)){
+                lhs = new JCastOp(line(), Type.DOUBLE, lhs).analyze(context);
+            }
+            type = Type.DOUBLE;
+            return this;
+        }
+        else{
+            lhs.type().mustMatchExpected(line(), Type.INT);
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+            return this;
+        }
     }
 
     /**
@@ -192,7 +220,12 @@ class JSubtractOp extends JBinaryExpression {
     public void codegen(CLEmitter output) {
         lhs.codegen(output);
         rhs.codegen(output);
-        output.addNoArgInstruction(ISUB);
+        if(type == Type.INT){
+            output.addNoArgInstruction(ISUB);
+        }
+        else{
+            output.addNoArgInstruction(DSUB);
+        }
     }
 
 }
@@ -232,10 +265,25 @@ class JMultiplyOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
-        return this;
+        if(lhs.type().matchesExpected(Type.DOUBLE) || rhs.type().matchesExpected(Type.DOUBLE) ){
+            if (rhs.type().matchesExpected(Type.INT)){
+                rhs = new JCastOp(line(), Type.DOUBLE, rhs).analyze(context);
+            }
+            if (lhs.type().matchesExpected(Type.INT)){
+                lhs = new JCastOp(line(), Type.DOUBLE, lhs).analyze(context);
+            }
+            type = Type.DOUBLE;
+            return this;
+        }
+        else{
+            lhs.type().mustMatchExpected(line(), Type.INT);
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+            return this;
+        }
+        
+        
+        
     }
 
     /**
@@ -250,7 +298,14 @@ class JMultiplyOp extends JBinaryExpression {
     public void codegen(CLEmitter output) {
         lhs.codegen(output);
         rhs.codegen(output);
-        output.addNoArgInstruction(IMUL);
+        if(type == Type.INT){
+            output.addNoArgInstruction(IMUL);
+        }
+        else{
+            output.addNoArgInstruction(DMUL);
+        }
+        
+  
     }
 
 }
@@ -268,10 +323,22 @@ class JRemainderOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
-        return this;
+        if(lhs.type().matchesExpected(Type.DOUBLE) || rhs.type().matchesExpected(Type.DOUBLE) ){
+            if (rhs.type().matchesExpected(Type.INT)){
+                rhs = new JCastOp(line(), Type.DOUBLE, rhs).analyze(context);
+            }
+            if (lhs.type().matchesExpected(Type.INT)){
+                lhs = new JCastOp(line(), Type.DOUBLE, lhs).analyze(context);
+            }
+            type = Type.DOUBLE;
+            return this;
+        }
+        else{
+            lhs.type().mustMatchExpected(line(), Type.INT);
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+            return this;
+        }
     }
 
     public void codegen(CLEmitter output) {
@@ -292,16 +359,34 @@ class JDivideOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
-        return this;
+        if(lhs.type().matchesExpected(Type.DOUBLE) || rhs.type().matchesExpected(Type.DOUBLE) ){
+            if (rhs.type().matchesExpected(Type.INT)){
+                rhs = new JCastOp(line(), Type.DOUBLE, rhs).analyze(context);
+            }
+            if (lhs.type().matchesExpected(Type.INT)){
+                lhs = new JCastOp(line(), Type.DOUBLE, lhs).analyze(context);
+            }
+            type = Type.DOUBLE;
+            return this;
+        }
+        else{
+            lhs.type().mustMatchExpected(line(), Type.INT);
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+            return this;
+        }
     }
 
     public void codegen(CLEmitter output) {
         lhs.codegen(output);
         rhs.codegen(output);
-        output.addNoArgInstruction(IDIV); 
+        if (type == Type.DOUBLE){
+            output.addNoArgInstruction(DDIV); 
+        }
+        else{
+            output.addNoArgInstruction(IDIV); 
+        }
+       
     }
 
 }

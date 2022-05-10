@@ -35,7 +35,7 @@ public class JColonForStatement extends JStatement {
 		//First create index variable
 		JVariable i = new JVariable(line, "RandomizeThisLater");
 		//Use condition to make array length, by making sure variable is less than array
-		this.arrayLength = new JLessThanOp(line, i, new JFieldSelection(line, array, "ArrayLength"));
+		this.arrayLength = new JLessThanOp(line, i, new JFieldSelection(line, array, "length"));
 		//Most now create expression to increment #i (see javase/specs chapter 14.14.2)
 		JExpression incrementer = new JPostIncrementOp(line, i);
 		this.impUp = new JStatementExpression(line, incrementer);
@@ -44,13 +44,15 @@ public class JColonForStatement extends JStatement {
 
 	public JAST analyze(Context context) {
 		// None of this is optional, therefore no Null checks.
-   
-		init = (JVariableDeclarator) init.analyze(context);
-		array = array.analyze(context);
-		arrayLength.analyze(context);
+		
+		LocalContext localContext = new LocalContext(context);
+
+		init = (JVariableDeclarator) init.analyze(localContext);
+		array = array.analyze(localContext);
+		arrayLength.analyze(localContext);
 		arrayLength.type().mustMatchExpected(line, Type.BOOLEAN);
-		impUp.analyze(context);
-        consequent.analyze(context);
+		impUp.analyze(localContext);
+        consequent.analyze(localContext);
         
         return this;
 	}

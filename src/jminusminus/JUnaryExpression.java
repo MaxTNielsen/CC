@@ -1,6 +1,7 @@
 // Copyright 2013 Bill Campbell, Swami Iyer and Bahar Akbal-Delibas
 
 package jminusminus;
+import java.lang.System;
 
 import static jminusminus.CLConstants.*;
 
@@ -87,8 +88,13 @@ class JNegateOp extends JUnaryExpression {
 
     public JExpression analyze(Context context) {
         arg = arg.analyze(context);
-        arg.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        arg.type().mustMatchOneOf(line(), Type.INT, Type.DOUBLE);
+        if (arg.type().matchesExpected(Type.INT)){
+            type = Type.INT;
+        }
+        if (arg.type().matchesExpected(Type.DOUBLE)){
+            type = Type.DOUBLE;
+        }
         return this;
     }
 
@@ -103,7 +109,12 @@ class JNegateOp extends JUnaryExpression {
 
     public void codegen(CLEmitter output) {
         arg.codegen(output);
-        output.addNoArgInstruction(INEG);
+        if (type == Type.DOUBLE){
+            output.addNoArgInstruction(DNEG);
+        }
+        else{
+            output.addNoArgInstruction(INEG);
+        }
     }
 
 }
@@ -544,14 +555,27 @@ class JUnaryPlusOp extends JUnaryExpression {
 
     public JExpression analyze(Context context) {
         arg = (JExpression) arg.analyze(context);
-        arg.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+        arg.type().mustMatchOneOf(line(), Type.INT, Type.DOUBLE);
+        if (arg.type().matchesExpected(Type.INT)){
+            type = Type.INT;
+        }
+        if (arg.type().matchesExpected(Type.DOUBLE)){
+            type = Type.DOUBLE;
+        }
         return this;
     }
     public void codegen(CLEmitter output) {
         arg.codegen(output);
-        output.addNoArgInstruction(INEG);
-        output.addNoArgInstruction(INEG);
+        if (type == Type.DOUBLE){
+            output.addNoArgInstruction(DNEG);
+            output.addNoArgInstruction(DNEG);
+        }
+        else{
+            output.addNoArgInstruction(INEG);
+            output.addNoArgInstruction(INEG);
+        }
+        
+        
     }
 
 }

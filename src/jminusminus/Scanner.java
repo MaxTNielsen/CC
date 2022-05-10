@@ -105,11 +105,8 @@ class Scanner {
 
         //MINE
         reserved.put(CONST.image(), CONST);
-        reserved.put(FINALLY.image(), FINALLY);
         reserved.put(CONTINUE.image(), CONTINUE);
-        reserved.put(FLOAT.image(), FLOAT);
         reserved.put(INTERFACE.image(),INTERFACE);
-        reserved.put(THROW.image(), THROW);
         reserved.put(BREAK.image(), BREAK);
         reserved.put(BYTE.image(),BYTE);
         reserved.put(DEFAULT.image(),DEFAULT);
@@ -119,6 +116,7 @@ class Scanner {
         reserved.put(LONG.image(), LONG);
         reserved.put(NATIVE.image(), NATIVE);
         reserved.put(SHORT.image(), SHORT);
+        reserved.put(CHAR.image(), CHAR);
         // Prime the pump.
         nextCh();
     }
@@ -139,20 +137,25 @@ class Scanner {
             if (ch == '/') {
                 nextCh();
                 if (ch == '*') {
-                    boolean skip = true;
-                    while (skip){
+                    boolean cond = true;
+                    while (cond){
                         nextCh();
-                        if (ch == '*' && ch != EOFCH){
+                        if (ch == EOFCH){
+                            cond = false;
+                        }
+                        else if (ch == '*'){
                             nextCh();
-                            if (ch == '/' && ch != EOFCH){
-                                //break out
-                                nextCh();
-                                skip = false;
-
+                            if (ch == EOFCH){
+                                cond = false;
+                            }
+                            else if (ch == '/'){
+                                cond = false;
                             }
                         }
                     }
-                } if(ch == '=') {
+                    nextCh();
+                } 
+                else if(ch == '=') {
 					nextCh();
                     return new TokenInfo(DIV_ASSIGN, line);
                 }
@@ -283,7 +286,6 @@ class Scanner {
                 return new TokenInfo(ANDEQ, line);
             }
             else {
-                nextCh(); //er dette ikke forkert?
                 return new TokenInfo(BAND, line);
             }
         case '>':
@@ -395,6 +397,17 @@ class Scanner {
         case '0':
             // Handle only simple decimal integers for now.
             nextCh();
+            if (ch == '.'){ // Is it a double?
+                buffer = new StringBuffer();
+                buffer.append(0);
+                buffer.append(ch);
+                nextCh();
+                while (isDigit(ch)) {
+                    buffer.append(ch);
+                    nextCh();
+                }
+                return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
+            }
             return new TokenInfo(INT_LITERAL, "0", line);
         case '1':
         case '2':

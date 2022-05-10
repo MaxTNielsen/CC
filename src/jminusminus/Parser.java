@@ -670,9 +670,11 @@ public class Parser {
             ArrayList<JFormalParameter> params = formalParameters();
             ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
             if (have(THROWS)){
+                mustBe(IDENTIFIER);
                 mods.add("throws");
                 exceptions.add(qualifiedIdentifier());
                 while(have(COMMA)){
+                    mustBe(IDENTIFIER);
                     exceptions.add(qualifiedIdentifier());
                 }
             }
@@ -699,7 +701,7 @@ public class Parser {
                 
                 ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
                 if (have(THROWS)){
-                    mods.add("throws");
+                   // mods.add("throws");
                     exceptions.add(qualifiedIdentifier());
                     while(have(COMMA)){
                         exceptions.add(qualifiedIdentifier());
@@ -865,24 +867,30 @@ private JBlock block(ArrayList<String> mods) {
         } else if  (have(FOR)) {
 
             mustBe(LPAREN);
+            scanner.recordPosition();
 			if (seeBasicType() | seeReferenceType()) { // checks if data type is instantiated in the
 									// loop
                                     // enhanced for-loop grammar is for( FormalParameter : expression ) statement
-                // Using variable declarator instead of formalParameter.
-                JVariableDeclarator init = variableDeclarator(type());
-                //Check if COLON, if not, it is not enhanced for loop
-				if (have(COLON)) { // enhanced for-loop
+                // Create own lookahead function
+                scanner.next();
+                //Check for identifier and COLON, or else not colon for statement
+                if(have(IDENTIFIER) && have(COLON)) {
+                    scanner.returnToPosition();
+                    JVariableDeclarator init = variableDeclarator(type());
+                    mustBe(COLON);
                     // Primary expression for array
-					JExpression array = primary();
-					mustBe(RPAREN);
+                    JExpression array = primary();
+                    mustBe(RPAREN);
                     //Using block instead of statement to be more specific
-					JBlock consequent = block();
-					return new JColonForStatement(line, init, array,
+                    JBlock consequent = block();
+                    return new JColonForStatement(line, init, array,
 							consequent);
-				} else {
+                } else {
+                    scanner.returnToPosition();
                     JVariableDeclaration initialize = null;
                     if(have(SEMI)) {
-                    } else {
+                    } 
+                    else {
                         initialize = forInit();
                         mustBe(SEMI);
                     }
@@ -1290,7 +1298,7 @@ private JBlock block(ArrayList<String> mods) {
     private JExpression assignmentExpression() {
         int line = scanner.token().line();
         JExpression lhs = conditionalExpression();
-        if (have(ASSIGN)) {
+        if (have(ASSIGN)) { 
             return new JAssignOp(line, lhs, assignmentExpression());
         } else if (have(PLUS_ASSIGN)) {
             return new JPlusAssignOp(line, lhs, assignmentExpression());
@@ -1392,7 +1400,7 @@ private JBlock block(ArrayList<String> mods) {
                 lhs = new JOrOp(line, lhs, equalityExpression());
             } else if (have(XOR)){
                 lhs = new JXorOp(line, lhs, equalityExpression());
-            } else if (have(AND)){
+            } else if (have(BAND)){
                 lhs = new JAndOp(line, lhs, equalityExpression());
             }
             else{

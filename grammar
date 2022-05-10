@@ -33,7 +33,8 @@ blockStatement ::= localVariableDeclarationStatement
 statement ::= block
             | IF parExpression statement [ELSE statement]
             | WHILE parExpression statement 
-            | FOR parExpression statement
+            | LPAREN JVariableDeclarator COL expression RPAREN statement | 
+              FOR LPAREN [ForInit] SEMI [expression] SEMI [forUpdate] RPAREN statement 
             | RETURN [expression] SEMI
             | SEMI 
             | FINALLY statement
@@ -42,6 +43,10 @@ statement ::= block
 formalParameters ::= LPAREN 
                        [formalParameter {COMMA formalParameter}]
                      RPAREN
+
+forInit = type variableDeclarators
+
+forUpdate = statementExpression {COMMA statementExpression}
 
 formalParameter ::= type IDENTIFIER
 
@@ -71,13 +76,7 @@ referenceType ::= basicType LBRACK RBRACK {LBRACK RBRACK}
 
 statementExpression ::= expression // but must have side-effect, eg i++
 
-expression ::= assignmentExpression | lambdaExpression
-
-LambdaExpression ::= LambdaParameters LAMBDA LambdaBody
-
-LambdaParameters ::= formalParameters
-
-LambdaBody ::= assignmentExpression | block
+expression ::= assignmentExpression
 
 assignmentExpression ::= conditionalAndExpression  // must be a valid lhs
                            [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | REM_ASSIGN | SHLE | ) assignmentExpression]

@@ -30,7 +30,7 @@ enum TokenKind {
     REM("%"), REM_ASSIGN("%="), STAR_ASSIGN("*="), BAND("&"), SHLE("<<="), 
     ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LT("<"), LAND("&&"),
     LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"),
-    DIV("/"),MOD("%"),USHIFTRIGHT_ASSIGN(">>>="),AND("&"),GREATEROREQ(">="),
+    DIV("/"),MOD("%"),USHIFTRIGHT_ASSIGN(">>>="),GREATEROREQ(">="),
     ANDEQ("&="), SHR(">>"),SHL("<<"), USHR(">>>"), UCOMP("~"), OR("|"), XOR("^"), DIV_ASSIGN("/="),
     RIGHTSHIFT_ASSIGN(">>="),LOGICAL_OR("||"), OR_ASSIGN("|="),
     SHL_ASSIGN("<<="), MINUS_ASSIGN("-="), QMARK("?"),LAMBDA("->"),
