@@ -651,7 +651,7 @@ private JInterfaceDeclaration interfaceDeclaration(ArrayList<String> mods): {
         recoverFromError(new int[] { SEMI, EOF }, e);
     }
     {
-        return new JInterfaceDeclaration(line, mods, name, superClass, interfaceBody);
+        return new JInterfaceDeclaration(line, mods, name, interfaces, interfaceBody());
     }
 }
 
@@ -669,6 +669,10 @@ private ArrayList<JMember> interfaceBody(): {
         <LCURLY>
         (
             mods = modifiers()
+            {
+                if (!mods.contains("abstract")) {
+                mods.add("abstract");
+            }
             aMember = interfaceMemberDecl(mods) { members.add(aMember); }
         )*
         <RCURLY>
@@ -747,8 +751,7 @@ private JMember interfaceMemberDecl(ArrayList<String> mods): {
                if (!mods.contains("final")) {
                     mods.add("final");
                 }                       
-                interfaceMemberDecl = new JFieldDeclaration(line, mods,
-                                                   variableDeclarators);
+                interfaceMemberDecl = new JFieldDeclaration(line, mods, variableDeclarators(type));
             }
         )
     }

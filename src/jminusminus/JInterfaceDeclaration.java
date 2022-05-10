@@ -7,18 +7,15 @@ import static jminusminus.CLConstants.*;
 
 class JInterfaceDeclaration extends JAST implements JTypeDecl{
 
-     public JInterfaceDeclaration(int line, ArrayList<String> mods, String name, ArrayList<Type> extend, ArrayList<JMember> interfaceBlock) {
+     public JInterfaceDeclaration(int line, ArrayList<String> mods, String name, ArrayList<Type> interfaces, ArrayList<JMember> interfaceBlock) {
         super(line);
         mods.add("interface");
         mods.add("abstract");
         this.interfaceBlock = interfaceBlock;
-        this.interfaceSuperType = extend;
+        this.interfaceSuperTypes = superTypes;
         this.mods = mods;
+        //hasExplicitConstructor = false;
         this.name = name;
-        this.staticFieldDeclaration = this.interfaceBlock.stream()
-            .filter(x -> x instanceof JFieldDeclaration)
-            .map(x -> (JFieldDeclaration) x)
-            .collect(Collectors.toCollection(ArrayList::new));
         instanceFieldInitializations = new ArrayList<JFieldDeclaration>();
         staticFieldDeclaration = new ArrayList<JFieldDeclaration>();
     }
@@ -35,7 +32,8 @@ class JInterfaceDeclaration extends JAST implements JTypeDecl{
      /** Super class type. */
      private Type superType;
 
-     private ArrayList<Type> interfaceSuperType;
+     private ArrayList<Type> superTypes;
+     private ArrayList<Type> interfaceSuperTypes;
  
      /** This class type. */
      private Type thisType;
@@ -120,9 +118,13 @@ public ArrayList<JFieldDeclaration> instanceFieldInitializations() {
 public void preAnalyze(Context context) {
     this.context = new ClassContext(this, context);
 
-    interfaceSuperType = interfaceSuperType.stream().map(x -> x.resolve(this.context)).collect(Collectors.toCollection(ArrayList::new));
+    superType = superType.resolve(this.context);
+
+    thisType.checkAccess(line, superType);
+    interfaceSuperTypes = interfaceSuperTypes.stream().map(x -> x.resolve(this.context))
+    .collect(Collectors.toCollection(ArrayList::new));
     
-    ArrayList<String> interfaceJVMNames = this.interfaceSuperType.stream().map(x -> x.jvmName())
+    ArrayList<String> interfaceJVMNames = this.interfaceSuperTypes.stream().map(x -> x.jvmName())
                 .collect(Collectors.toCollection(ArrayList::new));
         
     CLEmitter partial = new CLEmitter(false);
@@ -132,7 +134,26 @@ public void preAnalyze(Context context) {
     partial.addClass(mods, qualifiedName, Type.OBJECT.jvmName(), interfaceJVMNames, false);
 
 
-
+    for (JMember member : interfaceBlock) {
+        if(!(member instanceof JMethodDeclaration || member instanceof JFieldDeclaration)){
+            JAST.compilationUnit.reportSemanticError(line, "Member is not valid for the interface", member.toString());
+        }
+        if(member instanceof JMethodDeclaration){
+            JMethodDeclaration m = (JMethodDeclaration) member;
+            if(!m.isStatic){
+                m.setAbstract();
+            }
+            member = m;
+        }
+        if (member instanceof JFieldDeclaration) {
+            JFieldDeclaration field = (JFieldDeclaration) member;
+            field.setStatic();
+            field.setFinal();
+            member = field;
+        }   
+        member.preAnalyze(this.context, partial);
+    }
+    
     
 
         }
@@ -160,16 +181,31 @@ public JAST analyze(Context context) {
 
 @Override
 public void codegen(CLEmitter output) {
-     ArrayList<String> ifaceJVMNames = interfaceSuperType.stream().map(x -> x.jvmName()).collect(Collectors.toCollection(ArrayList::new));
 
-     String qualifiedname = JAST.compilationUnit.packageName() == "" ? name : JAST.compilationUnit.packageName() + "/" + name;
-     output.addClass(mods, qualifiedname, Type.OBJECT.jvmName(), ifaceJVMNames, false);
+    String qualifiedName = JAST.compilationUnit.packageName() == "" ? name
+    : JAST.compilationUnit.packageName() + "/" + name;
+    output.addClass(mods, qualifiedName, superType.jvmName(), null, false);
 
-        for (JMember member : interfaceBlock){
+// The implicit empty constructor?
+if (!hasExplicitConstructor) {
+codegenImplicitConstructor(output);
+}
+
+// The members
+for (JMember member : interfaceBlock) {
+((JAST) member).codegen(output);
+}
+
+// Generate a class initialization method?
+if (staticFieldDeclaration.size() > 0) {
+codegenClassInit(output);
+}
+
+    for (JMember member : interfaceBlock){
             ((JAST) member).codegen(output);
         }
 
-        for (JFieldDeclaration staticField : staticFieldDeclaration) {
+    for (JFieldDeclaration staticField : staticFieldDeclaration) {
             staticField.codegenInitializations(output); }
 }
 
@@ -189,10 +225,10 @@ public void writeToStdOut(PrettyPrinter p) {
         p.indentLeft();
         p.println("</Modifiers>");
     }
-    if (interfaceSuperType != null) {
+    if (interfaceSuperTypes != null) {
         p.println("<Extends>");
         p.indentRight();
-        for (Type extended : interfaceSuperType) {
+        for (Type extended : interfaceSuperTypes) {
             p.printf("<Extends name=\"%s\"/>\n", extended.toString());
         }
         p.indentLeft();
@@ -207,6 +243,54 @@ public void writeToStdOut(PrettyPrinter p) {
     }
     p.indentLeft();
     p.println("</JInterfaceDeclaration>");
+}
+
+private void codegenImplicitConstructor(CLEmitter output) {
+    // Invoke super constructor
+    ArrayList<String> mods = new ArrayList<String>();
+    mods.add("public");
+    output.addMethod(mods, "<init>", "()V", null, false);
+    output.addNoArgInstruction(ALOAD_0);
+    output.addMemberAccessInstruction(INVOKESPECIAL, superType.jvmName(),
+            "<init>", "()V");
+
+    // If there are instance field initializations, generate
+    // code for them
+    for (JFieldDeclaration instanceField : instanceFieldInitializations) {
+        instanceField.codegenInitializations(output);
+    }
+
+    // Return
+    output.addNoArgInstruction(RETURN);
+}
+
+private void codegenClassInit(CLEmitter output) {
+    ArrayList<String> mods = new ArrayList<String>();
+    mods.add("public");
+    mods.add("static");
+    output.addMethod(mods, "<clinit>", "()V", null, false);
+
+    // If there are instance initializations, generate code
+    // for them
+    for (JFieldDeclaration staticField : staticFieldDeclaration) {
+        staticField.codegenInitializations(output);
+    }
+
+    // Return
+    output.addNoArgInstruction(RETURN);
+}
+
+private void codegenPartialImplicitConstructor(CLEmitter partial) {
+    // Invoke super constructor
+    ArrayList<String> mods = new ArrayList<String>();
+    mods.add("public");
+    partial.addMethod(mods, "<init>", "()V", null, false);
+    partial.addNoArgInstruction(ALOAD_0);
+    partial.addMemberAccessInstruction(INVOKESPECIAL, superType.jvmName(),
+            "<init>", "()V");
+
+    // Return
+    partial.addNoArgInstruction(RETURN);
 }
     
 }

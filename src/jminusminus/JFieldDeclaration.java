@@ -56,6 +56,18 @@ class JFieldDeclaration extends JAST implements JMember {
         }
     }
 
+    public void setFinal(){
+        if(!mods.contains("final")){
+            mods.add("final");
+        }
+    }
+
+    public void setAbstract(){
+        if(!mods.contains("abstract")){
+            mods.add("abstract");
+        }
+    }
+
     /**
      * Declares fields in the parent's (partial) class.
      * 

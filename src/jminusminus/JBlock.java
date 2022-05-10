@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @see LocalContext
  */
 
-class JBlock extends JStatement {
+class JBlock extends JStatement implements JMember {
 
     /** List of statements forming the block body. */
     private ArrayList<JStatement> statements;
@@ -109,6 +109,12 @@ class JBlock extends JStatement {
             p.indentLeft();
         }
         p.printf("</JBlock>\n");
+    }
+
+    @Override
+    public void preAnalyze(Context context, CLEmitter partial) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

@@ -89,6 +89,12 @@ class JMethodDeclaration extends JAST implements JMember {
      *                for producing the partial class).
      */
 
+    public void setAbstract(){
+        if(!mods.contains("abstract")){
+            mods.add("abstract");
+        }
+    }
+
     public void preAnalyze(Context context, CLEmitter partial) {
         // Resolve types of the formal parameters
         for (JFormalParameter param : params) {
@@ -117,6 +123,8 @@ class JMethodDeclaration extends JAST implements JMember {
             JAST.compilationUnit.reportSemanticError(line(),
                 "static method cannot be declared abstract");
         }
+
+        
 
         // Compute descriptor
         descriptor = "(";

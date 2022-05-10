@@ -548,7 +548,7 @@ public class Parser {
     }
 
     private JInterfaceDeclaration interfaceDeclaration(ArrayList<String> mods){
-        Type superClass = type().OBJECT;
+        Type superClass;
         int line = scanner.token().line();
         mustBe(INTERFACE);
         mustBe(IDENTIFIER);
@@ -561,7 +561,7 @@ public class Parser {
                 interfaces.add(qualifiedIdentifier());
             }
         }
-        return new JInterfaceDeclaration(line, mods, name, interfaces, superClass, interfaceBody());
+        return new JInterfaceDeclaration(line, mods, name, interfaces, interfaceBody());
 
     }
 
@@ -624,6 +624,9 @@ public class Parser {
         interfaceMemberDeclaration = new JMethodDeclaration(line, mods, name, type, parameters, null, exceptions);
     }
     else{
+        if(!mods.contains("public")) {
+            mods.add("public"); 
+        }
         if (!mods.contains("static")) {
             mods.add("static");
         }
@@ -673,7 +676,7 @@ public class Parser {
                     exceptions.add(qualifiedIdentifier());
                 }
             }
-            JBlock body = have(SEMI) ? null : block();
+            JBlock body = block();
              memberDecl = new JConstructorDeclaration(line, mods, name,
                     params, body, exceptions);
 
