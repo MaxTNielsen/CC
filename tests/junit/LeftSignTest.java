@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import pass.LeftSign;
 
 
-public class LeftSign extends TestCase{
+public class LeftSignTest extends TestCase{
     private LeftSign ls;
 
     protected void setUp() throws Exception {

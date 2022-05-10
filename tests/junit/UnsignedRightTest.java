@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import pass.UnsignedRight;
 
 
-public class UnsignedRight extends TestCase{
+public class UnsignedRightTest extends TestCase{
     private UnsignedRight UnsignedRight;
 
     protected void setUp() throws Exception {

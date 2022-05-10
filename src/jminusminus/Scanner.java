@@ -9,9 +9,6 @@ import java.io.LineNumberReader;
 
 import java.util.Hashtable;
 
-import javax.imageio.ImageIO;
-
-import com.java2html.firstparse.Token;
 
 import static jminusminus.TokenKind.*;
 
@@ -309,7 +306,6 @@ class Scanner {
                         nextCh();
                         return new TokenInfo(USHIFTRIGHT_ASSIGN, line);
                     } else {
-                        nextCh();
                         return new TokenInfo(USHR, line);
                     }
                 } if(ch == '=') {
@@ -332,6 +328,7 @@ class Scanner {
             if (ch == '<'){
                 nextCh();
                 if (ch == '='){
+                    nextCh();
                     return new TokenInfo(SHL_ASSIGN, line);
                 }
                 else{

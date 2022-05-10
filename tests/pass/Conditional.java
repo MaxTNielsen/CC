@@ -1,5 +1,5 @@
-package pass;
 
+package pass;
 
 public class Conditional {
 

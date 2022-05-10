@@ -793,7 +793,7 @@ class JLNOTAssignOp extends JAssignment {
     }
 }
 
-class JSHLAssign extends JAssignment {
+class JSHLAssignOp extends JAssignment {
 
     /**
      * Constructs the AST node for a %= expression given its lhs and rhs
@@ -808,7 +808,7 @@ class JSHLAssign extends JAssignment {
      *             the rhs operand.
      */
 
-    public JSHLAssign(int line, JExpression lhs, JExpression rhs) {
+    public JSHLAssignOp(int line, JExpression lhs, JExpression rhs) {
         super(line, "<<=", lhs, rhs);
     }
 
@@ -863,7 +863,7 @@ class JSHLAssign extends JAssignment {
         }
         ((JLhs) lhs).codegenStore(output);
     }
-
+}
 
     /**
      * Constructs the AST node for a %= expression given its lhs and rhs
@@ -878,13 +878,11 @@ class JSHLAssign extends JAssignment {
      *             the rhs operand.
      */
 
-class JSHRAssign extends JAssignment {
+class JSHRAssignOp extends JAssignment {
 
-    public JSHRAssign(int line, JExpression lhs, JExpression rhs) {
+    public JSHRAssignOp(int line, JExpression lhs, JExpression rhs) {
         super(line, ">>=", lhs, rhs);
     }
-
-        
 
     /**
      * Analyzes the lhs and rhs and sets the result type.
@@ -976,6 +974,5 @@ class JUshiftRightAssignOp extends JAssignment {
         ((JLhs) lhs).codegenStore(output);
     
     }
-}
 }
 

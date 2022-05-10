@@ -66,10 +66,6 @@ public class ExceptionHandling  {
             int x = 2;
             System.out.println(e.getMessage());
         }
-        catch (ArithmeticException e){
-            int x = 2;
-            System.out.println(e.getMessage());
-        }
         finally{
             System.out.println("finally");
         }

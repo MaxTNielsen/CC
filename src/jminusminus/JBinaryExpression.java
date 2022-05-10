@@ -530,7 +530,7 @@ class JXorOp extends JBinaryExpression {
         lhs.codegen(output);
         rhs.codegen(output);
         output.addNoArgInstruction(IXOR); 
-    }
 
+    }
 }
 
