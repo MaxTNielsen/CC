@@ -42,6 +42,8 @@ class JMethodDeclaration extends JAST implements JMember {
     protected boolean isPrivate;
 
     protected ArrayList<TypeName> exceptions;
+
+    protected ArrayList<String> internalExceptions;
     /**
      * Constructs an AST node for a method declaration given the
      * line number, method name, return type, formal parameters,
@@ -77,6 +79,7 @@ class JMethodDeclaration extends JAST implements JMember {
         this.isStatic = mods.contains("static");
         this.isPrivate = mods.contains("private");
         this.exceptions = exceptions;
+        this.internalExceptions = new ArrayList<String>();
     }
     /**
      * Declares this method in the parent (class) context.
@@ -95,8 +98,7 @@ class JMethodDeclaration extends JAST implements JMember {
             param.setType(param.type().resolve(context));
         }
         for (TypeName e : exceptions) {
-                TypeName temp = new TypeName(line, e.jvmName());
-                temp.resolve(context);
+                internalExceptions.add(e.resolve(context).jvmName());
         }
         
 
@@ -187,7 +189,7 @@ class JMethodDeclaration extends JAST implements JMember {
     public void partialCodegen(Context context, CLEmitter partial) {
         // Generate a method with an empty body; need a return to
         // make the class verifier happy.
-        partial.addMethod(mods, name, descriptor, null, false);
+        partial.addMethod(mods, name, descriptor, internalExceptions, false);
 
         // Add implicit RETURN
         if (returnType == Type.VOID) {
@@ -196,7 +198,10 @@ class JMethodDeclaration extends JAST implements JMember {
             || returnType == Type.BOOLEAN || returnType == Type.CHAR) {
             partial.addNoArgInstruction(ICONST_0);
             partial.addNoArgInstruction(IRETURN);
-        } else {
+        } else if (returnType == Type.DOUBLE){
+            partial.addNoArgInstruction(DCONST_0);
+            partial.addNoArgInstruction(DRETURN);
+        }else {
             // A reference type.
             partial.addNoArgInstruction(ACONST_NULL);
             partial.addNoArgInstruction(ARETURN);
@@ -212,7 +217,7 @@ class JMethodDeclaration extends JAST implements JMember {
      */
 
     public void codegen(CLEmitter output) {
-        output.addMethod(mods, name, descriptor, null, false);
+        output.addMethod(mods, name, descriptor, internalExceptions, false);
         if (body != null) {
             body.codegen(output);
         }

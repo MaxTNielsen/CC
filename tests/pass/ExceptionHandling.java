@@ -37,6 +37,7 @@ public class ExceptionHandling  {
     }
     public static void testTryCatchNested(){
         try{
+            int x = 3;
             try{
                 System.out.println(1/0);
             }
@@ -62,6 +63,11 @@ public class ExceptionHandling  {
             System.out.println(1/0);
         }
         catch (Exception e){
+            int x = 2;
+            System.out.println(e.getMessage());
+        }
+        catch (ArithmeticException e){
+            int x = 2;
             System.out.println(e.getMessage());
         }
         finally{

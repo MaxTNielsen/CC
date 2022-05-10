@@ -35,7 +35,6 @@ public class JCatchStatement extends JStatement {
         this.context.addEntry(catchBlock.line(),  exception.name(), defn);
 
         catchBlock = (JBlock) catchBlock.analyze(this.context);
-        //---
         
         return this;
     }
@@ -46,7 +45,28 @@ public class JCatchStatement extends JStatement {
         exception.codegen(output);
         //output.addLabel(getException());
 
-     
+        if (defn instanceof LocalVariableDefn) {
+            int offset = ((LocalVariableDefn) defn).offset();
+            if (exception.type().isReference()) {
+                switch (offset) {
+                case 0:
+                    output.addNoArgInstruction(ASTORE_0);
+                    break;
+                case 1:
+                    output.addNoArgInstruction(ASTORE_1);
+                    break;
+                case 2:
+                    output.addNoArgInstruction(ASTORE_2);
+                    break;
+                case 3:
+                    output.addNoArgInstruction(ASTORE_3);
+                    break;
+                default:
+                    output.addOneArgInstruction(ASTORE, offset);
+                    break;
+                }
+            }
+        }
 
 
         catchBlock.codegen(output);
