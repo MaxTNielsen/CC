@@ -163,7 +163,7 @@ class JMethodDeclaration extends JAST implements JMember {
                 this.context.nextOffset());
             if (param.type() == Type.DOUBLE){
                     this.context.nextOffset();
-                }
+            }
             
             defn.initialize();
             this.context.addEntry(param.line(), param.name(), defn);

@@ -30,7 +30,7 @@ public class Double {
     static public double minus(double x, double y){
         return x-y;
     }
-    static public double tripple(double x, double y, double z){
-        return x+y+z;
+    static public int tripple(double x, double y, double z){
+        return (int) (x+y+z);
     }
 }
