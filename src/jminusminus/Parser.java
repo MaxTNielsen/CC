@@ -1310,6 +1310,10 @@ private JBlock block(ArrayList<String> mods) {
             return new JStarAssignOp(line, lhs, assignmentExpression());
         } else if (have(REM_ASSIGN)) {
             return new JRemAssignOp(line, lhs, assignmentExpression());
+        } else if (have(ANDEQ)) {
+            return new JRemAssignOp(line, lhs, assignmentExpression());
+        } else if (have(USHIFTRIGHT_ASSIGN)) {
+            return new JRemAssignOp(line, lhs, assignmentExpression());
         } else {
             return lhs;
         }
