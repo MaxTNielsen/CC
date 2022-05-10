@@ -33,7 +33,7 @@ public class JMinusMinusTestRunner {
         suite.addTestSuite(UnaryPlusTest.class);
         //suite.addTestSuite(RightShiftAssignTest.class);
         suite.addTestSuite(DivisionAssignTest.class);
-        //suite.addTestSuite(OrAssignTest.class);
+        suite.addTestSuite(OrAssignTest.class);
         suite.addTestSuite(LogicalOrTest.class);
         //suite.addTestSuite(LeftSignTest.class);
         suite.addTestSuite(PostfixIncrementTest.class);

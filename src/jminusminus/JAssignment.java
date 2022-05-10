@@ -152,6 +152,10 @@ class JPlusAssignOp extends JAssignment {
         if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        }
+        else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         } else if (lhs.type().equals(Type.STRING)) {
             rhs = (new JStringConcatenationOp(line, lhs, rhs)).analyze(context);
             type = Type.STRING;
@@ -177,10 +181,14 @@ class JPlusAssignOp extends JAssignment {
         ((JLhs) lhs).codegenLoadLhsLvalue(output);
         if (lhs.type().equals(Type.STRING)) {
             rhs.codegen(output);
-        } else {
+        } else if (lhs.type().equals(Type.INT)){
             ((JLhs) lhs).codegenLoadLhsRvalue(output);
             rhs.codegen(output);
             output.addNoArgInstruction(IADD);
+        } else {
+            ((JLhs) lhs).codegenLoadLhsRvalue(output);
+            rhs.codegen(output);
+            output.addNoArgInstruction(DADD);
         }
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
@@ -232,9 +240,13 @@ class JMinusAssignOp extends JAssignment {
             lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
         }
         rhs = (JExpression) rhs.analyze(context);
-        if (lhs.type().equals(Type.INT)) { // tilføj support for double her
+        if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        }
+        else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         } else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for -=: " + lhs.type());
@@ -257,7 +269,11 @@ class JMinusAssignOp extends JAssignment {
         ((JLhs) lhs).codegenLoadLhsRvalue(output);
         ((JLhs) lhs).codegenLoadLhsRvalue(output);
         rhs.codegen(output);
+        if (type == Type.DOUBLE){
+            output.addNoArgInstruction(DSUB);
+        } else {
         output.addNoArgInstruction(ISUB);
+        }
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
             ((JLhs) lhs).codegenDuplicateRvalue(output);
@@ -307,9 +323,13 @@ class JDivAssignOp extends JAssignment {
             lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
         }
         rhs = (JExpression) rhs.analyze(context);
-        if (lhs.type().equals(Type.INT)) { // tilføj support for double her
+        if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        }
+        else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         } else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for /=: " + lhs.type());
@@ -318,7 +338,7 @@ class JDivAssignOp extends JAssignment {
     }
 
     /**
-     * Code generation for /= involves, generating code for loading any
+     * Code generation for %= involves, generating code for loading any
      * necessary l-value onto the stack, for
      * loading the r-value, for (unless a statement) copying the r-value to its
      * proper place on the stack, and for doing the store.
@@ -332,7 +352,11 @@ class JDivAssignOp extends JAssignment {
         ((JLhs) lhs).codegenLoadLhsRvalue(output);
         ((JLhs) lhs).codegenLoadLhsRvalue(output);
         rhs.codegen(output);
+        if (type == Type.DOUBLE){
+            output.addNoArgInstruction(DDIV);
+        } else {
         output.addNoArgInstruction(IDIV);
+        }
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
             ((JLhs) lhs).codegenDuplicateRvalue(output);
@@ -381,9 +405,13 @@ class JStarAssignOp extends JAssignment {
             lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
         }
         rhs = (JExpression) rhs.analyze(context);
-        if (lhs.type().equals(Type.INT)) { // tilføj support for double her
+        if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        }
+        else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         } else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for *=: " + lhs.type());
@@ -406,7 +434,11 @@ class JStarAssignOp extends JAssignment {
         ((JLhs) lhs).codegenLoadLhsRvalue(output);
         ((JLhs) lhs).codegenLoadLhsRvalue(output);
         rhs.codegen(output);
+        if (type == Type.DOUBLE){
+            output.addNoArgInstruction(DMUL);
+        } else {
         output.addNoArgInstruction(IMUL);
+        }
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
             ((JLhs) lhs).codegenDuplicateRvalue(output);
@@ -455,9 +487,13 @@ class JRemAssignOp extends JAssignment {
             lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
         }
         rhs = (JExpression) rhs.analyze(context);
-        if (lhs.type().equals(Type.INT)) { // tilføj support for double her
+        if (lhs.type().equals(Type.INT)) {
             rhs.type().mustMatchExpected(line(), Type.INT);
             type = Type.INT;
+        }
+        else if (lhs.type().equals(Type.DOUBLE)) {
+            rhs.type().mustMatchExpected(line(), Type.DOUBLE);
+            type = Type.DOUBLE;
         } else {
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid lhs type for %=: " + lhs.type());
@@ -480,7 +516,11 @@ class JRemAssignOp extends JAssignment {
         ((JLhs) lhs).codegenLoadLhsRvalue(output);
         ((JLhs) lhs).codegenLoadLhsRvalue(output);
         rhs.codegen(output);
+        if (type == Type.DOUBLE){
+            output.addNoArgInstruction(DREM);
+        } else {
         output.addNoArgInstruction(IREM);
+        }
         if (!isStatementExpression) {
             // Generate code to leave the r-value atop stack
             ((JLhs) lhs).codegenDuplicateRvalue(output);
@@ -489,7 +529,72 @@ class JRemAssignOp extends JAssignment {
     }
 }
 
-    class JAndAssignOp extends JAssignment {
+/**
+ * The AST node for an OR assignment (|=) expression. The |= operator has two
+ * operands: a lhs and a rhs.
+ */
+
+class JOrAssignOp extends JAssignment {
+
+    /**
+     * Constructs the AST node for an OR assignment (|=) expression given the lhs and
+     * rhs operands.
+     * 
+     * @param line
+     *             line in which the assignment expression occurs in the source
+     *             file.
+     * @param lhs
+     *             lhs operand.
+     * @param rhs
+     *             rhs operand.
+     */
+
+    public JOrAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "|=", lhs, rhs);
+    }
+
+    /**
+     * Analyzes the lhs and rhs, checking that types match, and sets the result
+     * type.
+     * 
+     * @param context
+     *                context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) {
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        } else {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for |=: " + lhs.type());
+        }
+        return this;
+    }
+
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IOR);
+        if (!isStatementExpression) {
+            // Generate code to leave the r-value atop stack
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}
+
+class JAndAssignOp extends JAssignment {
 
     public JAndAssignOp(int line, JExpression lhs, JExpression rhs) {
         super(line, "&=", lhs, rhs);
@@ -540,47 +645,48 @@ class JRemAssignOp extends JAssignment {
         }
         ((JLhs) lhs).codegenStore(output);
     }
+}
+
+
+class JUshiftRightAssignOp extends JAssignment {
+
+    public JUshiftRightAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, ">>>=", lhs, rhs);
     }
 
-    class JUshiftRightAssignOp extends JAssignment {
-
-        public JUshiftRightAssignOp(int line, JExpression lhs, JExpression rhs) {
-            super(line, ">>>=", lhs, rhs);
-        }
-    
-        public JExpression analyze(Context context) {
-            if (!(lhs instanceof JLhs)) {
-                JAST.compilationUnit.reportSemanticError(line(),
-                        "Illegal lhs for assignment");
-                type = Type.ANY;
-                return this;
-            } else {
-                lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
-            }
-            rhs = (JExpression) rhs.analyze(context);
-            if (lhs.type().equals(Type.INT)) { 
-                rhs.type().mustMatchExpected(line(), Type.INT);
-                type = Type.INT;
-            }   else {
-                type = type.ANY;
-                JAST.compilationUnit.reportSemanticError(line(),
-                        "Invalid lhs type for %=: " + lhs.type());
-            }
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Illegal lhs for assignment");
+            type = Type.ANY;
             return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
         }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) { 
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        }   else {
+            type = type.ANY;
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for %=: " + lhs.type());
+        }
+        return this;
+    }
+
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IREM);
+        if (!isStatementExpression) {
+            // Generate code to leave the r-value atop stack
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
     
-        public void codegen(CLEmitter output) {
-            ((JLhs) lhs).codegenLoadLhsRvalue(output);
-            ((JLhs) lhs).codegenLoadLhsRvalue(output);
-            rhs.codegen(output);
-            output.addNoArgInstruction(IREM);
-            if (!isStatementExpression) {
-                // Generate code to leave the r-value atop stack
-                ((JLhs) lhs).codegenDuplicateRvalue(output);
-            }
-            ((JLhs) lhs).codegenStore(output);
-        
-        }
+    }
 }
 
 

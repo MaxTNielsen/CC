@@ -1309,6 +1309,8 @@ private JBlock block(ArrayList<String> mods) {
             return new JStarAssignOp(line, lhs, assignmentExpression());
         } else if (have(REM_ASSIGN)) {
             return new JRemAssignOp(line, lhs, assignmentExpression());
+        } else if (have(OR_ASSIGN)) {
+            return new JOrAssignOp(line, lhs, assignmentExpression());
         } else if (have(ANDEQ)) {
             return new JAndAssignOp(line, lhs, assignmentExpression());
         } else if (have(USHIFTRIGHT_ASSIGN)) {
@@ -1447,7 +1449,7 @@ private JBlock block(ArrayList<String> mods) {
             return new JGreaterThanOp(line, lhs, shiftExpression());
         } else if (have(LT)) {
             return new JLessThanOp(line, lhs, shiftExpression());
-        } else if (have(GREATEROREQ)) {
+        } else if (have(GE)) {
             return new JGreaterEqualOp(line, lhs, shiftExpression());
         } else if (have(LE)) {
             return new JLessEqualOp(line, lhs, shiftExpression());
@@ -1487,6 +1489,10 @@ private JBlock block(ArrayList<String> mods) {
         }
         return lhs;
     }
+
+
+
+
     private JExpression additiveExpression() {
         int line = scanner.token().line();
         boolean more = true;

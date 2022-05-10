@@ -205,6 +205,8 @@ TOKEN: {
 | <DIV_ASSIGN: "/=">
 | <EQUAL: "==">
 | <GT: ">">
+| <GE: "=>">
+| <LT: "=<">
 | <INC: "++">
 | <LAND: "&&">
 | <LOR: "||">
@@ -1317,6 +1319,7 @@ private JExpression expression(): {
  *            | STAR_ASSIGN
  *            | DIV_ASSIGN
  *            | REM_ASSIGN
+ *            | OR_ASSIGN
  *            )
  *            assignmentExpression]
  * </pre>
@@ -1360,6 +1363,10 @@ private JExpression assignmentExpression(): {
             <REM_ASSIGN>
             rhs = assignmentExpression()
             { lhs = new JRemAssignOp(line, lhs, rhs); }
+
+            <OR_ASSIGN>
+            rhs = assignmentExpression()
+            { lhs = new JOrAssignOp(line, lhs, rhs); }
         ]
     }
     catch (ParseException e) {
@@ -1500,14 +1507,22 @@ private JExpression relationalExpression(): {
 }
 {
     try {
-        lhs = additiveExpression() { line = lhs.line(); }
+        lhs = shiftExpression() { line = lhs.line(); }
         [
             <GT>
-            rhs = additiveExpression()
+            rhs = shiftExpression()
+            { lhs = new JGreaterThanOp(line, lhs, rhs); } |
+
+            <GE>
+            rhs = shiftExpression()
+            { lhs = new JGreaterThanOp(line, lhs, rhs); } |
+
+            <LT>
+            rhs = shiftExpression()
             { lhs = new JGreaterThanOp(line, lhs, rhs); } |
 
             <LE>
-            rhs = additiveExpression()
+            rhs = shiftExpression()
             { lhs = new JLessEqualOp(line, lhs, rhs); } |
 
             <INSTANCEOF>

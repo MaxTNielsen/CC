@@ -79,7 +79,7 @@ statementExpression ::= expression // but must have side-effect, eg i++
 expression ::= assignmentExpression
 
 assignmentExpression ::= conditionalAndExpression  // must be a valid lhs
-                           [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | REM_ASSIGN | SHLE | ) assignmentExpression]
+                           [(ASSIGN | PLUS_ASSIGN | STAR_ASSIGN | REM_ASSIGN | SHLE | OR_ASSIGN) assignmentExpression]
 
 conditionalAndExpression ::= equalityExpression // level 10
                                {LAND equalityExpression}
@@ -87,13 +87,8 @@ conditionalAndExpression ::= equalityExpression // level 10
 equalityExpression ::= relationalExpression  // level 6
                          {EQUAL relationalExpression}
 
-<<<<<<< HEAD
-relationalExpression ::= additiveExpression       // level 5
-                           [(GT | LT | LE) additiveExpression
-=======
 relationalExpression ::= shiftExpression       // level 5
-                           [(GT | LT | LE) shiftExpression
->>>>>>> main
+                           [(GT | LT | LE | GE) shiftExpression
                            | INSTANCEOF referenceType]
 
 shiftExpression ::= additiveExpression    // level 4
