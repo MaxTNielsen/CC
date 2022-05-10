@@ -471,6 +471,8 @@ class JRemAssignOp extends JAssignment {
         super(line, "%=", lhs, rhs);
     }
 
+
+
     /**
      * Analyzes the lhs and rhs and sets the result type.
      * @param context
@@ -647,6 +649,293 @@ class JAndAssignOp extends JAssignment {
     }
 }
 
+class JXORAssignOp extends JAssignment {
+
+    /**
+     * Constructs the AST node for a %= expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *             line in which the assignment expression occurs in the source
+     *             file.
+     * @param lhs
+     *             the lhs operand.
+     * @param rhs
+     *             the rhs operand.
+     */
+
+    public JXORAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "^=", lhs, rhs);
+    }
+
+
+
+    /**
+     * Analyzes the lhs and rhs and sets the result type.
+     * @param context
+     *                context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) { // tilføj support for double her
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        }
+        else{
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for %=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * Code generation for %= involves, generating code for loading any
+     * necessary l-value onto the stack, for
+     * loading the r-value, for (unless a statement) copying the r-value to its
+     * proper place on the stack, and for doing the store.
+     * 
+     * @param output
+     *               the code emitter (basically an abstraction for producing the
+     *               .class file).
+     */
+
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(IXOR);
+        if (!isStatementExpression) {
+            // Generate code to leave the r-value atop stack
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}
+
+class JLNOTAssignOp extends JAssignment {
+
+    /**
+     * Constructs the AST node for a %= expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *             line in which the assignment expression occurs in the source
+     *             file.
+     * @param lhs
+     *             the lhs operand.
+     * @param rhs
+     *             the rhs operand.
+     */
+
+    public JLNOTAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "!=", lhs, rhs);
+    }
+
+
+
+    /**
+     * Analyzes the lhs and rhs and sets the result type.
+     * @param context
+     *                context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) { // tilføj support for double her
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        }
+        else{
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for !=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * Code generation for %= involves, generating code for loading any
+     * necessary l-value onto the stack, for
+     * loading the r-value, for (unless a statement) copying the r-value to its
+     * proper place on the stack, and for doing the store.
+     * 
+     * @param output
+     *               the code emitter (basically an abstraction for producing the
+     *               .class file).
+     */
+
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(INEG);
+        if (!isStatementExpression) {
+            // Generate code to leave the r-value atop stack
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}
+
+class JSHLAssign extends JAssignment {
+
+    /**
+     * Constructs the AST node for a %= expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *             line in which the assignment expression occurs in the source
+     *             file.
+     * @param lhs
+     *             the lhs operand.
+     * @param rhs
+     *             the rhs operand.
+     */
+
+    public JSHLAssign(int line, JExpression lhs, JExpression rhs) {
+        super(line, "<<=", lhs, rhs);
+    }
+
+
+
+    /**
+     * Analyzes the lhs and rhs and sets the result type.
+     * @param context
+     *                context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) { // tilføj support for double her
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        }
+        else{
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for !=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * Code generation for %= involves, generating code for loading any
+     * necessary l-value onto the stack, for
+     * loading the r-value, for (unless a statement) copying the r-value to its
+     * proper place on the stack, and for doing the store.
+     * 
+     * @param output
+     *               the code emitter (basically an abstraction for producing the
+     *               .class file).
+     */
+
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(ISHL);
+        if (!isStatementExpression) {
+            // Generate code to leave the r-value atop stack
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+
+
+    /**
+     * Constructs the AST node for a %= expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *             line in which the assignment expression occurs in the source
+     *             file.
+     * @param lhs
+     *             the lhs operand.
+     * @param rhs
+     *             the rhs operand.
+     */
+
+class JSHRAssign extends JAssignment {
+
+    public JSHRAssign(int line, JExpression lhs, JExpression rhs) {
+        super(line, ">>=", lhs, rhs);
+    }
+
+        
+
+    /**
+     * Analyzes the lhs and rhs and sets the result type.
+     * @param context
+     *                context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+        if (!(lhs instanceof JLhs)) {
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Illegal lhs for assignment");
+            return this;
+        } else {
+            lhs = (JExpression) ((JLhs) lhs).analyzeLhs(context);
+        }
+        rhs = (JExpression) rhs.analyze(context);
+        if (lhs.type().equals(Type.INT)) { // tilføj support for double her
+            rhs.type().mustMatchExpected(line(), Type.INT);
+            type = Type.INT;
+        }
+        else{
+            JAST.compilationUnit.reportSemanticError(line(),
+                    "Invalid lhs type for !=: " + lhs.type());
+        }
+        return this;
+    }
+
+    /**
+     * Code generation for %= involves, generating code for loading any
+     * necessary l-value onto the stack, for
+     * loading the r-value, for (unless a statement) copying the r-value to its
+     * proper place on the stack, and for doing the store.
+     * 
+     * @param output
+     *               the code emitter (basically an abstraction for producing the
+     *               .class file).
+     */
+
+    public void codegen(CLEmitter output) {
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        ((JLhs) lhs).codegenLoadLhsRvalue(output);
+        rhs.codegen(output);
+        output.addNoArgInstruction(ISHR);
+        if (!isStatementExpression) {
+            // Generate code to leave the r-value atop stack
+            ((JLhs) lhs).codegenDuplicateRvalue(output);
+        }
+        ((JLhs) lhs).codegenStore(output);
+    }
+}
 
 class JUshiftRightAssignOp extends JAssignment {
 
@@ -688,5 +977,5 @@ class JUshiftRightAssignOp extends JAssignment {
     
     }
 }
-
+}
 

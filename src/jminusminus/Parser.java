@@ -1312,8 +1312,20 @@ private JBlock block(ArrayList<String> mods) {
         } else if (have(OR_ASSIGN)) {
             return new JOrAssignOp(line, lhs, assignmentExpression());
         } else if (have(ANDEQ)) {
-            return new JAndAssignOp(line, lhs, assignmentExpression());
-        } else if (have(USHIFTRIGHT_ASSIGN)) {
+            return new JAndAssignOp(line, lhs, assignmentExpression());}
+            else if (have(XOR_ASSIGN)){
+                return new JXORAssignOp(line, lhs, assignmentExpression());
+            }
+               else if (have(LNOT_ASSIGN)){
+                return new JLNOTAssignOp(line, lhs, assignmentExpression());
+               }
+               else if(have(SHL_ASSIGN)){
+                   return new JSHLAssign(line, lhs, assignmentExpression());
+               }
+               else if(have(RIGHTSHIFT_ASSIGN)){
+                   return new JSHRAssign(line, lhs, assignmentExpression());
+               }
+         else if (have(USHIFTRIGHT_ASSIGN)) {
             return new JUshiftRightAssignOp(line, lhs, assignmentExpression());
         } else {
             return lhs;

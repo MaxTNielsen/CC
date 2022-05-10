@@ -216,12 +216,17 @@ TOKEN: {
 | <MIN_ASSIGN: "-=">
 | <OR: "|">
 | <OR_ASSIGN: "|=">
+| <LNOT_ASSIGN: "!=">
+| <XOR: "^">
+| <XOR_ASSIGN: "^=">
 | <PLUS_ASSIGN: "+=">
 | <REM: "%">
 | <REM_ASSIGN: "%=">
 | <RSHIFT: ">>">
 | <STAR: "*">
 | <STAR_ASSIGN: "*=">
+| <SHL_ASSIGN: "<<=">
+| <RIGHTSHIFT_ASSIGN: "=>>">
 | <URSHIFT_ASSIGN: ">>>=">
 | <URSHIFT: ">>>">
 | <QMARK: "?">

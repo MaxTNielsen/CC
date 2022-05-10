@@ -11,6 +11,8 @@ import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 
+import com.java2html.firstparse.Token;
+
 import static jminusminus.TokenKind.*;
 
 /**
@@ -102,6 +104,8 @@ class Scanner {
         reserved.put(TRANSIENT.image(), TRANSIENT);
         reserved.put(TRY.image(), TRY);
         reserved.put(VOLATILE.image(), VOLATILE);
+        reserved.put(LNOT_ASSIGN.image(), LNOT_ASSIGN);
+        reserved.put(RIGHTSHIFT_ASSIGN.image(), RIGHTSHIFT_ASSIGN);
 
         //MINE
         reserved.put(CONST.image(), CONST);
@@ -190,8 +194,13 @@ class Scanner {
             else return new TokenInfo(OR, line);
         case '^':
             nextCh();
+            if(ch == '='){
+                nextCh();
+                return new TokenInfo(XOR_ASSIGN, line);
+            }else{
             return new TokenInfo(XOR, line);
-        case '~':
+            }
+            case '~':
             nextCh();
             return new TokenInfo(UCOMP, line);
         case '%':
@@ -238,8 +247,14 @@ class Scanner {
             }
         case '!':
             nextCh();
+            if(ch == '='){
+                nextCh();
+                return new TokenInfo(LNOT_ASSIGN, line);
+            }
+            else{
             return new TokenInfo(LNOT, line);
-        case '*':
+            }
+            case '*':
             nextCh();
             if(ch == '='){
                 nextCh();
@@ -317,7 +332,7 @@ class Scanner {
             if (ch == '<'){
                 nextCh();
                 if (ch == '='){
-                    return new TokenInfo(SHLE, line);
+                    return new TokenInfo(SHL_ASSIGN, line);
                 }
                 else{
                 return new TokenInfo(SHL, line);
