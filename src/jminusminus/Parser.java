@@ -1263,7 +1263,7 @@ public class Parser {
                 lhs = new JOrOp(line, lhs, equalityExpression());
             } else if (have(XOR)){
                 lhs = new JXorOp(line, lhs, equalityExpression());
-            } else if (have(AND)){
+            } else if (have(BAND)){
                 lhs = new JAndOp(line, lhs, equalityExpression());
             }
             else{

@@ -286,7 +286,6 @@ class Scanner {
                 return new TokenInfo(ANDEQ, line);
             }
             else {
-                nextCh(); //er dette ikke forkert?
                 return new TokenInfo(BAND, line);
             }
         case '>':
