@@ -17,6 +17,6 @@ public class ConditionalTest extends TestCase{
     
     public void testCompute() {
         assertEquals(conditional.ConditionExpressionLimit(10,20), 20);
-        assertEquals(conditional.ConditionExpressionLimitp(20,10), 20);
+        assertEquals(conditional.ConditionExpressionLimit(20,10), 20);
     }
 }

@@ -31,7 +31,6 @@ public class JTryStatement extends JStatement{
 
 
     public void codegen(CLEmitter output) {
-        //4 labels
         String startLabel = output.createLabel();
         String tryEndLabel = output.createLabel();
         String finallyLabel = output.createLabel();           
@@ -50,32 +49,29 @@ public class JTryStatement extends JStatement{
             
 
             output.addLabel(handlerLabel);
+            output.addExceptionHandler(startLabel, tryEndLabel, handlerLabel, catchSt.getException());
             catchSt.codegen(output);
-            output.addExceptionHandler(startLabel, tryEndLabel, handlerLabel, catchSt.getException()); 
             if (finallyBlock != null){
                 output.addBranchInstruction(JSR, finallyLabel);
             }
-            
             output.addNoArgInstruction(RETURN);
         }
+        
 
         if (finallyBlock != null){
-        String handlerLabel = output.createLabel();
-        output.addLabel(handlerLabel);
-        output.addExceptionHandler(startLabel, tryEndLabel, handlerLabel, null);
+            String handlerLabel = output.createLabel();
+            output.addLabel(handlerLabel);
+            output.addExceptionHandler(startLabel, tryEndLabel, handlerLabel, null);
+            output.addNoArgInstruction(ASTORE_1);
+            output.addBranchInstruction(JSR, finallyLabel);
+            output.addNoArgInstruction(ALOAD_1);
+            output.addNoArgInstruction(ATHROW);
 
-        output.addNoArgInstruction(ASTORE_1);
-        output.addBranchInstruction(JSR, finallyLabel);
-        output.addNoArgInstruction(ALOAD_1);
-        output.addNoArgInstruction(ATHROW);
-        }
-        if (finallyBlock != null){output.addLabel(finallyLabel);
+            output.addLabel(finallyLabel);
             output.addNoArgInstruction(ASTORE_2);
             finallyBlock.codegen(output);  
             output.addOneArgInstruction(RET, 2);
         }
-       
-        
     }
 
 

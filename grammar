@@ -33,7 +33,8 @@ blockStatement ::= localVariableDeclarationStatement
 statement ::= block
             | IF parExpression statement [ELSE statement]
             | WHILE parExpression statement 
-            | FOR parExpression statement
+            | LPAREN JVariableDeclarator COL expression RPAREN statement | 
+              FOR LPAREN [ForInit] SEMI [expression] SEMI [forUpdate] RPAREN statement 
             | RETURN [expression] SEMI
             | SEMI 
             | FINALLY statement
@@ -44,6 +45,10 @@ statement ::= block
 formalParameters ::= LPAREN 
                        [formalParameter {COMMA formalParameter}]
                      RPAREN
+
+forInit = type variableDeclarators
+
+forUpdate = statementExpression {COMMA statementExpression}
 
 formalParameter ::= type IDENTIFIER
 

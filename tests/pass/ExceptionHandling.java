@@ -11,7 +11,7 @@ public class ExceptionHandling  {
         testTryCatchNested();
         testTryCatchTwo();
         testTryFinally();
-        //testTryCatchFinally();
+        testTryCatchFinally();
     }
     public static void testThrows() throws ArithmeticException{
         throw new ArithmeticException();
@@ -37,6 +37,7 @@ public class ExceptionHandling  {
     }
     public static void testTryCatchNested(){
         try{
+            int x = 3;
             try{
                 System.out.println(1/0);
             }
@@ -50,7 +51,7 @@ public class ExceptionHandling  {
     }
     public static void testTryFinally(){
         try{
-            System.out.println(1/0);
+            System.out.println("try");
         }
 
         finally{
@@ -62,7 +63,12 @@ public class ExceptionHandling  {
             System.out.println(1/0);
         }
         catch (Exception e){
-            System.out.println("catch");
+            int x = 2;
+            System.out.println(e.getMessage());
+        }
+        catch (ArithmeticException e){
+            int x = 2;
+            System.out.println(e.getMessage());
         }
         finally{
             System.out.println("finally");

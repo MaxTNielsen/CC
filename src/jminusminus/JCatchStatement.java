@@ -7,7 +7,7 @@ public class JCatchStatement extends JStatement {
     private JFormalParameter exception;
 
     private LocalVariableDefn defn;
-
+    protected LocalContext context;
     public JCatchStatement(int line, JFormalParameter exception, JBlock catchBlock){
         super(line);
         this.catchBlock = catchBlock;
@@ -15,17 +15,26 @@ public class JCatchStatement extends JStatement {
     }
 
     public JAST analyze(Context context) {
-        context = new LocalContext(context);
+        
         exception = (JFormalParameter) exception.analyze(context);
         exception.setType(exception.type().resolve(context));
-        catchBlock = (JBlock) catchBlock.analyze(context);
         
-        defn = new LocalVariableDefn( exception.type(), 
-        ((LocalContext) context).nextOffset());
-        defn.initialize();
-        context.addEntry(catchBlock.line(),  exception.name(), defn);
 
-        //---
+        this.context = new LocalContext(context);
+        defn = new LocalVariableDefn(exception.type(), 
+        (this.context).nextOffset());
+        defn.initialize();
+
+        IDefn previousDefn = context.lookup(exception.name());
+        if (previousDefn != null
+                && previousDefn instanceof LocalVariableDefn) {
+            JAST.compilationUnit.reportSemanticError(exception.line(),
+                    "The name " + exception.name()
+                            + " overshadows another local variable.");
+        }
+        this.context.addEntry(catchBlock.line(),  exception.name(), defn);
+
+        catchBlock = (JBlock) catchBlock.analyze(this.context);
         
         return this;
     }
@@ -35,14 +44,34 @@ public class JCatchStatement extends JStatement {
     public void codegen(CLEmitter output) {
         exception.codegen(output);
         //output.addLabel(getException());
-        catchBlock.codegen(output);
 
         if (defn instanceof LocalVariableDefn) {
             int offset = ((LocalVariableDefn) defn).offset();
             if (exception.type().isReference()) {
-                output.addOneArgInstruction(ASTORE, offset);
+                switch (offset) {
+                case 0:
+                    output.addNoArgInstruction(ASTORE_0);
+                    break;
+                case 1:
+                    output.addNoArgInstruction(ASTORE_1);
+                    break;
+                case 2:
+                    output.addNoArgInstruction(ASTORE_2);
+                    break;
+                case 3:
+                    output.addNoArgInstruction(ASTORE_3);
+                    break;
+                default:
+                    output.addOneArgInstruction(ASTORE, offset);
+                    break;
+                }
             }
         }
+
+
+        catchBlock.codegen(output);
+
+       
         
 
         

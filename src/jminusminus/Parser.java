@@ -555,9 +555,11 @@ public class Parser {
             ArrayList<JFormalParameter> params = formalParameters();
             ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
             if (have(THROWS)){
+                mustBe(IDENTIFIER);
                 mods.add("throws");
                 exceptions.add(qualifiedIdentifier());
                 while(have(COMMA)){
+                    mustBe(IDENTIFIER);
                     exceptions.add(qualifiedIdentifier());
                 }
             }
@@ -577,7 +579,7 @@ public class Parser {
                 
                 ArrayList<TypeName> exceptions = new ArrayList<TypeName>();
                 if (have(THROWS)){
-                    mods.add("throws");
+                   // mods.add("throws");
                     exceptions.add(qualifiedIdentifier());
                     while(have(COMMA)){
                         exceptions.add(qualifiedIdentifier());
@@ -1151,7 +1153,7 @@ public class Parser {
     private JExpression assignmentExpression() {
         int line = scanner.token().line();
         JExpression lhs = conditionalExpression();
-        if (have(ASSIGN)) {
+        if (have(ASSIGN)) { 
             return new JAssignOp(line, lhs, assignmentExpression());
         } else if (have(PLUS_ASSIGN)) {
             return new JPlusAssignOp(line, lhs, assignmentExpression());
@@ -1261,7 +1263,7 @@ public class Parser {
                 lhs = new JOrOp(line, lhs, equalityExpression());
             } else if (have(XOR)){
                 lhs = new JXorOp(line, lhs, equalityExpression());
-            } else if (have(AND)){
+            } else if (have(BAND)){
                 lhs = new JAndOp(line, lhs, equalityExpression());
             }
             else{
