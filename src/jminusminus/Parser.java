@@ -1319,7 +1319,7 @@ private JBlock block(ArrayList<String> mods) {
             return new JXORAssignOp(line, lhs, assignmentExpression());
         }  else if (have(NOT_ASSIGN)) {
             return new JLNOTAssignOp(line, lhs, assignmentExpression());
-        }  else if (have(SHLE)) {
+        }  else if (have(SHL_ASSIGN)) {
             return new JSHLAssignOp(line, lhs, assignmentExpression());
         }  else if (have(RIGHTSHIFT_ASSIGN)) {
             return new JSHRAssignOp(line, lhs, assignmentExpression());

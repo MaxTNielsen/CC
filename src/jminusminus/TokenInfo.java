@@ -27,13 +27,14 @@ enum TokenKind {
     BREAK("break"), BYTE("byte"), DEFAULT("default"), DO("do"), CASE("case"), CATCH("catch"),
 
     // Operators
-    REM("%"), REM_ASSIGN("%="), STAR_ASSIGN("*="), BAND("&"), SHLE("<<="), 
+    REM("%"), REM_ASSIGN("%="), STAR_ASSIGN("*="), BAND("&"), 
     ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LT("<"), LAND("&&"),
     LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"),
     DIV("/"),MOD("%"),USHIFTRIGHT_ASSIGN(">>>="),GE(">="),
     ANDEQ("&="), SHR(">>"),SHL("<<"), USHR(">>>"), UCOMP("~"), OR("|"), XOR("^"), DIV_ASSIGN("/="),
     RIGHTSHIFT_ASSIGN(">>="),LOGICAL_OR("||"), OR_ASSIGN("|="),
-    SHL_ASSIGN("<<="), MINUS_ASSIGN("-="), QMARK("?"),LAMBDA("->"),
+    SHL_ASSIGN("<<="), MINUS_ASSIGN("-="), QMARK("?"),
+
     // Separators
     LPAREN("("), RPAREN(")"), LCURLY("{"), RCURLY("}"), LBRACK("["),
     RBRACK("]"), SEMI(";"), COMMA(","), DOT("."),COLON(":"),BXOR_ASSIGN("^="),NOT_ASSIGN("!="),

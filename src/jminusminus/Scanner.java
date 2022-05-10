@@ -325,7 +325,7 @@ class Scanner {
                 nextCh();
                 if (ch == '='){
                     nextCh();
-                    return new TokenInfo(SHLE, line);
+                    return new TokenInfo(SHL_ASSIGN, line);
                 }
                 else{
                 return new TokenInfo(SHL, line);

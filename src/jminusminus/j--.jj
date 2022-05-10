@@ -216,13 +216,18 @@ TOKEN: {
 | <MIN_ASSIGN: "-=">
 | <OR: "|">
 | <OR_ASSIGN: "|=">
+| <NOT_ASSIGN: "|=">
 | <PLUS_ASSIGN: "+=">
+| <BXOR_ASSIGN: "^=">
+| <ANDEQ: "&=">
 | <REM: "%">
 | <REM_ASSIGN: "%=">
 | <RSHIFT: ">>">
 | <STAR: "*">
 | <STAR_ASSIGN: "*=">
-| <URSHIFT_ASSIGN: ">>>=">
+| <USHIFTRIGHT_ASSIGN: ">>>=">
+| <RIGHTSHIFT_ASSIGN ">>="
+| <SHL_ASSIGN "<<=">
 | <URSHIFT: ">>>">
 | <QMARK: "?">
 | <AND: "&">
@@ -1320,6 +1325,7 @@ private JExpression expression(): {
  *            | DIV_ASSIGN
  *            | REM_ASSIGN
  *            | OR_ASSIGN
+ *
  *            )
  *            assignmentExpression]
  * </pre>
@@ -1356,9 +1362,17 @@ private JExpression assignmentExpression(): {
             rhs = assignmentExpression()
             { lhs = new JDivAssignOp(line, lhs, rhs); } |
 
+            <SHL_ASSIGN>
+            rhs = assignmentExpression()
+            { lhs = new JSHLAssignOp(line, lhs, rhs); } |
+
+            <RIGHTSHIFT_ASSIGN>
+            rhs = assignmentExpression()
+            { lhs = new JSHRAssignOp(line, lhs, rhs); } |
+
             <USHIFTRIGHT_ASSIGN>
             rhs = assignmentExpression()
-            { lhs = new JDivAssignOp(line, lhs, rhs); } |
+            { lhs = new JUshiftRightAssignOp(line, lhs, rhs); } |
 
             <REM_ASSIGN>
             rhs = assignmentExpression()
@@ -1367,6 +1381,10 @@ private JExpression assignmentExpression(): {
             <OR_ASSIGN>
             rhs = assignmentExpression()
             { lhs = new JOrAssignOp(line, lhs, rhs); }
+
+            <ANDEQ>
+            rhs = assignmentExpression()
+            { lhs = new JAndAssignOp(line, lhs, rhs); }
         ]
     }
     catch (ParseException e) {
