@@ -734,14 +734,18 @@ private JStatement statement(): {
         <TRY> { line = token.beginLine; }
         
         tryBlock = block()
+
+        (<FINALLY> finallyBlock = block() |
+        <CATCH> {catches.add(catchStatement());}
         (
             <CATCH> {catches.add(catchStatement());}
         )*
-        
         [
             LOOKAHEAD(<FINALLY>)
             <FINALLY> finallyBlock = block()
-        ]
+        ])
+
+
         {statement = new JTryStatement(line,tryBlock, catches, finallyBlock);} |
         //---
 
